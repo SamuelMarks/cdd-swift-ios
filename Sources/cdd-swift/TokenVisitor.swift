@@ -18,7 +18,7 @@ class TokenVisitor : SyntaxVisitor {
 		switch token.tokenKind {
 		case .structKeyword:
 			if let parent = token.parent {
-				if let structNameNode = parent.child(at: 3) {
+				if let structNameNode = parent.child(at: token.indexInParent + 1) {
 					print("found new model: \(structNameNode)")
 					let structName: String = structNameNode.description;
 
@@ -30,13 +30,18 @@ class TokenVisitor : SyntaxVisitor {
 					// now iterate children (refactor)
 
 
+
+
 //					print("new api: \(self.api)")
 				}
 			}
-		case .varKeyword:
-			print("var: \(token)")
+		case .letKeyword:
 			if let parent = token.parent {
-				print("-- \(parent)")
+				if let varNameNode = parent.child(at: token.indexInParent + 1) {
+					let fieldName: String = varNameNode.description;
+					print("- field found: \(fieldName)")
+
+				}
 			}
 		default: ()
 		}
