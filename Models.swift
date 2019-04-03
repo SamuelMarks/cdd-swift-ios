@@ -5,3 +5,8 @@ struct User: Codable {
     let email: String
     let roles: [String]
 }
+
+struct Post: Codable {
+    let title: String
+    let body: String
+}
