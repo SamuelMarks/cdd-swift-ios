@@ -69,3 +69,5 @@ fastlane/test_output
 
 # developer bash scripts
 scripts
+*.xcodeproj
+*.yaml
