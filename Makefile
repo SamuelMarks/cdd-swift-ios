@@ -15,3 +15,6 @@ build:
 	
 run: build
 	.build/debug/cdd-swift Models.swift
+
+clean:
+	swift package clean

@@ -2,6 +2,8 @@ import Foundation
 import Basic
 import SwiftSyntax
 import Yams
+// import SwagGenKit
+// import Swagger
 
 let arguments = Array(CommandLine.arguments.dropFirst())
 let filePath = URL(fileURLWithPath: arguments[0])
