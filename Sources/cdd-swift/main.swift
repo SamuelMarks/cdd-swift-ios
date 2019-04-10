@@ -14,8 +14,6 @@ let sourceFile = try! SyntaxTreeParser.parse(filePath)
 let visitor = TokenVisitor()
 sourceFile.walk(visitor)
 
-
-
 let fileSystem = Basic.localFileSystem
 
 let yaml_encoder = YAMLEncoder()

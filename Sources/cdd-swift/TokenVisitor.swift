@@ -7,7 +7,6 @@ struct Field {
 class ExtractField : SyntaxVisitor {
 	var fields: [Field] = []
 
-
 	override func visit(_ node: PatternBindingSyntax) -> SyntaxVisitorContinueKind {
 
 		let f: String? = node.children.first(where: { child in
@@ -34,10 +33,7 @@ class TokenVisitor : SyntaxVisitor {
     var api: OpenApi = OpenApi.init()
 
 	override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-
 		let modelName = node.identifier
-
-//		print("STRUCT: \(modelName)")
 
 		for member in node.children {
 			let extractField = ExtractField()
@@ -48,7 +44,6 @@ class TokenVisitor : SyntaxVisitor {
 //			}
 //			let component = ComponentObject(type: "object", properties: [:])
 //			let properties = [:]
-
 
 			var fields:Dictionary<String, ComponentField> = [:]
 			for field in extractField.fields {
@@ -68,10 +63,7 @@ class TokenVisitor : SyntaxVisitor {
 			}
 
 			api.components.schemas["\(modelName)"] = ComponentObject(type: "object", properties: fields)
-
-
 		}
-
 		return .skipChildren
 	}
 

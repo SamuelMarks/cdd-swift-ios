@@ -13,7 +13,6 @@ public struct OpenApi : Encodable {
 }
 
 public struct Schema: Encodable {
-
 }
 
 extension Schema: Component {
@@ -27,7 +26,6 @@ public struct Properties : Encodable {
 
 public struct Components : Encodable {
 	public var schemas: Dictionary<String, ComponentObject>
-//	public var schemas: [ComponentField]
 }
 
 public struct ComponentField: Encodable {
@@ -50,7 +48,6 @@ public enum ComponentType: String, Encodable {
 //	case datetime
 //	case string
 //}
-
 
 //public struct IntegerSchema: FieldType, Encodable {
 //	let type: String
@@ -92,28 +89,3 @@ struct Route : Encodable {
 struct Method : Encodable {
     var type: String // GET, PUT, etc
 }
-
-//public enum PropertyValue : Encodable {
-//
-//	enum TypeKey: CodingKey {
-//		case type
-//	}
-//
-//
-//
-//	public func encode(to encoder: Encoder) throws {
-//		var container = encoder.container(keyedBy: TypeKey.self)
-//
-//		switch self {
-//		case .int64(let k, let v):
-//			try container.encode([["type": "integer"], ["format": "int64"]], forKey: .type)
-//		}
-//
-//	}
-//
-//	case int64(String, String)
-//}
-
-//struct Component : Encodable {
-//	var required: [String]
-//}
