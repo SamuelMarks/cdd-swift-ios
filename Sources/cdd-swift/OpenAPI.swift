@@ -8,19 +8,31 @@ public struct OpenApi : Encodable {
         self.name = "hi"
         self.info = Info.init()
         self.paths = []
-		self.components = Components.init(schemas: [])
+		self.components = Components.init(schemas: [:])
     }
 }
 
 public struct Schema: Encodable {
+
 }
 
 extension Schema: Component {
 	public static let componentType: ComponentType = .schema
 }
 
+public struct Properties : Encodable {
+//	public var property: Dictionary<String, String>
+//	public var property: [(String, String)]
+}
+
 public struct Components : Encodable {
-	public let schemas: [ComponentObject<Schema>]
+	public var schemas: Dictionary<String, ComponentObject>
+//	public var schemas: [ComponentField]
+}
+
+public struct ComponentField: Encodable {
+	public let type: String
+	public let format: String
 }
 
 public protocol Component : Encodable {
@@ -29,12 +41,34 @@ public protocol Component : Encodable {
 
 public enum ComponentType: String, Encodable {
 	case schema = "schemas"
+	case response = "responses"
 }
 
+//public enum PropertyType: Encodable {
+//	case int64
+//	case int32
+//	case datetime
+//	case string
+//}
 
-public struct ComponentObject<T: Component>: Encodable {
-	public let name: String
-	public let value: T
+
+//public struct IntegerSchema: FieldType, Encodable {
+//	let type: String
+//	let format: String
+//}
+
+public protocol FieldComponent: Encodable {
+
+}
+
+//public struct ComponentProperty: Encodable {
+//	type: String
+//	format: PropertyType
+//}
+//
+public struct ComponentObject: Encodable {
+	public let type: String
+	public let properties: Dictionary<String, ComponentField>
 }
 
 struct Info : Encodable {
@@ -57,8 +91,28 @@ struct Route : Encodable {
 
 struct Method : Encodable {
     var type: String // GET, PUT, etc
-    
 }
+
+//public enum PropertyValue : Encodable {
+//
+//	enum TypeKey: CodingKey {
+//		case type
+//	}
+//
+//
+//
+//	public func encode(to encoder: Encoder) throws {
+//		var container = encoder.container(keyedBy: TypeKey.self)
+//
+//		switch self {
+//		case .int64(let k, let v):
+//			try container.encode([["type": "integer"], ["format": "int64"]], forKey: .type)
+//		}
+//
+//	}
+//
+//	case int64(String, String)
+//}
 
 //struct Component : Encodable {
 //	var required: [String]

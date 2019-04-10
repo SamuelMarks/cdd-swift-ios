@@ -7,7 +7,7 @@ import Yams
 
 let arguments = Array(CommandLine.arguments.dropFirst())
 
-let filePath = URL(fileURLWithPath: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Models.swift")
+let filePath = URL(fileURLWithPath: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Petstore/Sources/Models/Models.swift")
 //let filePath = URL(fileURLWithPath: arguments[0])
 
 let sourceFile = try! SyntaxTreeParser.parse(filePath)

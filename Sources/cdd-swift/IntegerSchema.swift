@@ -1,8 +1,28 @@
-//
-//  IntegerSchema.swift
-//  Basic
-//
-//  Created by Rob Saunders on 11/04/2019.
-//
+//import JSONUtilities
 
-import Foundation
+public struct IntegerSchema {
+	public let format: IntegerFormat?
+	public let minimum: Int?
+	public let maximum: Int?
+	public let exclusiveMinimum: Int?
+	public let exclusiveMaximum: Int?
+	public let multipleOf: Int?
+}
+
+public enum IntegerFormat: String {
+	case int32
+	case int64
+}
+
+extension IntegerSchema {
+
+//	public init(jsonDictionary: JSONDictionary) {
+//		format = jsonDictionary.json(atKeyPath: "format")
+//
+//		minimum = jsonDictionary.json(atKeyPath: "minimum")
+//		maximum = jsonDictionary.json(atKeyPath: "maximum")
+//		exclusiveMinimum = jsonDictionary.json(atKeyPath: "exclusiveMinimum")
+//		exclusiveMaximum = jsonDictionary.json(atKeyPath: "exclusiveMaximum")
+//		multipleOf = jsonDictionary.json(atKeyPath: "multipleOf")
+//	}
+}
