@@ -14,7 +14,10 @@ build:
 	swift build
 	
 run: build
-	.build/debug/cdd-swift Models.swift
+	.build/debug/cdd-swift Examples/Models.swift
+
+xcode:
+	swift package generate-xcodeproj
 
 clean:
 	swift package clean

@@ -13,3 +13,5 @@ If you prefer to work in xcode, generate a project via SPM:
 ```bash
 swift package generate-xcodeproj
 ```
+
+Note that if the xcode project complains about missing dependencies, try building the project once and see if they resolve.
