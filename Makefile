@@ -17,6 +17,7 @@ run: build
 	.build/debug/cdd-swift Examples/Models.swift
 
 xcode:
+	rm -rf cdd-swift.xcodeproj/
 	swift package generate-xcodeproj
 
 clean:

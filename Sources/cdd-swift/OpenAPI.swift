@@ -1,13 +1,13 @@
 public struct OpenApi : Encodable {
     var name: String
     var info: Info
-    var paths: [Path]
+    var paths: Dictionary<String, Dictionary<String, Path>>
 	var components: Components
 
     init() {
         self.name = "hi"
         self.info = Info.init()
-        self.paths = []
+		self.paths = [:]
 		self.components = Components.init(schemas: [:])
     }
 }
@@ -79,13 +79,17 @@ struct Info : Encodable {
 }
 
 struct Path : Encodable {
-    var route: Route
+	var operationId: String
+	var parameters: [RouteParameter]
+	var responses: [RouteResponse]
 }
 
 struct Route : Encodable {
-    var method: Method
+	var operationId: String
+	var parameters: [RouteParameter]
+	var responses: [RouteResponse]
 }
 
-struct Method : Encodable {
-    var type: String // GET, PUT, etc
-}
+struct RouteParameter : Encodable {}
+
+struct RouteResponse : Encodable {}
