@@ -28,10 +28,7 @@ class PathExtractor : SyntaxVisitor {
 			}
 
 		}
-		//		if let key = key, let value = value {
-		//			print("KEY VALUE! " + key + value)
-		//		}
-		//		print("KEY: ", key)
+		
 		if key == Optional("baseUrl") {
 			if let baseUrl = value {
 				self.baseUrl = baseUrl

@@ -2,30 +2,20 @@ public struct OpenApi : Encodable {
     var name: String
     var info: Info
     var paths: Dictionary<String, Dictionary<String, Path>>
-	var components: Components
+	var components: Dictionary<String, Dictionary<String, SchemaComponent>>
 
     init() {
         self.name = "hi"
         self.info = Info.init()
 		self.paths = [:]
-		self.components = Components.init(schemas: [:])
+		self.components = [:]
+		self.components["schemas"] = [:]
     }
 }
 
-public struct Schema: Encodable {
-}
-
-extension Schema: Component {
-	public static let componentType: ComponentType = .schema
-}
-
-public struct Properties : Encodable {
-//	public var property: Dictionary<String, String>
-//	public var property: [(String, String)]
-}
-
-public struct Components : Encodable {
-	public var schemas: Dictionary<String, ComponentObject>
+public struct SchemaComponent: Encodable {
+	public let type: String
+	public let properties: Dictionary<String, ComponentField>
 }
 
 public struct ComponentField: Encodable {
@@ -33,36 +23,6 @@ public struct ComponentField: Encodable {
 	public let format: String
 }
 
-public protocol Component : Encodable {
-	static var componentType: ComponentType { get }
-}
-
-public enum ComponentType: String, Encodable {
-	case schema = "schemas"
-	case response = "responses"
-}
-
-//public enum PropertyType: Encodable {
-//	case int64
-//	case int32
-//	case datetime
-//	case string
-//}
-
-//public struct IntegerSchema: FieldType, Encodable {
-//	let type: String
-//	let format: String
-//}
-
-public protocol FieldComponent: Encodable {
-
-}
-
-//public struct ComponentProperty: Encodable {
-//	type: String
-//	format: PropertyType
-//}
-//
 public struct ComponentObject: Encodable {
 	public let type: String
 	public let properties: Dictionary<String, ComponentField>
