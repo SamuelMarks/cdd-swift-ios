@@ -71,3 +71,5 @@ fastlane/test_output
 scripts
 cdd-swift.xcodeproj
 *.yaml
+
+.idea

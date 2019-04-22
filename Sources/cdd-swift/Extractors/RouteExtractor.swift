@@ -11,7 +11,7 @@ struct FunctionExtract {
 	var functionName: String?
 }
 
-class FunctionExtractor : SyntaxVisitor {
+class RouteExtractor : SyntaxVisitor {
 	var method: String? = nil
 	var operationId: String? = nil
 
