@@ -7,30 +7,21 @@ import SwiftSyntax
 class OpenAPIBuilder {
 	var data: OpenApi = OpenApi.init()
 
-	init() {
-		let projectPath = "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Basic/"
-
-		let _ = fileToSyntax("\(projectPath)/Sources/api/Pets/Models.swift").map { syntax in
-			parseModels(syntax: syntax)
+	func readModel(file: String) {
+		// todo: pass back error as result
+		let _ = fileToSyntax(file).map { syntax in
+			parseModel(syntax: syntax)
 		}
+	}
 
-		let _ = fileToSyntax("\(projectPath)/Sources/api/Pets/Routes.swift").map { syntax in
-			parseRoutes(syntax: syntax)
-		}
-
-		let _ = fileToSyntax("\(projectPath)/Sources/api/Pets/AuthApi.swift").map { syntax in
+	func readRoute(file: String) {
+		// todo: pass back error as result
+		let _ = fileToSyntax(file).map { syntax in
 			parseRoutes(syntax: syntax)
 		}
 	}
 
-	func parseAPIBase(syntax: SourceFileSyntax) {
-//		let visitor = ApiBaseVisitor()
-//		syntax.walk(visitor)
-//
-//		self.data.components = visitor.components
-	}
-
-	func parseModels(syntax: SourceFileSyntax) {
+	func parseModel(syntax: SourceFileSyntax) {
 		let visitor = ModelsVisitor()
 		syntax.walk(visitor)
 
@@ -46,14 +37,15 @@ class OpenAPIBuilder {
 		for (path, route) in visitor.paths {
 			self.data.paths[path] = route
 		}
-
-
-//		self.data.paths = visitor.paths
 	}
 }
 
 func fileToSyntax(_ file: String) -> Result<SourceFileSyntax, Swift.Error> {
-	return Result {
-		try SyntaxTreeParser.parse(URL(fileURLWithPath: file))
+	do {
+		let syntax = try SyntaxTreeParser.parse(URL(fileURLWithPath: file))
+		return .success(syntax)
+	}
+	catch let error {
+		return .failure(error)
 	}
 }
