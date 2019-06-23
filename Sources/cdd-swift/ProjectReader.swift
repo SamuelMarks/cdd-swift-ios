@@ -37,15 +37,6 @@ class ProjectReader {
 	init(path: String) {
 		self.path = path
 		self.builder = OpenAPIBuilder()
-//		// read files in old convention (nested)
-//		let _ = readDirectory("\(path)/Sources/api").map{ resources in
-//			for resource in resources {
-//				print("\(path)/Sources/api/\(resource)")
-//				let _ = readFiles("\(path)/Sources/api/\(resource)", fileType: "swift").map{ file in
-//					print(file)
-//				}
-//			}
-//		}
 	}
 
 	func readProject() {
@@ -83,6 +74,7 @@ class ProjectReader {
 		do {
 			try createStoryboardFrame(content: [view])
 				.write(toFile: "Scaffold.storyboard", atomically: false, encoding: .utf8)
+			print("wrote Scaffold.storyboard")
 		}
 		catch {
 			print("error writing storyboard file.")

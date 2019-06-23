@@ -16,7 +16,7 @@ project.readProject()
 
 switch project.writeOpenAPI() {
 case .success(let yaml):
-	print("wrote yaml: \(yaml)")
+	print("wrote openapi.yml")
 case .failure(let err):
 	print("error: \(err)")
 }
