@@ -73,3 +73,5 @@ cdd-swift.xcodeproj
 *.yaml
 
 .idea
+
+Examples/Generated/*
