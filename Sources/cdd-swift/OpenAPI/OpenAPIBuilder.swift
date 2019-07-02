@@ -1,5 +1,6 @@
 //
 //  OpenAPIBuilder
+//  - Creates OpenAPI objects from ASTs.
 
 import Foundation
 import SwiftSyntax

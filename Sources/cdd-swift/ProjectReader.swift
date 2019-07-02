@@ -1,7 +1,6 @@
 //
 //  ProjectReader.swift
-//	Responsible for understanding project directory structure and writing reading files
-//
+//	- Responsible for understanding project directory structure and writing reading files
 
 import Foundation
 import Yams
@@ -54,30 +53,6 @@ class ProjectReader {
 		}
 		catch let error {
 			return .failure(error)
-		}
-	}
-
-	func writeStoryboard() {
-		var subviews:[XMLElement] = []
-
-		for models in self.builder.data.components {
-			for model in models.value {
-				subviews.append(
-					inputGroup(title: model.key, fields: (model.value.properties.map({ propertyName, property in
-						propertyName
-					}))))
-			}
-		}
-
-		let view = viewElement(key: "view", children: [stackView(height: SCREEN_HEIGHT, children: subviews)])
-
-		do {
-			try createStoryboardFrame(content: [view])
-				.write(toFile: self.path + "/Scaffold.storyboard", atomically: false, encoding: .utf8)
-			print("wrote Scaffold.storyboard")
-		}
-		catch let err {
-			print("error writing storyboard file: \(err)")
 		}
 	}
 

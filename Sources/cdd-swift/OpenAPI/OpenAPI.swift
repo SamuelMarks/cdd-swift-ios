@@ -1,3 +1,7 @@
+//
+//   OpenAPI
+//   - Codable representation of the OpenAPI spec.
+
 public struct OpenApi : Encodable {
     var name: String
     var info: Info

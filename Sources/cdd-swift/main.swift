@@ -2,14 +2,8 @@ import Foundation
 import SwiftSyntax
 
 let arguments = Array(CommandLine.arguments.dropFirst())
-//let filePath = URL(fileURLWithPath: arguments[0])
-
-//let builder = OpenAPIBuilder()
-
-//let sb = StoryboardWriter()
-//print(createDefaultStoryboard())
-
 let project = ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Basic")
+//let project = ProjectReader(path: arguments[0])
 
 project.readProject()
 
@@ -19,8 +13,3 @@ case .success(let yaml):
 case .failure(let err):
 	print("error: \(err)")
 }
-
-project.writeStoryboard()
-
-//let yamlPath = filePath.deletingPathExtension().appendingPathExtension("yaml")
-//try! fileSystem.writeFileContents(AbsolutePath(yamlPath.path), bytes: ByteString(encodingAsUTF8: encodedYAML))

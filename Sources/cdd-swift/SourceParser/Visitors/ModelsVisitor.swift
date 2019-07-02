@@ -1,3 +1,6 @@
+//  RoutesVisitor
+//  - finds and identifies models and model fields
+
 import SwiftSyntax
 
 class ModelsVisitor : SyntaxVisitor {
