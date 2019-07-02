@@ -9,14 +9,13 @@ let arguments = Array(CommandLine.arguments.dropFirst())
 //let sb = StoryboardWriter()
 //print(createDefaultStoryboard())
 
-let project = ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Basic/"
-)
+let project = ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Basic")
 
 project.readProject()
 
 switch project.writeOpenAPI() {
 case .success(let yaml):
-	print("wrote openapi.yml")
+	print("wrote openapi.yml: \(yaml)")
 case .failure(let err):
 	print("error: \(err)")
 }

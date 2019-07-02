@@ -32,6 +32,7 @@
 		C9C78A4B4FFFCD26148E923E /* JsonHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C78D6E4176DABB97D8426D /* JsonHttpClient.swift */; };
 		C9C78C9883D110D45226928B /* ErrorResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C78D891BF87FE5AEF1DA04 /* ErrorResponse.swift */; };
 		C9C78EC1D7AAB5E2F68D5F06 /* ServerStatusApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C78F635DF6F2CE5E0FB2FB /* ServerStatusApi.swift */; };
+		D4F186B722C265BE00D2F5AC /* Scaffold.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D4F186B622C265BE00D2F5AC /* Scaffold.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		C9C78D6E4176DABB97D8426D /* JsonHttpClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JsonHttpClient.swift; sourceTree = "<group>"; };
 		C9C78D891BF87FE5AEF1DA04 /* ErrorResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorResponse.swift; sourceTree = "<group>"; };
 		C9C78F635DF6F2CE5E0FB2FB /* ServerStatusApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerStatusApi.swift; sourceTree = "<group>"; };
+		D4F186B622C265BE00D2F5AC /* Scaffold.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Scaffold.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				7EA543982039225700532AD1 /* DashboardVC.swift */,
+				D4F186B622C265BE00D2F5AC /* Scaffold.storyboard */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7E3C27A2203E878300031654 /* Auth.storyboard in Resources */,
+				D4F186B722C265BE00D2F5AC /* Scaffold.storyboard in Resources */,
 				7EA543A42039225700532AD1 /* LaunchScreen.storyboard in Resources */,
 				7EA543A12039225700532AD1 /* Assets.xcassets in Resources */,
 				7EA5439C2039225700532AD1 /* Main.storyboard in Resources */,
@@ -440,7 +444,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D6C5SJK2C4;
+				DEVELOPMENT_TEAM = 65E78X9ZNB;
 				INFOPLIST_FILE = "ios-auth-scaffold/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -456,7 +460,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D6C5SJK2C4;
+				DEVELOPMENT_TEAM = 65E78X9ZNB;
 				INFOPLIST_FILE = "ios-auth-scaffold/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

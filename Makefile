@@ -6,9 +6,13 @@ BUILD_PATH = .build/release/$(TOOL_NAME)
 PREFIX = /usr/local
 INSTALL_PATH = $(PREFIX)/bin/$(TOOL_NAME)
 
-install:
+install-release:
 	swift build --disable-sandbox -c release
 	cp $(BUILD_PATH) ~/.bin/$(TOOL_NAME)
+
+install:
+	swift build
+	cp .build/debug/$(TOOL_NAME) ~/.bin/$(TOOL_NAME)
 
 build:
 	swift build

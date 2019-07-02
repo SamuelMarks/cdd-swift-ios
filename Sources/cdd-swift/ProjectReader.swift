@@ -73,11 +73,11 @@ class ProjectReader {
 
 		do {
 			try createStoryboardFrame(content: [view])
-				.write(toFile: "Scaffold.storyboard", atomically: false, encoding: .utf8)
+				.write(toFile: self.path + "/Scaffold.storyboard", atomically: false, encoding: .utf8)
 			print("wrote Scaffold.storyboard")
 		}
-		catch {
-			print("error writing storyboard file.")
+		catch let err {
+			print("error writing storyboard file: \(err)")
 		}
 	}
 
