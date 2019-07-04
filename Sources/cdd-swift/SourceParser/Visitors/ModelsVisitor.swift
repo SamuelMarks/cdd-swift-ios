@@ -29,6 +29,8 @@ class ModelsVisitor : SyntaxVisitor {
 					fields[field.variableName] = ComponentField(type: "number", format: "float")
 				case "Date":
 					fields[field.variableName] = ComponentField(type: "string", format: "date")
+				case "^[(.*)]s":
+					fields[field.variableName] = ComponentField(type: "string", format: "date")
 				default:
 					print("unknown field: \(field)")
 				}
