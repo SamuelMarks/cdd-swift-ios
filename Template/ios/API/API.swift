@@ -7,21 +7,21 @@
 //
 
 import UIKit
+import Alamofire
 
 //class API {
     struct Person: APIResponse {
         let name: String
         let surname: String
         let people: [Person]
+        
     }
 
-
-    
     struct GetPersons: APIRequest {
-        func path() -> String {
-            return "/persons"
-        }
-        
         typealias ResponseType = [Person]
+        func path() -> String { return "/persons" }
+        func method() -> HTTPMethod { return .get }
+            
+        
     }
 //}
