@@ -39,7 +39,7 @@ class ProjectReader {
 	}
 
 	func readProject() {
-		self.builder.readModel(file: "\(self.path)/API.swift")
+		self.builder.readModel(file: "\(self.path)/ios/API/API.swift")
 //        self.builder.readRoute(file: "\(self.path)/Sources/Routes.swift")
 	}
 

@@ -1,0 +1,19 @@
+name: hi
+info:
+  title: Simple API overview
+  version: 2.0.0
+paths: {}
+components:
+  schemas:
+    Person:
+      type: blah
+      properties:
+        name:
+          type: string
+          format: string
+        surname:
+          type: string
+          format: string
+    GetPersons:
+      type: blah
+      properties: {}
