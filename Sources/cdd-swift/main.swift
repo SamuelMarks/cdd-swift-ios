@@ -2,10 +2,8 @@ import Foundation
 import SwiftSyntax
 
 let arguments = Array(CommandLine.arguments.dropFirst())
-let project = ProjectReader(path: "/Users/alexei/Documents/Projects/cdd-swift-ios/Template/ios/API")
-//let project = ProjectReader(path: arguments[0])
+let project = ProjectReader(path: arguments[0])
 
-SwiftWriter().write()
 project.readProject()
 
 switch project.writeOpenAPI() {
