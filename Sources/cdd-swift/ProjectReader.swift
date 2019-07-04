@@ -31,30 +31,30 @@ func readDirectory(_ path: String) -> Result<[String], Swift.Error> {
 
 class ProjectReader {
 	let path: String
-	var builder: OpenAPIBuilder
+//	var builder: OpenAPIBuilder
 
 	init(path: String) {
 		self.path = path
-		self.builder = OpenAPIBuilder()
+//		self.builder = OpenAPIBuilder()
 	}
 
 	func readProject() {
-		self.builder.readModel(file: "\(self.path)/ios/API/API.swift")
+//		self.builder.readModel(file: "\(self.path)/ios/API/API.swift")
 //        self.builder.readRoute(file: "\(self.path)/Sources/Routes.swift")
 	}
 
-	func writeOpenAPI() -> Result<String, Swift.Error> {
-		do {
-			let yaml_encoder = YAMLEncoder()
-			let encodedYAML = try yaml_encoder.encode(builder.data)
-			try encodedYAML.write(toFile: "openapi.yml", atomically: false, encoding: .utf8)
-
-			return .success(encodedYAML)
-		}
-		catch let error {
-			return .failure(error)
-		}
-	}
+//	func writeOpenAPI() -> Result<String, Swift.Error> {
+//		do {
+//			let yaml_encoder = YAMLEncoder()
+//			let encodedYAML = try yaml_encoder.encode(builder.data)
+//			try encodedYAML.write(toFile: "openapi.yml", atomically: false, encoding: .utf8)
+//
+//			return .success(encodedYAML)
+//		}
+//		catch let error {
+//			return .failure(error)
+//		}
+//	}
 
 	func writeProject() {
 		// unimplemented
