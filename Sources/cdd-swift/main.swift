@@ -2,7 +2,7 @@ import Foundation
 import SwiftSyntax
 
 let arguments = Array(CommandLine.arguments.dropFirst())
-let project = ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Examples/Basic")
+let project = ProjectReader(path: "/Users/alexei/Documents/Projects/cdd-swift-ios/ios/ios/API")
 //let project = ProjectReader(path: arguments[0])
 
 project.readProject()
