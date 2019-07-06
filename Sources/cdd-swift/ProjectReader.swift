@@ -29,13 +29,39 @@ func readDirectory(_ path: String) -> Result<[String], Swift.Error> {
 	}
 }
 
+func readOpenApi(_ path: String) throws -> SwaggerSpec {
+	// note: should look for json first, in default location. CHANGEME
+	let url = URL(fileURLWithPath: path + "/Examples/petstore.yml")
+
+	let data: Data
+	do {
+		data = try Data(contentsOf: url)
+	} catch {
+		throw SwaggerError.loadError(url)
+	}
+
+	if let string = String(data: data, encoding: .utf8) {
+		return try SwaggerSpec.init(string: string)
+	} else if let string = String(data: data, encoding: .ascii) {
+		return try SwaggerSpec.init(string: string)
+	} else {
+		throw SwaggerError.parseError("Swagger doc is not utf8 or ascii encoded")
+	}
+}
+
 class ProjectReader {
+	let openapi: SwaggerSpec
+
 	let path: String
 //	var builder: OpenAPIBuilder
 
-	init(path: String) {
+	init(path: String) throws {
 		self.path = path
 //		self.builder = OpenAPIBuilder()
+
+
+
+		self.openapi = try readOpenApi(path)
 	}
 
 	func readProject() {
