@@ -8,8 +8,26 @@
 import Foundation
 import SwiftSyntax
 
+func parseModel(syntax: SourceFileSyntax) -> [Model] {
+	let visitor = ModelsVisitor()
+	syntax.walk(visitor)
+
+	return visitor.models
+}
+
 func ParseSource(_ file: String) -> Project {
-	return Project(models: [], routes: [])
+	let models: [Model]
+
+	switch fileToSyntax(file) {
+		case .success(let syntax):
+			models = parseModel(syntax: syntax)
+		case .failure:
+			models = []
+	}
+
+	return Project(
+		models: models,
+		routes: [])
 }
 
 func fileToSyntax(_ file: String) -> Result<SourceFileSyntax, Swift.Error> {

@@ -7,6 +7,8 @@ let project = try! ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/c
 
 project.readProject()
 
+print(project.project)
+
 //switch project.writeOpenAPI() {
 //case .success(let yaml):
 //	print("wrote openapi.yml: \(yaml)")

@@ -13,9 +13,22 @@ struct Project {
 }
 
 struct Model {
-
+	let name: String
 }
 
 struct Route {
-	
+	let paths: [RoutePath]
+}
+
+struct RoutePath {
+	let requests: [Request]
+}
+
+struct Request {
+	let method: Method
+}
+
+enum Method {
+	case get
+	case put
 }
