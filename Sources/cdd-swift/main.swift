@@ -3,11 +3,9 @@ import SwiftSyntax
 
 let arguments = Array(CommandLine.arguments.dropFirst())
 //let project = try! ProjectReader(path: arguments[0])
-let project = try! ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios")
+let project = try! ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template")
 
 project.readProject()
-
-
 
 //switch project.writeOpenAPI() {
 //case .success(let yaml):

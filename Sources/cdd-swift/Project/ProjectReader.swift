@@ -5,6 +5,9 @@
 import Foundation
 import Yams
 
+let SPEC_FILE = "openapi.yml"
+let MODELS_DIR = "/ios/API/"
+
 func readFiles(_ path: String, fileType: String) -> Result<[String], Swift.Error> {
 	do {
 		let files = try FileManager.default.contentsOfDirectory(at: URL.init(fileURLWithPath: path), includingPropertiesForKeys: [], options:  [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
@@ -31,7 +34,7 @@ func readDirectory(_ path: String) -> Result<[String], Swift.Error> {
 
 func readOpenApi(_ path: String) throws -> SwaggerSpec {
 	// note: should look for json first, in default location. CHANGEME
-	let url = URL(fileURLWithPath: path + "/Examples/petstore.yml")
+	let url = URL(fileURLWithPath: path + "/" + SPEC_FILE)
 
 	let data: Data
 	do {
@@ -50,18 +53,18 @@ func readOpenApi(_ path: String) throws -> SwaggerSpec {
 }
 
 class ProjectReader {
-	let openapi: SwaggerSpec
-
+	let openapiDoc: SwaggerSpec
+	let project: Project
 	let path: String
-//	var builder: OpenAPIBuilder
 
 	init(path: String) throws {
 		self.path = path
-//		self.builder = OpenAPIBuilder()
+		print("reading \(path)...")
 
+		self.openapiDoc = try readOpenApi(path)
+		print("read openapi.yml")
 
-
-		self.openapi = try readOpenApi(path)
+		self.project = ParseSource("\(self.path + MODELS_DIR)/API.swift")
 	}
 
 	func readProject() {
