@@ -1,7 +1,19 @@
 import JSONUtilities
 
-public struct Path {
+extension Path : Encodable {
+	enum CodingKeys: String, CodingKey {
+		case responses
+	}
 
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		let successResponse = [200: ["description": "success"]]
+		try container.encode(successResponse, forKey: .responses)
+	}
+}
+
+
+public struct Path {
     public let path: String
     public let operations: [Operation]
     public let parameters: [PossibleReference<Parameter>]

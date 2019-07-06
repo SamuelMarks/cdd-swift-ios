@@ -3,6 +3,23 @@ import JSONUtilities
 import PathKit
 import Yams
 
+extension SwaggerSpec : Encodable {
+	enum CodingKeys: String, CodingKey {
+		case version
+		case info
+		case paths
+	}
+
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		var pathDict:Dictionary<String,Path> = Dictionary()
+		for path in paths {
+			pathDict[path.path] = path
+		}
+		try container.encode(pathDict, forKey: .paths)
+	}
+}
+
 public struct SwaggerSpec {
 
     public let json: [String: Any]
