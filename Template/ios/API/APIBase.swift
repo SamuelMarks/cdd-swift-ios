@@ -11,13 +11,17 @@ private let configuration: URLSessionConfiguration = {
 }()
 let sessionManager = Alamofire.SessionManager(configuration: configuration)
 
-struct APIError: Error {
-    let code: Int?
-    let message: String?
+enum PostTypeCodingError: Error {
+    case decoding(String)
+}
+
+struct EmptyResponse: Decodable {
+    
 }
 
 protocol APIRequest: Encodable {
-    associatedtype ResponseType: APIResponse
+    associatedtype ResponseType: Decodable
+    associatedtype ErrorType: Decodable
 
     func baseURL() -> URL
     func path() -> String
@@ -28,30 +32,8 @@ protocol APIRequest: Encodable {
     func send()
     func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)?,
               onResult: @escaping (_ result: ResponseType) -> Void,
-              onError: @escaping (_ error: Error) -> Void)
-}
-
-protocol APIResponse: Decodable {
-    func isValid() -> Bool
-}
-
-extension APIResponse {
-    func isValid() -> Bool {
-        return true
-    }
-}
-
-extension Array: APIResponse where Element: APIResponse {
-}
-
-extension Dictionary: APIResponse where Key: APIResponse, Value: APIResponse {
-}
-
-extension String: APIResponse {
-}
-
-
-struct APIResponseEmpty: APIResponse {
+              onError: @escaping (_ error: ErrorType) -> Void,
+              onOtherError: ((_ error: Error) -> Void)?)
 }
 
 extension APIRequest {
@@ -65,10 +47,10 @@ extension APIRequest {
 
     func send() {
         send(onResult: { (_) in
-
-        }) { (_) in
-
-        }
+            
+        }, onError: { (_) in
+            
+        })
     }
 
     func headers() -> HTTPHeaders {
@@ -94,14 +76,14 @@ extension APIRequest {
 
     func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)? = nil,
                 onResult: @escaping (_ result: ResponseType) -> Void,
-              onError: @escaping (_ error: Error) -> Void) {
+              onError: @escaping (_ error: ErrorType) -> Void,
+              onOtherError: ((_ error: Error) -> Void)? = nil) {
 
         guard let data = try? JSONEncoder().encode(self),
               let params = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
             return
         }
         
-        var urll: URL! = baseURL().appendingPathComponent(path())
         sessionManager.startRequestsImmediately = true
 
         var request: DataRequest?
@@ -133,21 +115,24 @@ extension APIRequest {
                         do {
                             let result = try decoder.decode(ResponseType.self, from: data)
                             if let httpResponse = response.response,
-                                result.isValid(),
                                 httpResponse.statusCode >= 200 && httpResponse.statusCode <= 300 {
                                 
                                 onResult(result)
                             } else {
-//!!!!Need to parse errorv here
-                                onError(APIError(code: response.response?.statusCode ?? -1, message: "Unknown error"))
                             }
                         } catch {
-                            print("📌 📌 📌")
-                            print(error)
-                            onError(error)
+                            do {
+                                let result = try decoder.decode(ErrorType.self, from: data)
+                                onError(result)
+                            }
+                            catch {
+                                print("📌 📌 📌")
+                                print(error)
+                                onOtherError?(error)
+                            }
                         }
                     case .failure(let error):
-                      onError(error)
+                      onOtherError?(error)
                     }
                 }
     }
