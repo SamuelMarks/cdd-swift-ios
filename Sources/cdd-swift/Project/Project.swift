@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct Settings {
+	let host: URL
+}
+
 struct Project {
 	var models: [Model]
 	var routes: [Route]

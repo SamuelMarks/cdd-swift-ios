@@ -18,12 +18,13 @@ let package = Package(
         // .package(url: "https://github.com/jakeheis/SwiftCLI", from: "5.0.0"),
         .package(url: "https://github.com/kylef/PathKit.git", from: "0.9.0"),
         .package(url: "https://github.com/yonaskolb/JSONUtilities.git", from: "4.1.0"),
+		.package(url: "https://github.com/onevcat/Rainbow", from: "3.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "cdd-swift",
-            dependencies: ["Utility", "SwiftSyntax", "Yams", "PathKit", "JSONUtilities"]),
+            dependencies: ["Utility", "SwiftSyntax", "Yams", "PathKit", "JSONUtilities", "Rainbow"]),
     ]
 )

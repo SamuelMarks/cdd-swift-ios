@@ -4,6 +4,20 @@ struct VariableDeclaration {
 	let variableName, variableType: String
 }
 
+//func RecursiveFindVariables(syntax: SourceFileSyntax, variables: [VariableDeclaration]) -> SourceFileSyntax {
+//	guard syntax.numberOfChildren != 0 else {
+//		for node in syntax.children()  {
+//			RecursiveFindVariables(node)
+//		}
+//	}
+//}
+
+func ParseVariables(_ syntax: SourceFileSyntax) -> [VariableDeclaration] {
+	let visitor = ExtractVariables()
+	syntax.walk(visitor)
+	return visitor.variables
+}
+
 class ExtractVariables : SyntaxVisitor {
 	var variables: [VariableDeclaration] = []
 

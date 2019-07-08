@@ -15,19 +15,54 @@ func parseModel(syntax: SourceFileSyntax) -> [Model] {
 	return visitor.models
 }
 
-func ParseSource(_ file: String) -> Project {
-	let models: [Model]
+func parseRoute(syntax: SourceFileSyntax) -> [Route] {
+	let visitor = RoutesVisitor()
+	syntax.walk(visitor)
 
-	switch fileToSyntax(file) {
+	return visitor.routes
+}
+
+struct ProjectInfo {
+	var hostname: String
+}
+
+func findProjectInfo(syntax: SourceFileSyntax) -> ProjectInfo {
+	let visitor = ExtractVariables()
+	syntax.walk(visitor)
+
+	print(visitor.variables)
+
+	return ProjectInfo(hostname: "blah")
+}
+
+func ParseSource(_ files: [String], settingsFile: String) -> Project {
+	var models: [Model] = []
+	var routes: [Route] = []
+
+	switch fileToSyntax(settingsFile) {
+	case .success(let syntax):
+		print(ParseVariables(syntax))
+	case .failure(let err):
+		print("error parsing settings file: \(err)")
+	}
+
+	for file in files {
+		switch fileToSyntax(file) {
 		case .success(let syntax):
-			models = parseModel(syntax: syntax)
-		case .failure:
-			models = []
+			models.append(contentsOf: parseModel(syntax: syntax))
+			routes.append(contentsOf: parseRoute(syntax: syntax))
+
+//			print(ParseVariables(syntax))
+
+//			findProjectInfo(syntax: syntax)
+		case .failure(let err):
+			print("error parsing file: \(err)")
+		}
 	}
 
 	return Project(
 		models: models,
-		routes: [])
+		routes: routes)
 }
 
 func fileToSyntax(_ file: String) -> Result<SourceFileSyntax, Swift.Error> {
