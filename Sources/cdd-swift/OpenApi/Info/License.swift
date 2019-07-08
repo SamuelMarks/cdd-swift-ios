@@ -1,7 +1,7 @@
 import Foundation
 import JSONUtilities
 
-public struct License {
+public struct License: Encodable {
 
     public let name: String
     public let url: URL?

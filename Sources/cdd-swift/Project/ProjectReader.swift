@@ -5,6 +5,9 @@
 import Foundation
 import Yams
 
+let SPEC_FILE = "openapi.yml"
+let MODELS_DIR = "/ios/API/"
+
 func readFiles(_ path: String, fileType: String) -> Result<[String], Swift.Error> {
 	do {
 		let files = try FileManager.default.contentsOfDirectory(at: URL.init(fileURLWithPath: path), includingPropertiesForKeys: [], options:  [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
@@ -29,13 +32,45 @@ func readDirectory(_ path: String) -> Result<[String], Swift.Error> {
 	}
 }
 
-class ProjectReader {
-	let path: String
-//	var builder: OpenAPIBuilder
+func readOpenApi(_ path: String) throws -> SwaggerSpec {
+	// note: should look for json first, in default location. CHANGEME
+	let url = URL(fileURLWithPath: path + "/" + SPEC_FILE)
 
-	init(path: String) {
+	let data: Data
+	do {
+		data = try Data(contentsOf: url)
+	} catch {
+		throw SwaggerError.loadError(url)
+	}
+
+	if let string = String(data: data, encoding: .utf8) {
+		return try SwaggerSpec.init(string: string)
+	} else if let string = String(data: data, encoding: .ascii) {
+		return try SwaggerSpec.init(string: string)
+	} else {
+		throw SwaggerError.parseError("Swagger doc is not utf8 or ascii encoded")
+	}
+}
+
+class ProjectReader {
+	let openapiDoc: SwaggerSpec
+	let project: Project
+	let path: String
+
+	init(path: String) throws {
 		self.path = path
-//		self.builder = OpenAPIBuilder()
+		print("reading \(path)...")
+
+		self.openapiDoc = try readOpenApi(path)
+		print("read openapi.yml")
+
+		let files = [
+			"\(self.path + MODELS_DIR)/API.swift"
+		]
+		let settingsFile = "\(self.path)/Settings.swift"
+
+//		self.project = ParseSource(files, settingsFile: settingsFile)
+		self.project = Project(models: [], routes: [])
 	}
 
 	func readProject() {
