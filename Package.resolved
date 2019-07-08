@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/yonaskolb/JSONUtilities.git",
         "state": {
           "branch": null,
-          "revision": "db238f4858ac2ac3fff228b5b71ce90488a6a9b3",
-          "version": "4.1.0"
+          "revision": "128d2ffc22467f69569ef8ff971683e2393191a0",
+          "version": "4.2.0"
         }
       },
       {
@@ -38,12 +38,21 @@
         }
       },
       {
+        "package": "llbuild",
+        "repositoryURL": "https://github.com/apple/swift-llbuild.git",
+        "state": {
+          "branch": null,
+          "revision": "f1c9ad9a253cdf1aa89a7f5c99c30b4513b06ddb",
+          "version": "0.1.1"
+        }
+      },
+      {
         "package": "SwiftPM",
         "repositoryURL": "https://github.com/apple/swift-package-manager.git",
         "state": {
           "branch": null,
-          "revision": "235aacc514cb81a6881364b0fedcb3dd083228f3",
-          "version": "0.3.0"
+          "revision": "8656a25cb906c1896339f950ac960ee1b4fe8034",
+          "version": "0.4.0"
         }
       },
       {
@@ -53,6 +62,15 @@
           "branch": null,
           "revision": "43aa4a19b8105a803d8149ad2a86aa53a77efef3",
           "version": "0.50000.0"
+        }
+      },
+      {
+        "package": "SwiftCLI",
+        "repositoryURL": "https://github.com/jakeheis/SwiftCLI",
+        "state": {
+          "branch": null,
+          "revision": "ba2268e67c07b9f9cfbc0801385e6238b36255eb",
+          "version": "5.3.2"
         }
       },
       {

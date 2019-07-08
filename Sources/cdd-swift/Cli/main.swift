@@ -1,5 +1,6 @@
 import Foundation
 import SwiftSyntax
+import SwiftCLI
 
 let arguments = Array(CommandLine.arguments.dropFirst())
 //let project = try! ProjectReader(path: arguments[0])
@@ -15,3 +16,12 @@ print(project.project)
 //case .failure(let err):
 //	print("error: \(err)")
 //}
+
+CLI(
+	name: "cdd-swift",
+	version: "0.1.0",
+	description: "Compiler Driven Development: Swift Adaptor",
+	commands: [
+		GenerateCommand()
+	]
+).goAndExit()

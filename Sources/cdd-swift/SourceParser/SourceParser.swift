@@ -35,9 +35,26 @@ func findProjectInfo(syntax: SourceFileSyntax) -> ProjectInfo {
 	return ProjectInfo(hostname: "blah")
 }
 
-func ParseSource(_ files: [String], settingsFile: String) -> Project {
+func ParseSourceFiles(_ files: [String]) -> [Result<SourceFileSyntax, Swift.Error>] {
+	return files.map{ file in
+		fileToSyntax(file)
+	}
+}
+
+func ParseSource(_ files: [String], settingsFile: String) -> Result<Project, Swift.Error> {
+
+	
+
+
 	var models: [Model] = []
 	var routes: [Route] = []
+
+	let res = fileToSyntax(settingsFile).map({ syntax in
+		return ParseVariables(syntax)
+	})
+
+	guard case .success = res else { return res.map({ _ in return Project(models: [], routes: [])}) }
+
 
 	switch fileToSyntax(settingsFile) {
 	case .success(let syntax):
@@ -60,9 +77,9 @@ func ParseSource(_ files: [String], settingsFile: String) -> Project {
 		}
 	}
 
-	return Project(
+	return Result.success(Project(
 		models: models,
-		routes: routes)
+		routes: routes))
 }
 
 func fileToSyntax(_ file: String) -> Result<SourceFileSyntax, Swift.Error> {

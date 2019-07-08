@@ -18,7 +18,7 @@ build:
 	swift build
 	
 run: build
-	.build/debug/cdd-swift Examples/Models.swift
+	.build/debug/cdd-swift generate
 
 xcode:
 	rm -rf cdd-swift.xcodeproj/

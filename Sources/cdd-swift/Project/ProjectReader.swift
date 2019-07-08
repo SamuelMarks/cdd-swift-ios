@@ -64,10 +64,13 @@ class ProjectReader {
 		self.openapiDoc = try readOpenApi(path)
 		print("read openapi.yml")
 
-		let files = ["\(self.path + MODELS_DIR)/API.swift"]
+		let files = [
+			"\(self.path + MODELS_DIR)/API.swift"
+		]
 		let settingsFile = "\(self.path)/Settings.swift"
 
-		self.project = ParseSource(files, settingsFile: settingsFile)
+//		self.project = ParseSource(files, settingsFile: settingsFile)
+		self.project = Project(models: [], routes: [])
 	}
 
 	func readProject() {
