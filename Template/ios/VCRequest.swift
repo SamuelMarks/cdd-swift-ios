@@ -10,6 +10,7 @@ import UIKit
 import EasyPeasy
 
 class VCRequest: UIViewController {
+    var btnTagsToField: [Int:(APIFieldD,UIStackView)] = [:]
     var request: APIRequestD!
     var stackView = UIStackView()
     var scrollView = UIScrollView()
@@ -25,7 +26,7 @@ class VCRequest: UIViewController {
         stackView.easy.layout([Edges(),Width().like(scrollView)])
         
         addLabel(request.path).textAlignment = .center
-        request.fields.forEach { addField($0)}
+        request.fields.forEach { self.stackView.addArrangedSubview(viewForField($0))}
         
         addRunButton()
     }
@@ -44,28 +45,106 @@ class VCRequest: UIViewController {
         btn.easy.layout(Height(30))
         btn.setTitle("Execute", for: .normal)
         btn.setTitleColor(.blue, for: .normal)
+        btn.addTarget(self, action: #selector(run), for: .touchUpInside)
         stackView.addArrangedSubview(btn)
     }
     
-    func addField(_ field: APIFieldD) {
-        if field.isSimple {
-            let view = UIView()
-            stackView.addArrangedSubview(view)
-            view.easy.layout(Height(40))
-            let label = UILabel()
-            label.text = field.name
-            view.addSubview(label)
-            label.easy.layout([Left(),Top(),Bottom()])
-            
-            let tf = UITextField()
-            view.addSubview(tf)
-            tf.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-            tf.easy.layout([Top(5),Bottom(5),Left(10).to(label), Width(*0.5).like(view)])
-            let descLabel = UILabel()
-            descLabel.text = field.type
-            descLabel.textColor = .darkGray
-            view.addSubview(descLabel)
-            descLabel.easy.layout([Top(),Bottom(),Left(10).to(tf)])
+    func viewForField(_ field: APIFieldD) -> UIView {
+        let view = UIView()
+        
+        let label = UILabel()
+        label.text = field.name
+        view.addSubview(label)
+        label.easy.layout([Left(),Top(),Height(40),Width(100)])
+        
+        let descLabel = UILabel()
+        descLabel.text = field.type
+        descLabel.textColor = .darkGray
+        view.addSubview(descLabel)
+        descLabel.easy.layout([Top(),Left(10).to(label),Height(40)])
+        
+        let fieldsStackView = UIStackView()
+        fieldsStackView.axis = .vertical
+        view.addSubview(fieldsStackView)
+        fieldsStackView.easy.layout(Left(10).to(label),Right(),Top().to(descLabel),Bottom())
+        
+        if field.isArray {
+            let btn = addItemToArrayButton()
+            btnTagsToField[btn.tag] = (field,fieldsStackView)
+            fieldsStackView.addArrangedSubview(btn)
         }
+        else
+        if field.isSimple {
+            let view = viewForSimpleField(type:field.clearType)
+            fieldsStackView.addArrangedSubview(view)
+        }
+        else {
+            if let model = VCRequests.models.first(where: { (model) -> Bool in
+                return model.name == field.clearType
+            }) {
+                model.fields.forEach({fieldsStackView.addArrangedSubview(self.viewForField($0))})
+            }
+        }
+        
+        return view
+    }
+    
+    func viewForSimpleField(type: String) -> UIView {
+        let tf = UITextField()
+        view.addSubview(tf)
+        tf.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        tf.easy.layout([Height(40)])
+        return tf
+    }
+    
+    func addItemToArrayButton() -> UIButton {
+        let btn = UIButton()
+        btn.easy.layout(Height(30))
+        btn.setTitle("+", for: .normal)
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 26, weight: .bold)
+        btn.setTitleColor(.darkGray, for: .normal)
+        btn.tag = Int.random(in: 1000..<9999)
+        btn.addTarget(self, action: #selector(onAddItemToArray(_:)), for: .touchUpInside)
+        return btn
+    }
+    
+    @objc func onAddItemToArray(_ button: UIButton) {
+        guard let tuple = btnTagsToField[button.tag] else { return }
+        let field = tuple.0
+        let fieldsStackView = tuple.1
+        
+        if field.isSimple {
+            let view = viewForSimpleField(type:field.clearType)
+            fieldsStackView.insertArrangedSubview(view, at: fieldsStackView.arrangedSubviews.count - 1)
+        }
+        else {
+            if let model = VCRequests.models.first(where: { (model) -> Bool in
+                return model.name == field.clearType
+            }) {
+                model.fields.forEach {
+                    fieldsStackView.insertArrangedSubview(self.viewForField($0), at: fieldsStackView.arrangedSubviews.count - 1)
+                }
+            }
+        }
+        
+        fieldsStackView.insertArrangedSubview(separator(), at: fieldsStackView.arrangedSubviews.count - 1)
+    }
+    
+    @objc func run() {
+        
+    }
+    
+    func separator() -> UIView {
+        let view = UIView()
+        view.backgroundColor = .lightGray
+        view.easy.layout(Height(1))
+        return view
+    }
+    
+    func responseView() -> UIView {
+        let tv = UITextView()
+        tv.easy.layout(Height(200))
+        
+        return tv
     }
 }

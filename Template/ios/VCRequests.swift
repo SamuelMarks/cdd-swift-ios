@@ -10,10 +10,9 @@ import UIKit
 import EasyPeasy
 
 class VCRequests: UIViewController {
-    static var models: [APIModelD] = [APIModelD(fields: [APIFieldD(name: "name", type: "string")])]
+    static var models: [APIModelD] = [APIModelD(name: "Person", fields: [APIFieldD(name: "name", type: "string"),APIFieldD(name: "age", type: "int")])]
     var tableView = UITableView()
-    var requests = [APIRequestD(path: "GetPersons", type: "POST", fields: [APIFieldD(name: "filter", type: "string")], responseType: "Person"),
-    APIRequestD(path: "GetPerson", type: "POST", fields: [APIFieldD(name: "filter", type: "string")], responseType: "[Person]")]
+    var requests:[APIRequestD] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
