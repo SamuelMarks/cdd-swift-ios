@@ -4,13 +4,13 @@ import Rainbow
 
 class SyncCommand: Command {
 	let name = "sync"
-	let shortDescription = "Synchronizes openapi document to swift files"
+	let shortDescription = "Synchronizes OpenAPI spec to a CDD-Swift project"
 
 	func execute() throws {
 		let projectReader = try! ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template")
 
-		printResult(fileResults: [projectReader.settingsSyntax])
-		printResult(fileResults: projectReader.parsableFiles)
+		printFileResults(fileResults: [projectReader.settingsSyntax])
+		printFileResults(fileResults: projectReader.parsableFiles)
 
 		print(projectReader.generateProject())
 	}
@@ -25,11 +25,11 @@ func printResult<T>(fileName: String, result: Result<T, Swift.Error>) {
 	}
 }
 
-func printResult<T>(fileResults: [FileResult<T>]) {
+func printFileResults<T>(fileResults: [FileResult<T>]) {
 	for fileResult in fileResults {
 		switch fileResult.result {
 
-		case .success(let file):
+		case .success(_):
 			print("Parsed \(fileResult.fileName)".green)
 
 		case .failure(let error):

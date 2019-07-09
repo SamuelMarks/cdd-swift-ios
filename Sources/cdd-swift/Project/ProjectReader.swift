@@ -23,6 +23,16 @@ func readFiles(_ path: String, fileType: String) -> Result<[String], Swift.Error
 	}
 }
 
+func fileToSyntax(_ file: String) -> FileResult<SourceFileSyntax> {
+	do {
+		let syntax = try SyntaxTreeParser.parse(URL(fileURLWithPath: file))
+		return FileResult(fileName: file, result: .success(syntax))
+	}
+	catch let error {
+		return FileResult(fileName: file, result: .failure(error))
+	}
+}
+
 func readDirectory(_ path: String) -> Result<[String], Swift.Error> {
 	do {
 		let files = try FileManager.default.contentsOfDirectory(at: URL.init(fileURLWithPath: path), includingPropertiesForKeys: [], options:  [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
@@ -93,31 +103,6 @@ class ProjectReader {
 			routes: parseRoutes(syntaxes: syntaxes)
 		))
 	}
-
-//	func readSettings() -> FileResult<SourceFileSyntax> {
-//		return fileToSyntax("\(self.path + SETTINGS_DIR)/Settings.swift")
-//	}
-//
-//	func readProject() -> [FileResult<SourceFileSyntax>] {
-//		return [
-//			"\(self.path + MODELS_DIR)/API.swift"
-//		].map({ file in
-//			fileToSyntax(file)
-//		})
-//	}
-
-//	func writeOpenAPI() -> Result<String, Swift.Error> {
-//		do {
-//			let yaml_encoder = YAMLEncoder()
-//			let encodedYAML = try yaml_encoder.encode(builder.data)
-//			try encodedYAML.write(toFile: "openapi.yml", atomically: false, encoding: .utf8)
-//
-//			return .success(encodedYAML)
-//		}
-//		catch let error {
-//			return .failure(error)
-//		}
-//	}
 
 	func writeProject() {
 		// unimplemented
