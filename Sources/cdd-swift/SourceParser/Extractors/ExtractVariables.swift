@@ -4,39 +4,29 @@ struct VariableDeclaration {
 	let variableName, variableType: String
 }
 
-//func RecursiveFindVariables(syntax: SourceFileSyntax, variables: [VariableDeclaration]) -> SourceFileSyntax {
-//	guard syntax.numberOfChildren != 0 else {
-//		for node in syntax.children()  {
-//			RecursiveFindVariables(node)
-//		}
-//	}
-//}
-
-func ParseVariables(_ syntax: SourceFileSyntax) -> [VariableDeclaration] {
+func ParseVariables(_ syntax: SourceFileSyntax) -> Dictionary<String, String> {
 	let visitor = ExtractVariables()
 	syntax.walk(visitor)
 	return visitor.variables
 }
 
 class ExtractVariables : SyntaxVisitor {
-	var variables: [VariableDeclaration] = []
+	var variables: Dictionary<String, String> = [:]
 
 	override func visit(_ node: PatternBindingSyntax) -> SyntaxVisitorContinueKind {
+		var varName : String?
 
-		let f: String? = node.children.first(where: { child in
-			type(of: child) == IdentifierPatternSyntax.self
-		}).map({child in
-			"\(child)"
-		})
-
-		let t = node.children.first(where: { child in
-			type(of: child) == TypeAnnotationSyntax.self
-		}).map({child in
-			"\((child as! TypeAnnotationSyntax).type)"
-		})
-
-		if let fieldName = f, let fieldType = t {
-			variables.append(VariableDeclaration(variableName: fieldName, variableType: fieldType))
+		for child in node.children {
+			if type(of: child) == IdentifierPatternSyntax.self {
+				varName = "\(child)".trimmingCharacters(in: .whitespacesAndNewlines)
+			}
+			for subchild in child.children {
+				if type(of: subchild) == StringLiteralExprSyntax.self {
+					if varName != nil {
+						variables[varName!] = "\(subchild)".replacingOccurrences(of: "\"", with: "")
+					}
+				}
+			}
 		}
 
 		return .skipChildren

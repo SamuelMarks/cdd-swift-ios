@@ -18,7 +18,7 @@ struct Project {
 }
 
 struct ProjectInfo {
-	var hostname: String
+	var hostname: URL
 }
 
 struct Model {

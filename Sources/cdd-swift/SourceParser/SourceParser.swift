@@ -32,7 +32,7 @@ func parseProjectInfo(syntax: SourceFileSyntax) -> ProjectInfo {
 	let visitor = ExtractVariables()
 	syntax.walk(visitor)
 
-	print(visitor.variables)
+	let hostname =  URL(string: visitor.variables["HOST"]! + visitor.variables["ENDPOINT"]!)
 
-	return ProjectInfo(hostname: "blah")
+	return ProjectInfo(hostname: hostname!)
 }
