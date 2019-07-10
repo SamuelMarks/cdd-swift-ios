@@ -20,6 +20,9 @@ build:
 run: build
 	.build/debug/cdd-swift sync .
 
+alex: build
+	.build/debug/cdd-swift generate
+
 xcode:
 	rm -rf cdd-swift.xcodeproj/
 	swift package generate-xcodeproj
