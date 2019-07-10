@@ -12,28 +12,27 @@ class SyncCommand: Command {
 		printFileResults(fileResults: [projectReader.settingsSyntax])
 		printFileResults(fileResults: projectReader.parsableFiles)
 
-		print(projectReader.generateProject())
+		switch projectReader.generateProject() {
+		case .success(let project):
+			print("[OK] Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.".green)
+			print(project)
+		case .failure(let error):
+			print("[Error] \(error.localizedDescription)".red)
+		}
 	}
 }
 
 func printResult<T>(fileName: String, result: Result<T, Swift.Error>) {
 	switch result {
 	case .success(_):
-		print("Parsed \(fileName)".green)
+		print("[OK] Parsed \(fileName)".green)
 	case .failure(let error):
-		print("Error parsing: \(fileName)\n\(error.localizedDescription)".red)
+		print("[Error] parsing: \(fileName):\n\(error.localizedDescription)".red)
 	}
 }
 
 func printFileResults<T>(fileResults: [FileResult<T>]) {
 	for fileResult in fileResults {
-		switch fileResult.result {
-
-		case .success(_):
-			print("Parsed \(fileResult.fileName)".green)
-
-		case .failure(let error):
-			print("Error parsing: \(fileResult.fileName)\n\(error.localizedDescription)".red)
-		}
+		printResult(fileName: fileResult.fileName, result: fileResult.result)
 	}
 }
