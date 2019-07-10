@@ -2,6 +2,10 @@ import Foundation
 import SwiftSyntax
 import SwiftCLI
 
+
+try? YmlToSwift().run(urlToSpec:  URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/swagger.yaml"), urlForSwiftFile: YmlToSwift.testUrlForSwift)
+
+/*
 let arguments = Array(CommandLine.arguments.dropFirst())
 //let project = try! ProjectReader(path: arguments[0])
 let project = try! ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template")
@@ -25,3 +29,4 @@ CLI(
 		GenerateCommand()
 	]
 ).goAndExit()
+*/

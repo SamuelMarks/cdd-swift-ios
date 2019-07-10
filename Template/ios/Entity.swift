@@ -18,8 +18,11 @@ struct APIFieldD {
     init(name: String,type: String) {
         let cleanType = type.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "?", with: "")
         var newType = ""
-        if cleanType == "integer" || cleanType == "number" {
+        if cleanType == "integer" {
             newType = "Int"
+        }
+        else if cleanType == "number" {
+            newType = "Float"
         }
         else if cleanType == "boolean" {
             newType = "Bool"
@@ -39,7 +42,7 @@ struct APIFieldD {
         return type.prefix(1) == "["
     }
     var isSimple: Bool {
-        return ["String","Int","Double","Bool"].contains(type)
+        return ["String","Int","Float","Bool"].contains(clearType)
     }
 }
 
@@ -60,5 +63,53 @@ struct APIModelD {
     init(name:String,fields:[APIFieldD]) {
         self.name = name.capitalizingFirstLetter()
         self.fields = fields
+    }
+}
+
+
+extension APIFieldD {
+    func json() -> [String:Any] {
+        return ["name":name,"type":type]
+    }
+    
+    static func fromJson(_ json: [String:Any]) -> APIFieldD? {
+        if let name = json["name"] as? String,
+            let type = json["type"] as? String {
+            return APIFieldD(name: name, type:type)
+        }
+        return nil
+    }
+}
+
+extension APIModelD {
+    func json() -> [String:Any] {
+        return ["name":name,"fields":fields.map {$0.json()},"models":models.map {$0.json()}]
+    }
+    
+    static func fromJson(_ json: [String:Any]) -> APIModelD? {
+        if let name = json["name"] as? String {
+            let fields = (json["fields"] as? [[String:Any]]) ?? []
+            let models = (json["models"] as? [[String:Any]]) ?? []
+            var model = APIModelD(name: name, fields: fields.compactMap {APIFieldD.fromJson($0)})
+            model.models = models.compactMap {APIModelD.fromJson($0)}
+            return model
+        }
+        return nil
+    }
+}
+
+extension APIRequestD {
+    func json() -> [String:Any] {
+        return ["path":path,"method":method,"fields":fields.map {$0.json()}]
+    }
+    
+    static func fromJson(_ json: [String:Any]) -> APIRequestD? {
+        if let path = json["path"] as? String,
+            let method = json["method"] as? String {
+            let fields = (json["fields"] as? [[String:Any]]) ?? []
+            let request = APIRequestD(path: path, method: method, fields: fields.compactMap {APIFieldD.fromJson($0)}, responseType: "", errorType: "")
+            return request
+        }
+        return nil
     }
 }
