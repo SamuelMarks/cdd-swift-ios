@@ -10,7 +10,12 @@ import SwiftCLI
 
 class GenerateCommand: Command {
 	func execute() throws {
-		print("hello")
+		do {
+			try WriteToYmlTest().run()
+		} catch (let err) {
+			print("error: \(err)")
+		}
+
 	}
 
 	let name = "generate"
