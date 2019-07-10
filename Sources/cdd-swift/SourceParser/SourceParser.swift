@@ -8,24 +8,31 @@
 import Foundation
 import SwiftSyntax
 
-func parseModels(syntaxes: [SourceFileSyntax]) -> [Model] {
-	let visitor = ModelsVisitor()
+func parseModels(syntaxes: [SourceFileSyntax]) -> [String: Model] {
+	let visitor = ClassVisitor()
+	var models: [String: Model] = [:]
 
 	for syntax in syntaxes {
 		syntax.walk(visitor)
 	}
 
-	return visitor.models
+	for klass in visitor.klasses {
+		models[klass.name] = Model(name: klass.name)
+	}
+
+	return models
 }
 
-func parseRoutes(syntaxes: [SourceFileSyntax]) -> [Route] {
+func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
 	let visitor = RoutesVisitor()
+	var routes: [String: Route] = [:]
 
 	for syntax in syntaxes {
 		syntax.walk(visitor)
 	}
 
-	return visitor.routes
+	// todo: complete
+	return routes
 }
 
 func parseProjectInfo(syntax: SourceFileSyntax) -> ProjectInfo {

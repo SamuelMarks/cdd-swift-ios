@@ -13,8 +13,8 @@ struct Settings {
 
 struct Project {
 	var info: ProjectInfo
-	var models: [Model]
-	var routes: [Route]
+	var models: [String: Model]
+	var routes: [String: Route]
 }
 
 struct ProjectInfo {
