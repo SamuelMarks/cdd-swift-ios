@@ -3,23 +3,37 @@
 
 import SwiftSyntax
 
-class ModelsVisitor : SyntaxVisitor {
-	var models: [Model] = []
+struct Klass {
+	let name: String
+	var vars: [String:MemberVarType]
+}
+
+//struct MemberVar {
+//	let type: MemberVarType
+//}
+
+enum MemberVarType {
+	case String
+	case Int
+	case Date
+	case Complex
+}
+
+class ClassVisitor : SyntaxVisitor {
+	var klasses: [Klass] = []
 
 	override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-		let modelName = "\(node.identifier)".trimmingCharacters(in: .whitespaces)
-		print("found model: \(modelName)")
+		let klassName = "\(node.identifier)".trimmingCharacters(in: .whitespaces)
+		var klass = Klass(name: klassName, vars: [:])
 
 		for member in node.children {
 			let extractFields = ExtractVariables()
 			member.walk(extractFields)
 
-//			var fields:Dictionary<String, ComponentField> = [:]
-
-//			for field in extractFields.variables {
-//				switch(field.variableType) {
-//				case "String?", "String":
-//					models.append(Model())
+			for (varName, varType) in extractFields.variables {
+				switch varType {
+				case "String?", "String":
+					klass.vars[varName] = MemberVarType.String
 //					fields[field.variableName] = ComponentField(type: "string", format: "string")
 //				case "[String]":
 //					fields[field.variableName] = ComponentField(type: "[string]", format: "[string]")
@@ -33,16 +47,12 @@ class ModelsVisitor : SyntaxVisitor {
 //					fields[field.variableName] = ComponentField(type: "string", format: "date")
 //				case "^[(.*)]s":
 //					fields[field.variableName] = ComponentField(type: "string", format: "date")
-//				default:
-//					print("unknown field: \(field)")
-//				}
-//
-//			}
-//            let pathExtractor = PathExtractor()
-//            member.walk(extractSomething)
-			models.append(Model(name: modelName))
+				default:
+					klass.vars[varName] = MemberVarType.Complex
+				}
 
-//				)["\(modelName)"] = SchemaComponent(type: "blah", properties: fields)
+			}
+			klasses.append(klass)
 		}
 		return .skipChildren
 	}
