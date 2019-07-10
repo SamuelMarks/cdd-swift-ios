@@ -18,7 +18,7 @@ build:
 	swift build
 	
 run: build
-	.build/debug/cdd-swift sync
+	.build/debug/cdd-swift sync .
 
 xcode:
 	rm -rf cdd-swift.xcodeproj/

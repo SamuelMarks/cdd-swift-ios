@@ -5,9 +5,25 @@ import Rainbow
 class SyncCommand: Command {
 	let name = "sync"
 	let shortDescription = "Synchronizes OpenAPI spec to a CDD-Swift project"
+	//		let verbose = Flag("--verbose", "-v", description: "Show verbose output", defaultValue: false)
+	//		let silent = Flag("--silent", "-s", description: "Silence standard output", defaultValue: false)
+	let spec = SwiftCLI.Parameter()
 
 	func execute() throws {
-		let projectReader = try! ProjectReader(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template")
+
+		// spec
+		let specURL: URL
+		if let url = URL(string: spec.value) {
+			specURL = url
+		} else {
+			exitWithError("Must pass valid spec. It can be a path or a url")
+		}
+
+		sync(spec: specURL)
+	}
+
+	func sync(spec: URL) {
+		let projectReader = try! ProjectReader(path: spec.absoluteString)
 
 		printFileResults(fileResults: [projectReader.settingsSyntax])
 		printFileResults(fileResults: projectReader.parsableFiles)
@@ -35,4 +51,9 @@ func printFileResults<T>(fileResults: [FileResult<T>]) {
 	for fileResult in fileResults {
 		printResult(fileName: fileResult.fileName, result: fileResult.result)
 	}
+}
+
+func exitWithError(_ string: String) -> Never {
+	print(string.red)
+	exit(EXIT_FAILURE)
 }
