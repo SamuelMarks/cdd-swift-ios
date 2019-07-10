@@ -14,5 +14,5 @@ class GenerateCommand: Command {
 	}
 
 	let name = "generate"
-	let shortDescription = "Generates code ..."
+	let shortDescription = "Generates a new swift CDD-Swift project"
 }

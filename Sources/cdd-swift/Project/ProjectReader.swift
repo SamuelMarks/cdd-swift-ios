@@ -4,9 +4,11 @@
 
 import Foundation
 import Yams
+import SwiftSyntax
 
-let SPEC_FILE = "openapi.yml"
-let MODELS_DIR = "/ios/API/"
+let SPEC_FILE = "/openapi.yml"
+let MODELS_DIR = "/ios/API"
+let SETTINGS_DIR = "/ios"
 
 func readFiles(_ path: String, fileType: String) -> Result<[String], Swift.Error> {
 	do {
@@ -18,6 +20,16 @@ func readFiles(_ path: String, fileType: String) -> Result<[String], Swift.Error
 	}
 	catch let error {
 		return .failure(error)
+	}
+}
+
+func fileToSyntax(_ file: String) -> FileResult<SourceFileSyntax> {
+	do {
+		let syntax = try SyntaxTreeParser.parse(URL(fileURLWithPath: file))
+		return FileResult(fileName: file, result: .success(syntax))
+	}
+	catch let error {
+		return FileResult(fileName: file, result: .failure(error))
 	}
 }
 
@@ -52,10 +64,16 @@ func readOpenApi(_ path: String) throws -> SwaggerSpec {
 	}
 }
 
+struct FileResult<T> {
+	let fileName: String
+	let result: Result<T,Swift.Error>
+}
+
 class ProjectReader {
 	let openapiDoc: SwaggerSpec
-	let project: Project
 	let path: String
+	let settingsSyntax: FileResult<SourceFileSyntax>
+	let parsableFiles: [FileResult<SourceFileSyntax>]
 
 	init(path: String) throws {
 		self.path = path
@@ -64,32 +82,27 @@ class ProjectReader {
 		self.openapiDoc = try readOpenApi(path)
 		print("read openapi.yml")
 
-		let files = [
+		settingsSyntax = fileToSyntax("\(self.path + SETTINGS_DIR)/Settings.swift")
+		parsableFiles = [
 			"\(self.path + MODELS_DIR)/API.swift"
-		]
-		let settingsFile = "\(self.path)/Settings.swift"
-
-//		self.project = ParseSource(files, settingsFile: settingsFile)
-		self.project = Project(models: [], routes: [])
+		].map({ file in
+			fileToSyntax(file)
+		})
 	}
 
-	func readProject() {
-//		self.builder.readModel(file: "\(self.path)/ios/API/API.swift")
-//        self.builder.readRoute(file: "\(self.path)/Sources/Routes.swift")
-	}
+	func generateProject() -> Result<Project, Swift.Error> {
+		let syntaxes:[SourceFileSyntax] = self.parsableFiles.map({ result in
+			return try! result.result.get()
+		})
 
-//	func writeOpenAPI() -> Result<String, Swift.Error> {
-//		do {
-//			let yaml_encoder = YAMLEncoder()
-//			let encodedYAML = try yaml_encoder.encode(builder.data)
-//			try encodedYAML.write(toFile: "openapi.yml", atomically: false, encoding: .utf8)
-//
-//			return .success(encodedYAML)
-//		}
-//		catch let error {
-//			return .failure(error)
-//		}
-//	}
+		let settingsSyn = try! settingsSyntax.result.get()
+
+		return .success(Project(
+			info: parseProjectInfo(syntax: settingsSyn),
+			models: parseModels(syntaxes: syntaxes),
+			routes: parseRoutes(syntaxes: syntaxes)
+		))
+	}
 
 	func writeProject() {
 		// unimplemented
