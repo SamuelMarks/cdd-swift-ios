@@ -3,12 +3,25 @@ import JSONUtilities
 extension Schema : Encodable {
     enum CodingKeys: String, CodingKey {
         case metadata
+        case ref = ""
+        case type
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode("Metadata", forKey: .metadata)
 
+        switch type {
+        case .reference(let reference):
+            try reference.encode(to: encoder)
+        case .object(let object):
+            try object.encode(to: encoder)
+        case .array(let array):
+            try array.encode(to: encoder)
+            try container.encode("array", forKey: .type)
+            break
+        default:
+            try metadata.encode(to: encoder)
+        }
     }
 }
 

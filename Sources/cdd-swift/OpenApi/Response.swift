@@ -1,5 +1,18 @@
 import JSONUtilities
 
+extension OperationResponse : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case statusCode
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try response.encode(to: encoder)
+        
+    }
+}
+
+
 public struct OperationResponse {
     public let statusCode: Int?
     public let response: PossibleReference<Response>
@@ -8,12 +21,19 @@ public struct OperationResponse {
 extension Response : Encodable {
     enum CodingKeys: String, CodingKey {
         case description
+        case content
+        case headers
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(description, forKey: .description)
-        
+        if content != nil {
+            try container.encode(content, forKey: .content)
+        }
+        if headers.count > 0 {
+            try container.encode(headers, forKey: .headers)
+        }
     }
 }
 
@@ -29,12 +49,14 @@ extension Header : Encodable {
     enum CodingKeys: String, CodingKey {
         case required
         case description
+        case schema
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(required, forKey: .required)
         try container.encode(description, forKey: .description)
+        try container.encode(schema, forKey: .schema)
     }
 }
 

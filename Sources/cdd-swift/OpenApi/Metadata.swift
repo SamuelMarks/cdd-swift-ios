@@ -1,5 +1,21 @@
 import JSONUtilities
 
+
+extension Metadata : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case type
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        //need to finish
+        if type == nil {
+            
+        }
+    }
+}
+
 public struct Metadata {
     public let type: DataType?
     public let title: String?

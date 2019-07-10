@@ -1,6 +1,17 @@
 import Foundation
 import JSONUtilities
 
+extension Content : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case media
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try mediaItems.encode(to: encoder)
+    }
+}
+
 public struct Content {
     public let mediaItems: [String: MediaItem]
 
@@ -49,7 +60,7 @@ public struct MediaItem {
     public let schema: Schema
 }
 
-extension MediaItem: JSONObjectConvertible {
+extension MediaItem: JSONObjectConvertible, Encodable {
 
     public init(jsonDictionary: JSONDictionary) throws {
         schema = try jsonDictionary.json(atKeyPath: "schema")

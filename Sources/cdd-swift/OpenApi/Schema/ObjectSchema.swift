@@ -1,5 +1,26 @@
 import JSONUtilities
 
+extension ObjectSchema : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case properties
+        case required
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(properties, forKey: .properties)
+        
+        var propDict: [String:Property] = [:]
+        for property in properties {
+            propDict[property.name] = property
+        }
+        try container.encode(propDict, forKey: .properties)
+        
+        try container.encode(requiredProperties.map {$0.name}, forKey: .required)
+    }
+}
+
+
 public struct ObjectSchema {
     public let requiredProperties: [Property]
     public let optionalProperties: [Property]
@@ -9,6 +30,17 @@ public struct ObjectSchema {
     public let additionalProperties: Schema?
     public let abstract: Bool
     public let discriminator: Discriminator?
+}
+
+extension Property : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case type
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try schema.encode(to: encoder)
+    }
 }
 
 public struct Property {

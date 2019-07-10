@@ -13,8 +13,13 @@ extension Components: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        var schemaDict: [String:Schema] = [:]
+        for schema in schemas {
+            schemaDict[schema.name] = schema.value
+        }
+        try container.encode(schemaDict, forKey: .schemas)
         
-//                try container.encode(version, forKey: .openapi)
+//        try container.encode(version, forKey: .openapi)
 //        try container.encode(info, forKey: .info)
 //        try container.encode(pathDict, forKey: .paths)
 //        try container.encode(servers, forKey: .servers)

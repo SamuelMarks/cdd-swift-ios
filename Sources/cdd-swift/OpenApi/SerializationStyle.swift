@@ -1,6 +1,6 @@
 import Foundation
 
-public enum SerializationStyle: String {
+public enum SerializationStyle: String, Encodable {
     case form
     case simple
     case matrix

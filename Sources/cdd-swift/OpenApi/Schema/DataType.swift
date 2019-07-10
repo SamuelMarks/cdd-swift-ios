@@ -1,6 +1,6 @@
 import JSONUtilities
 
-public enum DataType: String {
+public enum DataType: String, Encodable {
     case array
     case object
     case string
