@@ -10,13 +10,25 @@ import UIKit
 import EasyPeasy
 
 class VCRequests: UIViewController {
-    static var models: [APIModelD] = [APIModelD(name: "Person", fields: [APIFieldD(name: "name", type: "string"),APIFieldD(name: "age", type: "int")])]
+    static var models: [APIModelD] = []
     var tableView = UITableView()
     var requests:[APIRequestD] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if let url = Bundle.main.url(forResource: "TestObjects", withExtension: "string"),
+            let jsonData = try? Data(contentsOf: url),
+            let objects = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String:Any] {
+            
+            if let modelsJSON = objects["models"] as? [[String:Any]] {
+                VCRequests.models = modelsJSON.compactMap {APIModelD.fromJson($0)}
+            }
+            if let requestsJSON = objects["requests"] as? [[String:Any]] {
+                requests = requestsJSON.compactMap {APIRequestD.fromJson($0)}
+            }
+        }
+        
         view.addSubview(tableView)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "kCell")
         tableView.easy.layout(Edges())

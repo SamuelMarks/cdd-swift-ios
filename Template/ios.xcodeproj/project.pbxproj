@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA3529C722D3907300D25146 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3529C622D3907200D25146 /* Helper.swift */; };
+		AAA5967422D48D2000972F9A /* TestObjects.string in Resources */ = {isa = PBXBuildFile; fileRef = AAA5967322D48D2000972F9A /* TestObjects.string */; };
 		AAA6CA3122CDEE3700F1FAFF /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6CA2E22CDEE3700F1FAFF /* Entity.swift */; };
 		AAA6CA3222CDEE3700F1FAFF /* VCRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6CA2F22CDEE3700F1FAFF /* VCRequest.swift */; };
 		AAA6CA3322CDEE3700F1FAFF /* VCRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA6CA3022CDEE3700F1FAFF /* VCRequests.swift */; };
@@ -25,6 +26,7 @@
 		0651EC1CF3D39A3990E389AE /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		61B4EC4DB5C9E21C89E6F4BB /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
 		AA3529C622D3907200D25146 /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		AAA5967322D48D2000972F9A /* TestObjects.string */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TestObjects.string; path = ../../../Examples/TestObjects.string; sourceTree = "<group>"; };
 		AAA6CA2E22CDEE3700F1FAFF /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		AAA6CA2F22CDEE3700F1FAFF /* VCRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCRequest.swift; sourceTree = "<group>"; };
 		AAA6CA3022CDEE3700F1FAFF /* VCRequests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VCRequests.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 			children = (
 				AAF0278F22CCF09500582CDF /* APIBase.swift */,
 				AAF027A422CDD2A300582CDF /* API.swift */,
+				AAA5967322D48D2000972F9A /* TestObjects.string */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -175,6 +178,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAF0278622CCEF3500582CDF /* LaunchScreen.storyboard in Resources */,
+				AAA5967422D48D2000972F9A /* TestObjects.string in Resources */,
 				AAF0278322CCEF3500582CDF /* Assets.xcassets in Resources */,
 				AAF0278122CCEF3300582CDF /* Main.storyboard in Resources */,
 			);

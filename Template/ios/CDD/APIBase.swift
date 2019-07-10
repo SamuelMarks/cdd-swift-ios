@@ -24,7 +24,7 @@ protocol APIRequest: Encodable {
     associatedtype ErrorType: Decodable
 
     func baseURL() -> URL
-    func path() -> String
+    func urlPath() -> String
     func method() -> HTTPMethod
     func headers() -> HTTPHeaders
     func isNeedLog() -> Bool

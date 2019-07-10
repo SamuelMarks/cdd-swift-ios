@@ -24,7 +24,7 @@ class SwiftWriter {
         var lines = ["struct " + name + "\(request.method.capitalizingFirstLetter())Request : APIRequest {",
         "\ttypealias ResponseType = " + request.responseType,
         "\ttypealias ErrorType = \(request.errorType) ",
-        "\tfunc path() -> String { return \"\(request.path)\" }",
+        "\tfunc urlPath() -> String { return \"\(request.path)\" }",
         "\tfunc method() -> HTTPMethod { return .\(request.method) }"]
 
         request.fields.forEach { (field) in

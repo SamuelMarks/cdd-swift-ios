@@ -7,12 +7,15 @@
 import Foundation
 //import PathKit
 import Yams
-//import JSONUtilities
+import JSONUtilities
 
 class YmlToSwift {
     
     static let testUrl = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/petstore.yml")
     static let testUrlForSwift = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/REST.swift")
+    
+    static let testUrlForTestObjects = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/TestObjects.string")
+    
     
     func getSpec(url: URL) throws -> SwaggerSpec {
         let data: Data
@@ -87,12 +90,16 @@ class YmlToSwift {
                 case .array:
                     if let items = schema.value.metadata.json["items"] as? [String:Any] {
                         if let ref = items["$ref"] as? String, let type = ref.components(separatedBy: "/").last {
-                            arrayTypes.append((schema.name,"[\(type)]"))
+                            arrayTypes.append((schema.name.capitalizingFirstLetter(),"[\(type.capitalizingFirstLetter())]"))
                         }
                         else
                             if var model = parseObject(name: schema.name, json: items) {
                                 model.shouldBeUsedAsArray = true
                                 models.append(model)
+                        }
+                            else if let type = items["type"] as? String {
+                                let field = APIFieldD(name: schema.name, type: type)
+                                arrayTypes.append((schema.name.capitalizingFirstLetter(),"[\(field.type)]"))
                         }
                     }
                 case .string:
@@ -141,16 +148,25 @@ class YmlToSwift {
                                 let schema = (content.values.first as? [String:Any])?.values.first as? [String:Any],
                                 let ref = schema["$ref"] as? String,
                                 let name = ref.components(separatedBy: "/").last{
-                                errorNameResponse = name
+                                errorNameResponse = name.capitalizingFirstLetter()
                             }
                         }
                         else {
                             if let content = responseJSON["content"] as? [String:Any],
-                                let schema = (content.values.first as? [String:Any])?.values.first as? [String:Any],
-                                let ref = schema["$ref"] as? String,
-                                let name = ref.components(separatedBy: "/").last{
-                                
-                                responseName = name
+                                let schema = (content.values.first as? [String:Any])?.values.first as? [String:Any] {
+                                if let ref = schema["$ref"] as? String,
+                                    let name = ref.components(separatedBy: "/").last{
+                                    
+                                    responseName = name.capitalizingFirstLetter()
+                                }
+                                else if let type = schema["type"] as? String {
+                                    if type == "array",
+                                        let items = schema["items"] as? [String:Any],
+                                        let ref = items["$ref"] as? String,
+                                        let name = ref.components(separatedBy: "/").last{
+                                        responseName = "[\(name.capitalizingFirstLetter())]"
+                                    }
+                                }
                             }
                             
                             
@@ -187,10 +203,19 @@ class YmlToSwift {
             text = text.replacingOccurrences(of: " \(word) ", with: " API\(word)")
         }
         
+        requests.map {$0.}
+        models.map {$0.name}
         
         print(text)
         try text.write(to: urlForSwiftFile, atomically: false, encoding: .utf8)
         //print(spec)
+        
+        let modelsJSON = models.map {$0.json()}
+        let requestsJSON = requests.map {$0.json()}
+        let JSON = ["models":modelsJSON,"requests":requestsJSON]
+        
+        let jsonData = try? JSONSerialization.data(withJSONObject: JSON, options: .prettyPrinted)
+        try? jsonData?.write(to: YmlToSwift.testUrlForTestObjects)
         
     }
 }
