@@ -1,5 +1,18 @@
 import JSONUtilities
 
+extension Schema : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case metadata
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode("Metadata", forKey: .metadata)
+
+    }
+}
+
+
 public struct Schema {
     public let metadata: Metadata
     public let type: SchemaType

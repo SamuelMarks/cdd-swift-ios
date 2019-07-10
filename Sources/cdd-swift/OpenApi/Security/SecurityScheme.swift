@@ -15,6 +15,18 @@ public enum SecuritySchemeType {
     }
 }
 
+extension SecurityScheme : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case description
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(description, forKey: .description)
+    }
+}
+
+
 public struct SecurityScheme {
 
     public let json: [String: Any]

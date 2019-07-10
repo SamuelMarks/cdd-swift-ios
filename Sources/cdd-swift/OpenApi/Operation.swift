@@ -5,17 +5,19 @@ extension Operation : Encodable {
 		case summary
 		case operationId
 		case tags
-		// case parameters
+//         case parameters
 	}
 
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 
+        var pars: [Encodable] = []
+        
 		// print(self)
 		try container.encode(summary, forKey: .summary)
 		try container.encode(identifier, forKey: .operationId)
 		try container.encode(tags, forKey: .tags)
-		// try container.encode(operationParameters, forKey: .parameters)
+//         try container.encode(pars, forKey: .parameters)
 	}
 }
 

@@ -1,14 +1,14 @@
 import Foundation
 import JSONUtilities
 
-public struct Server {
+public struct Server: Encodable {
 
     public let name: String?
     public let url: String
     public let description: String?
     public let variables: [String: Variable]
 
-    public struct Variable {
+    public struct Variable: Encodable {
         public let defaultValue: String
         public let enumValues: [String]?
         public let description: String?

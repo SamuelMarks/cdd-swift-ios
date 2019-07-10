@@ -1,6 +1,27 @@
 import Foundation
 import JSONUtilities
 
+extension Components: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case securitySchemes
+        case schemas
+        case parameters
+        case responses
+        case requestBodies
+        case headers
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+//                try container.encode(version, forKey: .openapi)
+//        try container.encode(info, forKey: .info)
+//        try container.encode(pathDict, forKey: .paths)
+//        try container.encode(servers, forKey: .servers)
+//        try container.encode(components, forKey: .components)
+    }
+}
+
 public struct Components {
     public let securitySchemes: [ComponentObject<SecurityScheme>]
     public let schemas: [ComponentObject<Schema>]

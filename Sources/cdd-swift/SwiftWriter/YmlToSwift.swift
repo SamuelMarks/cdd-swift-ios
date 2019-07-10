@@ -203,8 +203,6 @@ class YmlToSwift {
             text = text.replacingOccurrences(of: " \(word) ", with: " API\(word)")
         }
         
-        requests.map {$0.}
-        models.map {$0.name}
         
         print(text)
         try text.write(to: urlForSwiftFile, atomically: false, encoding: .utf8)

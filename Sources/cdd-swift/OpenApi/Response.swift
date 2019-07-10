@@ -5,11 +5,37 @@ public struct OperationResponse {
     public let response: PossibleReference<Response>
 }
 
+extension Response : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case description
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(description, forKey: .description)
+        
+    }
+}
+
+
 public struct Response {
 
     public let description: String
     public let content: Content?
     public let headers: [String: PossibleReference<Header>]
+}
+
+extension Header : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case required
+        case description
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(required, forKey: .required)
+        try container.encode(description, forKey: .description)
+    }
 }
 
 public struct Header {

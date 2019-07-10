@@ -1,7 +1,13 @@
 import Foundation
 import JSONUtilities
 
-public struct ComponentObject<T:Any> {
+
+
+extension ComponentObject : Encodable where T: Encodable {
+}
+
+
+public struct ComponentObject<T> {
     public let name: String
     public let value: T
 }

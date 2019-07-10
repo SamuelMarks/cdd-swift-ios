@@ -1,7 +1,7 @@
 import Foundation
 import JSONUtilities
 
-public struct SecurityRequirement: JSONObjectConvertible {
+public struct SecurityRequirement: JSONObjectConvertible, Encodable {
     public let name: String
     public let scopes: [String]
 
