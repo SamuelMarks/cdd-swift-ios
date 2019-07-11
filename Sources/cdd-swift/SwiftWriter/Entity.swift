@@ -15,6 +15,8 @@ struct APIFieldD {
     var isEnum: Bool {
         return cases.count > 0
     }
+    var description: String?
+    
     init(name: String,type: String) {
         let cleanType = type.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "").replacingOccurrences(of: "?", with: "")
         var newType = ""
@@ -52,7 +54,7 @@ struct APIRequestD {
     var fields: [APIFieldD]
     var responseType: String
     var errorType: String
-    
+    var description: String?
     var name: String {
         let name = path.components(separatedBy: ["/","\\","(",")"]).map {$0.capitalizingFirstLetter()}.joined()
         return name + "\(method.capitalizingFirstLetter())Request"
@@ -113,7 +115,7 @@ extension APIRequestD {
         if let path = json["path"] as? String,
             let method = json["method"] as? String {
             let fields = (json["fields"] as? [[String:Any]]) ?? []
-            let request = APIRequestD(path: path, method: method, fields: fields.compactMap {APIFieldD.fromJson($0)}, responseType: "", errorType: "")
+            let request = APIRequestD(path: path, method: method, fields: fields.compactMap {APIFieldD.fromJson($0)}, responseType: "", errorType: "", description: nil)
             return request
         }
         return nil

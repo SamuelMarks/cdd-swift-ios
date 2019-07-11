@@ -6,28 +6,24 @@
 
 import  Foundation
 class SwiftWriter {
-    
-//    var requests = [APIRequestD(path: "/getPersons", method: "POST", fields: [APIFieldD(name: "filter", type: "string")], responseType: "Person"),APIRequestD(path: "/getPerson", method: "POST", fields: [APIFieldD(name: "filter", type: "string")], responseType: "[Person]")]
-//    var models = [APIModelD(name:"Person", fields: [APIFieldD(name: "name", type: "string"),APIFieldD(name: "surname", type: "string")])]
-    func write() {
-//        let requestsText = requests.map ({ self.writeRequest($0)}).joined(separator: "\n\n")
-//        let modelsText = models.map ({ self.writeModel($0)}).joined(separator: "\n\n")
-        
-//        print(requestsText)
-//        print(modelsText)
-    }
-    
     func writeRequest(_ request: APIRequestD) -> String {
 
         let name = request.path.components(separatedBy: ["/","\\","(",")"]).map {$0.capitalizingFirstLetter()}.joined()
-
-        var lines = ["struct " + name + "\(request.method.capitalizingFirstLetter())Request : APIRequest {",
+        
+        var lines: [String] = []
+        if let description = request.description {
+            lines.append("/// " + description)
+        }
+        lines += ["struct " + name + "\(request.method.capitalizingFirstLetter())Request : APIRequest {",
         "\ttypealias ResponseType = " + request.responseType,
         "\ttypealias ErrorType = \(request.errorType) ",
-        "\tfunc urlPath() -> String { return \"\(request.path)\" }",
+        "\tvar urlPath: String { return \"\(request.path)\" }",
         "\tfunc method() -> HTTPMethod { return .\(request.method) }"]
 
         request.fields.forEach { (field) in
+            if let description = field.description {
+                lines.append("\t/// " + description)
+            }
             lines.append("\tlet \(field.name): \(field.type)")
         }
         
@@ -48,6 +44,10 @@ class SwiftWriter {
         }
         
         model.fields.forEach { (field) in
+            if let description = field.description {
+                lines.append("\t/// " + description)
+            }
+            
             lines.append("\tlet \(field.name): \(field.type)")
         }
         

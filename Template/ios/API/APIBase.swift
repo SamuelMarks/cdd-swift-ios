@@ -15,16 +15,19 @@ enum PostTypeCodingError: Error {
     case decoding(String)
 }
 
-struct EmptyResponse: Decodable {
+protocol APIModel: Decodable {}
+
+struct EmptyResponse: APIModel {
     
 }
+
+
 
 protocol APIRequest: Encodable {
     associatedtype ResponseType: Decodable
     associatedtype ErrorType: Decodable
     var urlPath: String { get }
     func baseURL() -> URL
-//    func urlPath() -> String
     func method() -> HTTPMethod
     func headers() -> HTTPHeaders
     func isNeedLog() -> Bool
