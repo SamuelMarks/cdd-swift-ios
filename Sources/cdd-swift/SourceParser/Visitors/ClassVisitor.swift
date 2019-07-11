@@ -32,6 +32,8 @@ class ClassVisitor : SyntaxVisitor {
 			let extractFields = ExtractVariables()
 			member.walk(extractFields)
 
+			print(extractFields.variables)
+
 			for (varName, varType) in extractFields.variables {
                 let required = varType.suffix(1) != "?"
                 let cleanType = varType.replacingOccurrences(of: "?", with: "")

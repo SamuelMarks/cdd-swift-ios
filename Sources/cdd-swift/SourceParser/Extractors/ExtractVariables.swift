@@ -30,14 +30,23 @@ class ExtractVariables : SyntaxVisitor {
 				varName = "\(child)"
 			}
 
+			if type(of: child) == InitializerClauseSyntax.self {
+				if varName != "" {
+					for c in child.children {
+						if type(of: c) == StringLiteralExprSyntax.self {
+							self.variables[varName] = "\(c)"
+						}
+					}
+				}
+			}
+
 			if type(of: child) == CodeBlockSyntax.self {
 				let returnWalker = ExtractReturnValue()
 				child.walk(returnWalker)
 				self.variables["\(varName)"] = "\(returnWalker.returnValue)"
 			}
-
-
 		}
+
 		return .skipChildren
 	}
 }

@@ -51,11 +51,6 @@ func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
 	return routes
 }
 
-enum ProjectError : Error {
-	case InvalidSettingsFile(String)
-	case InvalidHostname(String)
-}
-
 func parseProjectInfo(syntax: SourceFileSyntax) -> Result<ProjectInfo, Swift.Error> {
 	let visitor = ExtractVariables()
 	syntax.walk(visitor)
