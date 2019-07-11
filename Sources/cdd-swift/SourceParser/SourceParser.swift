@@ -44,14 +44,6 @@ func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
 				let paths = Route(paths: [RoutePath(urlPath: url, requests: [])])
 				routes[klass.name] = paths
 			}
-//			if let MemberVarType.Complex(let urlPath) = klass.vars["urlPath"] {
-//
-//			}
-//			if let urlPath = MemberVarType.Complex() {
-//				routes[klass.name] = Route(paths: [
-//					RoutePath(urlPath: klass.vars["urlPath"], requests: [])
-//				])
-//			}
 		}
 	}
 
@@ -59,11 +51,24 @@ func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
 	return routes
 }
 
-func parseProjectInfo(syntax: SourceFileSyntax) -> ProjectInfo {
+enum ProjectError : Error {
+	case InvalidSettingsFile(String)
+	case InvalidHostname(String)
+}
+
+func parseProjectInfo(syntax: SourceFileSyntax) -> Result<ProjectInfo, Swift.Error> {
 	let visitor = ExtractVariables()
 	syntax.walk(visitor)
 
-	let hostname =  URL(string: visitor.variables["HOST"]! + visitor.variables["ENDPOINT"]!)
+	guard let hostname = visitor.variables["HOST"], let endpoint = visitor.variables["ENDPOINT"] else {
+		return .failure(
+			ProjectError.InvalidSettingsFile("Cannot find HOST or ENDPOINT variables in Settings.swift"))
+	}
 
-	return ProjectInfo(hostname: hostname!)
+	guard let hosturl = URL(string: hostname + endpoint) else {
+		return .failure(
+			ProjectError.InvalidHostname("Invalid hostname format: \(hostname), \(endpoint)"))
+	}
+
+	return .success(ProjectInfo(hostname: hosturl))
 }

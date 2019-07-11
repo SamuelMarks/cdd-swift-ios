@@ -43,8 +43,6 @@ class ClassVisitor : SyntaxVisitor {
 			let extractFields = ExtractVariables()
 			member.walk(extractFields)
 
-			print("FILED ARE: \(extractFields.variables)")
-
 			for (varName, varType) in extractFields.variables {
 				switch varType {
 				case "String?", "String":

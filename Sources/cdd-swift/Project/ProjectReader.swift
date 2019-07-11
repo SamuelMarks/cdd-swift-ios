@@ -71,13 +71,18 @@ class ProjectReader {
 			return try! result.result.get()
 		})
 
-		let settingsSyn = try! settingsSyntax.result.get()
+		guard case let .success(settingsSyntax) = settingsSyntax.result else {
+			return .failure(
+				ProjectError.InvalidSettingsFile("Cannot parse Settings.swift"))
+		}
 
-		return .success(Project(
-			info: parseProjectInfo(syntax: settingsSyn),
-			models: parseModels(syntaxes: syntaxes),
-			routes: parseRoutes(syntaxes: syntaxes)
-		))
+		return parseProjectInfo(syntax: settingsSyntax).map({ projectInfo in
+			Project(
+				info: projectInfo,
+				models: parseModels(syntaxes: syntaxes),
+				routes: parseRoutes(syntaxes: syntaxes)
+			)
+		})
 	}
 
 	func writeProject() {

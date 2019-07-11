@@ -11,15 +11,20 @@ import SwiftCLI
 class TestCommand: Command {
 	func execute() throws {
 //		let syntax = fileToSyntax("Template/ios/API/API.swift")
-		let syntax = fileToSyntax("Test.swift")
-		let result = try! syntax.result.get()
+		let syntax = fileToSyntax("/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Test.swift")
 
-		for (modelName, model) in parseModels(syntaxes: [result]) {
-			print(model)
-		}
+		do {
+			let result = try syntax.result.get()
 
-		for (routeName, route) in parseRoutes(syntaxes: [result]) {
-			print(route)
+			for (_, model) in parseModels(syntaxes: [result]) {
+				print(model)
+			}
+
+			for (_, route) in parseRoutes(syntaxes: [result]) {
+				print(route)
+			}
+		} catch (let err) {
+			print("error \(err)")
 		}
 	}
 
