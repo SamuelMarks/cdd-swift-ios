@@ -36,3 +36,9 @@ func trim(_ string: String) -> String {
 		.trimmingCharacters(in: .whitespacesAndNewlines)
 		.replacingOccurrences(of: "\"", with: "")
 }
+
+extension String {
+    var trimmedWhiteSpaces: String {
+        return trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
