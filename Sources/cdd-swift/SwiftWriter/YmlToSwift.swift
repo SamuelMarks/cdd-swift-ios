@@ -11,7 +11,7 @@ import JSONUtilities
 
 class YmlToSwift {
     
-    static let testUrl = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/petstore.yml")
+    static let testUrl = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/swagger.yaml")
     static let testUrlForSwift = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/REST.swift")
     
     static let testUrlForTestObjects = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/TestObjects.string")
@@ -63,7 +63,8 @@ class YmlToSwift {
             if let model = result.1 {
                 additionalModels.append(model)
             }
-            let field = APIFieldD(name: property.key, type: result.0 + (required.contains(property.key) ? "" : "?"))
+            var field = APIFieldD(name: property.key, type: result.0 + (required.contains(property.key) ? "" : "?"))
+            field.description = property.value["description"] as? String
             if field.clearType.count > 0 {
                 fields.append(field)
             }
@@ -98,13 +99,15 @@ class YmlToSwift {
                                 models.append(model)
                         }
                             else if let type = items["type"] as? String {
-                                let field = APIFieldD(name: schema.name, type: type)
+                                var field = APIFieldD(name: schema.name, type: type)
+                                field.description = schema.value.metadata.description
                                 arrayTypes.append((schema.name.capitalizingFirstLetter(),"[\(field.type)]"))
                         }
                     }
                 case .string:
                     if let items = schema.value.metadata.json["enum"] as? [String] {
                         var field = APIFieldD(name: schema.name, type: "string")
+                        field.description = schema.value.metadata.description
                         field.cases = items
                         enums.append(field)
                     }
@@ -123,12 +126,15 @@ class YmlToSwift {
                 if let name = json["name"] as? String,
                     let required = json["required"] as? Bool,
                     let schema = json["schema"] as? [String:String] {
+                    
                     if let type = schema["type"] {
-                        let field = APIFieldD(name: name, type: type + (required ? "" : "?"))
+                        var field = APIFieldD(name: name, type: type + (required ? "" : "?"))
+                        field.description = parameter.value.description
                         fields.append(field)
                     }
                     else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
-                        let field = APIFieldD(name: name, type: name.capitalizingFirstLetter())
+                        var field = APIFieldD(name: name, type: name.capitalizingFirstLetter())
+                        field.description = parameter.value.description
                         fields.append(field)
                     }
                 }
@@ -168,8 +174,6 @@ class YmlToSwift {
                                     }
                                 }
                             }
-                            
-                            
                         }
                     }
                 }
@@ -180,7 +184,7 @@ class YmlToSwift {
                 responseName = arrType.type
             }
             let path = operation.path.replacingOccurrences(of: "{", with: "\\(").replacingOccurrences(of: "}", with: ")")
-            let request = APIRequestD(path: path, method: method, fields: fields, responseType: responseName.capitalizingFirstLetter(),errorType: errorNameResponse.capitalizingFirstLetter())
+            let request = APIRequestD(path: path, method: method, fields: fields, responseType: responseName.capitalizingFirstLetter(),errorType: errorNameResponse.capitalizingFirstLetter(), description: operation.description)
             requests.append(request)
         }
         

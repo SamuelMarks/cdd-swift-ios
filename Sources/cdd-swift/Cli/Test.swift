@@ -10,17 +10,20 @@ import SwiftCLI
 
 class TestCommand: Command {
 	func execute() throws {
+        
+        try YmlToSwift().run(urlToSpec: YmlToSwift.testUrl, urlForSwiftFile: YmlToSwift.testUrlForSwift)
+        
 //		let syntax = fileToSyntax("Template/ios/API/API.swift")
-		let syntax = fileToSyntax("Test.swift")
-		let result = try! syntax.result.get()
-
-		for (modelName, model) in parseModels(syntaxes: [result]) {
-			print(model)
-		}
-
-		for (routeName, route) in parseRoutes(syntaxes: [result]) {
-			print(route)
-		}
+//        let syntax = fileToSyntax("Test.swift")
+//        let result = try! syntax.result.get()
+//
+//        for (modelName, model) in parseModels(syntaxes: [result]) {
+//            print(model)
+//        }
+//
+//        for (routeName, route) in parseRoutes(syntaxes: [result]) {
+//            print(route)
+//        }
 	}
 
 	let name = "test"
