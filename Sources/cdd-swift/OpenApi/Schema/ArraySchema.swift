@@ -1,5 +1,23 @@
 import JSONUtilities
 
+extension ArraySchema : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case items
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        switch items {
+        case .single(let schema):
+            try container.encode(schema, forKey: .items)
+        case .multiple(let schemas):
+            try container.encode(schemas, forKey: .items)
+        }
+        
+    }
+}
+
 public struct ArraySchema {
     public let items: ArraySchemaItems
     public let minItems: Int?

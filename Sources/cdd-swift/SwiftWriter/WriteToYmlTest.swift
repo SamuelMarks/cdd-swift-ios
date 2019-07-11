@@ -39,10 +39,10 @@ class WriteToYmlTest {
         
         print(json)
         
-        if let jsonData = try? JSONSerialization.data(withJSONObject: spec.json, options: .prettyPrinted),
-        let json = try? JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? [String: Any]  {
-            print(json)
-        }
+//        if let jsonData = try? JSONSerialization.data(withJSONObject: spec.json, options: .prettyPrinted),
+//        let json = try? JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? [String: Any]  {
+//            print(json)
+//        }
         
         
     }

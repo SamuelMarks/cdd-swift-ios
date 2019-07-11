@@ -1,5 +1,16 @@
 import JSONUtilities
 
+extension Reference : Encodable {
+    enum CodingKeys: String, CodingKey {
+        case ref = "$ref"
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(string, forKey: .ref)
+    }
+}
+
 public class Reference<T: Component> {
 
     let string: String
@@ -47,7 +58,28 @@ public class Reference<T: Component> {
     }
 }
 
-public enum PossibleReference<T: Component>: JSONObjectConvertible {
+extension PossibleReference : Encodable {
+    enum CodingKeys: String, CodingKey {
+       case componentType
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let parametr = value as? Parameter {
+            try parametr.encode(to: encoder)
+        }
+        else
+            if let response = value as? Response {
+                try response.encode(to: encoder)
+        }
+            else if let header = value as? Header {
+                try header.encode(to: encoder)
+        }
+    }
+}
+
+
+public enum PossibleReference<T: Component & Encodable>: JSONObjectConvertible {
 
     case reference(Reference<T>)
     case value(T)

@@ -11,7 +11,6 @@ extension SwaggerSpec : Encodable {
         case servers
         case components
         case securityRequirements
-        case operations
 	}
 
 	public func encode(to encoder: Encoder) throws {
@@ -30,7 +29,6 @@ extension SwaggerSpec : Encodable {
         try container.encode(servers, forKey: .servers)
         try container.encode(components, forKey: .components)
         try container.encode(securityRequirements, forKey: .securityRequirements)
-        try container.encode(operations, forKey: .operations)
 	}
 }
 

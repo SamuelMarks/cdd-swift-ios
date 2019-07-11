@@ -5,19 +5,31 @@ extension Operation : Encodable {
 		case summary
 		case operationId
 		case tags
-//         case parameters
+        case parameters
+        case responses
 	}
 
 	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 
-        var pars: [Encodable] = []
         
 		// print(self)
 		try container.encode(summary, forKey: .summary)
 		try container.encode(identifier, forKey: .operationId)
 		try container.encode(tags, forKey: .tags)
-//         try container.encode(pars, forKey: .parameters)
+        try container.encode(parameters, forKey: .parameters)
+        
+        var responsesDict:Dictionary<String,OperationResponse> = [:]
+        for response in responses {
+            if let statusCode = response.statusCode {
+                responsesDict["\(statusCode)"] = response
+            }
+            else {
+                responsesDict["default"] = response
+            }
+        }
+        
+        try container.encode(responsesDict, forKey: .responses)
 	}
 }
 
