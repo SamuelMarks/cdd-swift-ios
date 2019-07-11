@@ -6,22 +6,11 @@ import SwiftSyntax
 struct Klass {
 	let name: String
 	var interfaces: [String] = []
-	var vars: [String:MemberVarType] = [:]
+    var vars: [String:Field] = [:]
 
 	init(name: String) {
 		self.name = name
 	}
-}
-
-//struct MemberVar {
-//	let type: MemberVarType
-//}
-
-enum MemberVarType {
-	case String
-	case Int
-	case Date
-	case Complex(String)
 }
 
 class ClassVisitor : SyntaxVisitor {
@@ -44,30 +33,32 @@ class ClassVisitor : SyntaxVisitor {
 			member.walk(extractFields)
 
 			for (varName, varType) in extractFields.variables {
-				switch varType {
-				case "String?", "String":
-					klass.vars[varName] = MemberVarType.String
-//					fields[field.variableName] = ComponentField(type: "string", format: "string")
-//				case "[String]":
-//					fields[field.variableName] = ComponentField(type: "[string]", format: "[string]")
-//				case "Int", "Int64", "UInt64":
-//						fields[field.variableName] = ComponentField(type: "integer", format: "int64")
-//				case "Int32", "UInt32":
-//					fields[field.variableName] = ComponentField(type: "integer", format: "int32")
-//				case "Float":
-//					fields[field.variableName] = ComponentField(type: "number", format: "float")
-//				case "Date":
-//					fields[field.variableName] = ComponentField(type: "string", format: "date")
-//				case "^[(.*)]s":
-//					fields[field.variableName] = ComponentField(type: "string", format: "date")
-				default:
-					klass.vars[varName] = MemberVarType.Complex(varType)
-				}
-
+                let required = varType.suffix(1) != "?"
+                let cleanType = varType.replacingOccurrences(of: "?", with: "")
+                klass.vars[varName] = Field(name: varName, required: required, type: typeFor(type: cleanType))
 			}
 			klasses.append(klass)
 		}
 		return .skipChildren
 	}
+    
+    func typeFor(type:String) -> Type {
+        guard type.first != "["  else {
+            let inType = String(type.dropFirst().dropLast())
+            return Type.array(typeFor(type: inType))
+        }
+        switch type {
+        case "String":
+            return Type.primitive(.String)
+        case "Int":
+            return Type.primitive(.Int)
+        case "Bool":
+            return Type.primitive(.Bool)
+        case "Float":
+            return Type.primitive(.Float)
+        default:
+            return Type.complex(type)
+        }
+    }
 }
 

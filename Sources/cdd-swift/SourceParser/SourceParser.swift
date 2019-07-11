@@ -20,7 +20,7 @@ func parseModels(syntaxes: [SourceFileSyntax]) -> [String: Model] {
 
 	for klass in visitor.klasses {
 		if klass.interfaces.contains(MODEL_PROTOCOL) {
-			models[klass.name] = Model(name: klass.name)
+			models[klass.name] = Model(name: klass.name, fields: Array(klass.vars.values))
 		}
 	}
 
@@ -39,8 +39,8 @@ func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
 
 	for klass in visitor.klasses {
 		if klass.interfaces.contains(ROUTE_PROTOCOL) {
-			if let e = klass.vars["urlPath"],
-				case let .Complex(url) = e {
+			if let e = klass.vars["urlPath"]?.type,
+				case let .complex(url) = e {
 				let paths = Route(paths: [RoutePath(urlPath: url, requests: [])])
 				routes[klass.name] = paths
 			}

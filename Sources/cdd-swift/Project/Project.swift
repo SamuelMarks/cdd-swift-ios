@@ -23,6 +23,26 @@ struct ProjectInfo {
 
 struct Model {
 	let name: String
+    let fields: [Field]
+}
+
+struct Field {
+    let name: String
+    let required: Bool
+    let type: Type
+}
+
+indirect enum Type {
+    case primitive(PrimitiveType)
+    case array(Type)
+    case complex(String)
+}
+
+enum PrimitiveType: String {
+    case String
+    case Int
+    case Float
+    case Bool
 }
 
 struct Route {

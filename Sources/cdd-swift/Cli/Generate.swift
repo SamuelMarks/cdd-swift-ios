@@ -10,7 +10,7 @@ import SwiftCLI
 
 class GenerateCommand: Command {
 	func execute() throws {
-		let syntax = fileToSyntax("/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Test.swift")
+		let syntax = fileToSyntax("/Users/alexei/Documents/Projects/cdd-swift-ios/Test.swift")
 
 		do {
 			let result = try syntax.result.get()
@@ -23,6 +23,7 @@ class GenerateCommand: Command {
 				print(route)
 			}
 		} catch (let err) {
+            throw err
 			print("error \(err)")
 		}
 	}
