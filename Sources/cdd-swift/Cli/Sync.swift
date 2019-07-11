@@ -23,17 +23,23 @@ class SyncCommand: Command {
 	}
 
 	func sync(spec: URL) {
-		let projectReader = try! ProjectReader(path: spec.absoluteString)
 
-		printFileResults(fileResults: [projectReader.settingsSyntax])
-		printFileResults(fileResults: projectReader.parsableFiles)
+		do {
+			let projectReader = try ProjectReader(path: spec.absoluteString)
 
-		switch projectReader.generateProject() {
-		case .success(let project):
-			print("[OK] Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.".green)
-			print(project)
-		case .failure(let error):
-			print("[Error] \(error.localizedDescription)".red)
+			printFileResults(fileResults: [projectReader.settingsSyntax])
+			printFileResults(fileResults: projectReader.parsableFiles)
+
+			switch projectReader.generateProject() {
+			case .success(let project):
+				print("[OK] Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.".green)
+				print(project)
+			case .failure(let error):
+				print("[Error] \(error.localizedDescription)".red)
+			}
+			
+		} catch (let err) {
+			exitWithError("\(err.localizedDescription)")
 		}
 	}
 }
@@ -54,6 +60,6 @@ func printFileResults<T>(fileResults: [FileResult<T>]) {
 }
 
 func exitWithError(_ string: String) -> Never {
-	print(string.red)
+	print("[Error] \(string)".red)
 	exit(EXIT_FAILURE)
 }

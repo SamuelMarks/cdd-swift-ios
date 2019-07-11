@@ -30,6 +30,7 @@ struct Route {
 }
 
 struct RoutePath {
+	let urlPath: String
 	let requests: [Request]
 }
 

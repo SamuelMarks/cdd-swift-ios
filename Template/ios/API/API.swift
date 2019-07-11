@@ -206,7 +206,7 @@ struct TourFull : Decodable {
     let updatedTs: Float?
 }
 
-struct User : Decodable {
+struct User : APIModel {
     let city: String?
     let firstName: String?
     let phone: String?

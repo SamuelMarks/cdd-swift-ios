@@ -5,7 +5,12 @@ import SwiftSyntax
 
 struct Klass {
 	let name: String
-	var vars: [String:MemberVarType]
+	var interfaces: [String] = []
+	var vars: [String:MemberVarType] = [:]
+
+	init(name: String) {
+		self.name = name
+	}
 }
 
 //struct MemberVar {
@@ -16,7 +21,7 @@ enum MemberVarType {
 	case String
 	case Int
 	case Date
-	case Complex
+	case Complex(String)
 }
 
 class ClassVisitor : SyntaxVisitor {
@@ -24,11 +29,21 @@ class ClassVisitor : SyntaxVisitor {
 
 	override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
 		let klassName = "\(node.identifier)".trimmingCharacters(in: .whitespaces)
-		var klass = Klass(name: klassName, vars: [:])
+		var klass = Klass(name: klassName)
 
 		for member in node.children {
+			if type(of: member) == TypeInheritanceClauseSyntax.self {
+				for child in member.children {
+					if type(of: child) == InheritedTypeListSyntax.self {
+						klass.interfaces.append(trim("\(child)"))
+					}
+				}
+			}
+
 			let extractFields = ExtractVariables()
 			member.walk(extractFields)
+
+			print("FILED ARE: \(extractFields.variables)")
 
 			for (varName, varType) in extractFields.variables {
 				switch varType {
@@ -48,7 +63,7 @@ class ClassVisitor : SyntaxVisitor {
 //				case "^[(.*)]s":
 //					fields[field.variableName] = ComponentField(type: "string", format: "date")
 				default:
-					klass.vars[varName] = MemberVarType.Complex
+					klass.vars[varName] = MemberVarType.Complex(varType)
 				}
 
 			}

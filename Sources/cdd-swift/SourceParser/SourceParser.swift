@@ -8,6 +8,8 @@
 import Foundation
 import SwiftSyntax
 
+let MODEL_PROTOCOL = "APIModel"
+
 func parseModels(syntaxes: [SourceFileSyntax]) -> [String: Model] {
 	let visitor = ClassVisitor()
 	var models: [String: Model] = [:]
@@ -17,18 +19,40 @@ func parseModels(syntaxes: [SourceFileSyntax]) -> [String: Model] {
 	}
 
 	for klass in visitor.klasses {
-		models[klass.name] = Model(name: klass.name)
+		if klass.interfaces.contains(MODEL_PROTOCOL) {
+			models[klass.name] = Model(name: klass.name)
+		}
 	}
 
 	return models
 }
 
+let ROUTE_PROTOCOL = "APIRequest"
+
 func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
-	let visitor = RoutesVisitor()
+	let visitor = ClassVisitor()
 	var routes: [String: Route] = [:]
 
 	for syntax in syntaxes {
 		syntax.walk(visitor)
+	}
+
+	for klass in visitor.klasses {
+		if klass.interfaces.contains(ROUTE_PROTOCOL) {
+			if let e = klass.vars["urlPath"],
+				case let .Complex(url) = e {
+				let paths = Route(paths: [RoutePath(urlPath: url, requests: [])])
+				routes[klass.name] = paths
+			}
+//			if let MemberVarType.Complex(let urlPath) = klass.vars["urlPath"] {
+//
+//			}
+//			if let urlPath = MemberVarType.Complex() {
+//				routes[klass.name] = Route(paths: [
+//					RoutePath(urlPath: klass.vars["urlPath"], requests: [])
+//				])
+//			}
+		}
 	}
 
 	// todo: complete

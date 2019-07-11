@@ -41,7 +41,7 @@ class SwiftWriter {
     
     func writeModel(_ model: APIModelD, additionalsTabs: String = "") -> String {
         
-        var lines = ["struct " + model.name + " : Decodable {"]
+        var lines = ["struct " + model.name + " : APIModel {"]
         
         model.models.forEach {
             lines.append(writeModel($0, additionalsTabs: additionalsTabs + "\t"))

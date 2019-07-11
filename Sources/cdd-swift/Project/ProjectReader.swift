@@ -10,19 +10,6 @@ let SPEC_FILE = "/openapi.yml"
 let MODELS_DIR = "/ios/API"
 let SETTINGS_DIR = "/ios"
 
-func readFiles(_ path: String, fileType: String) -> Result<[String], Swift.Error> {
-	do {
-		let files = try FileManager.default.contentsOfDirectory(at: URL.init(fileURLWithPath: path), includingPropertiesForKeys: [], options:  [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-
-		return .success(files
-			.filter{ $0.pathExtension == fileType }
-			.map{ $0.lastPathComponent } as [String])
-	}
-	catch let error {
-		return .failure(error)
-	}
-}
-
 func fileToSyntax(_ file: String) -> FileResult<SourceFileSyntax> {
 	do {
 		let syntax = try SyntaxTreeParser.parse(URL(fileURLWithPath: file))
@@ -30,17 +17,6 @@ func fileToSyntax(_ file: String) -> FileResult<SourceFileSyntax> {
 	}
 	catch let error {
 		return FileResult(fileName: file, result: .failure(error))
-	}
-}
-
-func readDirectory(_ path: String) -> Result<[String], Swift.Error> {
-	do {
-		let files = try FileManager.default.contentsOfDirectory(at: URL.init(fileURLWithPath: path), includingPropertiesForKeys: [], options:  [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-
-		return .success(files.map{ $0.lastPathComponent } as [String])
-	}
-	catch let error {
-		return .failure(error)
 	}
 }
 

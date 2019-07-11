@@ -10,25 +10,34 @@ func ParseVariables(_ syntax: SourceFileSyntax) -> Dictionary<String, String> {
 	return visitor.variables
 }
 
+class ExtractReturnValue : SyntaxVisitor {
+	var returnValue: String = ""
+
+	override func visit(_ node: StringLiteralExprSyntax) -> SyntaxVisitorContinueKind {
+		self.returnValue = trim("\(node)")
+		return .skipChildren
+	}
+}
+
 class ExtractVariables : SyntaxVisitor {
 	var variables: Dictionary<String, String> = [:]
 
 	override func visit(_ node: PatternBindingSyntax) -> SyntaxVisitorContinueKind {
-		var varName : String?
+		var varName: String = ""
 
 		for child in node.children {
 			if type(of: child) == IdentifierPatternSyntax.self {
-				varName = "\(child)".trimmingCharacters(in: .whitespacesAndNewlines)
+				varName = "\(child)"
 			}
-			for subchild in child.children {
-				if type(of: subchild) == StringLiteralExprSyntax.self {
-					if varName != nil {
-						variables[varName!] = "\(subchild)".replacingOccurrences(of: "\"", with: "")
-					}
-				}
-			}
-		}
 
+			if type(of: child) == CodeBlockSyntax.self {
+				let returnWalker = ExtractReturnValue()
+				child.walk(returnWalker)
+				self.variables["\(varName)"] = "\(returnWalker.returnValue)"
+			}
+
+
+		}
 		return .skipChildren
 	}
 }

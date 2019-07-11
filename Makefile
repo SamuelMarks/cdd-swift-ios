@@ -18,7 +18,7 @@ build:
 	swift build
 	
 run: build
-	.build/debug/cdd-swift sync .
+	.build/debug/cdd-swift sync ./Template
 
 alex: build
 	.build/debug/cdd-swift generate
@@ -29,3 +29,6 @@ xcode:
 
 clean:
 	swift package clean
+
+test: build
+	.build/debug/cdd-swift test

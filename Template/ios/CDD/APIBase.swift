@@ -19,6 +19,8 @@ struct EmptyResponse: Decodable {
     
 }
 
+protocol APIModel: Decodable {}
+
 protocol APIRequest: Encodable {
     associatedtype ResponseType: Decodable
     associatedtype ErrorType: Decodable
