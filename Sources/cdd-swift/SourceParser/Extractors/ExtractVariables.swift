@@ -27,14 +27,14 @@ class ExtractVariables : SyntaxVisitor {
 
 		for child in node.children {
 			if type(of: child) == IdentifierPatternSyntax.self {
-				varName = "\(child)"
+				varName = trim("\(child)")
 			}
 
 			if type(of: child) == InitializerClauseSyntax.self {
 				if varName != "" {
 					for c in child.children {
 						if type(of: c) == StringLiteralExprSyntax.self {
-							self.variables[varName] = "\(c)"
+							self.variables[varName] = trim("\(c)")
 						}
 					}
 				}
