@@ -35,7 +35,7 @@ class SyncCommand: Command {
 				print("[OK] Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.".green)
 				print(project)
 			case .failure(let error):
-				print("[Error] \(error.localizedDescription)".red)
+				printError(error)
 			}
 			
 		} catch (let err) {
@@ -62,4 +62,9 @@ func printFileResults<T>(fileResults: [FileResult<T>]) {
 func exitWithError(_ string: String) -> Never {
 	print("[Error] \(string)".red)
 	exit(EXIT_FAILURE)
+}
+
+// todo: not printing localisedDescription correctly
+func printError(_ error: Swift.Error) {
+	print("[Error] \(error)".red)
 }
