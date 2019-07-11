@@ -26,6 +26,7 @@ class SyncCommand: Command {
 
 		do {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
+			let specFile = try readOpenApi(path: spec.absoluteString)
 
 			printFileResults(fileResults: [projectReader.settingsSyntax])
 			printFileResults(fileResults: projectReader.parsableFiles)
@@ -33,7 +34,10 @@ class SyncCommand: Command {
 			switch projectReader.generateProject() {
 			case .success(let project):
 				print("[OK] Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.".green)
-				print(project)
+
+				let _ = project.syncSettings(spec: specFile)
+				// todo write result
+
 			case .failure(let error):
 				printError(error)
 			}

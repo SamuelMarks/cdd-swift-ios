@@ -20,7 +20,7 @@ func fileToSyntax(_ file: String) -> FileResult<SourceFileSyntax> {
 	}
 }
 
-func readOpenApi(_ path: String) throws -> SwaggerSpec {
+func readOpenApi(path: String) throws -> SwaggerSpec {
 	// note: should look for json first, in default location. CHANGEME
 	let url = URL(fileURLWithPath: path + "/" + SPEC_FILE)
 
@@ -55,7 +55,7 @@ class ProjectReader {
 		self.path = path
 		print("reading \(path)...")
 
-		self.openapiDoc = try readOpenApi(path)
+		self.openapiDoc = try readOpenApi(path: path)
 		print("read openapi.yml")
 
 		settingsSyntax = fileToSyntax("\(self.path + SETTINGS_DIR)/Settings.swift")
