@@ -34,7 +34,7 @@ struct Variable {
     
     init(name: String) {
         self.name = name
-        optional = true
+        optional = false
         type = .primitive(.String)
     }
 }

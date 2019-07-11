@@ -4,7 +4,7 @@ struct VariableDeclaration {
 	let variableName, variableType: String
 }
 
-func ParseVariables(_ syntax: SourceFileSyntax) -> Dictionary<String, String> {
+func ParseVariables(_ syntax: SourceFileSyntax) -> Dictionary<String, Variable> {
 	let visitor = ExtractVariables()
 	syntax.walk(visitor)
 	return visitor.variables
@@ -36,22 +36,21 @@ class ExtractVariables : SyntaxVisitor {
 
 			if type(of: child) == InitializerClauseSyntax.self {
 					for c in child.children {
+                        let value = "\(c)".trimmedWhiteSpaces
 						if type(of: c) == StringLiteralExprSyntax.self {
-                            let value = "\(c)".trimmedWhiteSpaces
-                            if value.contains("\"") {
-                                variable?.type = Type.primitive(.String)
-                            } else
-                            if value.contains(".") {
-                                variable?.type = Type.primitive(.Float)
-                            } else
-                                if value == "true" || value == "false" {
-                                    variable?.type = Type.primitive(.Bool)
-                                } else {
-                                        variable?.type = Type.primitive(.Int)
-                                    }
-                                        
-                            variable?.value = value
-						}
+                            variable?.type = Type.primitive(.String)
+                        }
+                        else if type(of: c) == IntegerLiteralExprSyntax.self {
+                            variable?.type = Type.primitive(.Int)
+                        }
+                        else if type(of: c) == BooleanLiteralExprSyntax.self {
+                            variable?.type = Type.primitive(.Bool)
+                        }
+                        else if type(of: c) == FloatLiteralExprSyntax.self {
+                            variable?.type = Type.primitive(.Float)
+                        }
+                        
+                        variable?.value = value
 					}
 			}
             
