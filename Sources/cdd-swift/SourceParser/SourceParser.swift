@@ -9,11 +9,12 @@ import Foundation
 import SwiftSyntax
 
 let MODEL_PROTOCOL = "APIModel"
+let REQUEST_PROTOCOL = "APIRequest"
 
 func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
 	let visitor = ClassVisitor()
 	var models: [String: Model] = [:]
-
+    var requests:[Request] = []
 	for sourceFile in sourceFiles {
 		sourceFile.syntax.walk(visitor)
 	}
@@ -23,6 +24,23 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
 			models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values))
 		}
 	}
+    
+    for klass in visitor.klasses {
+        if klass.interfaces.contains(REQUEST_PROTOCOL) {
+            if let responseType = klass.typeAliases["ResponseType"],
+                let errorType = klass.typeAliases["ErrorType"],
+            let path = klass.vars["urlPath"]?.value,
+            let methodRaw = klass.vars["method"]?.value,
+                let method = Method(rawValue:methodRaw){
+                var vars = klass.vars
+                vars.removeValue(forKey: "urlPath")
+                vars.removeValue(forKey: "method")
+                requests.append(Request(method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
+            }
+        }
+    }
+    
+    print(requests)
 
 	return models
 }
@@ -61,7 +79,7 @@ func parseRequests(sourceFiles: [SourceFile]) -> [Request] {
     return []
 }
 
-let ROUTE_PROTOCOL = "APIRequest"
+
 
 //func parseRoutes(sourceFiles: [SourceFile]) -> [String: Route] {
 //    let visitor = ClassVisitor()

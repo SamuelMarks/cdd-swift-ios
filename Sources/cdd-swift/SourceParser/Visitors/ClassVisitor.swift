@@ -7,7 +7,7 @@ struct Klass {
 	let name: String
 	var interfaces: [String] = []
     var vars: [String:Variable] = [:]
-
+    var typeAliases: [String:String] = [:]
 	init(name: String) {
 		self.name = name
 	}
@@ -31,10 +31,12 @@ class ClassVisitor : SyntaxVisitor {
 
 			let extractFields = ExtractVariables()
 			member.walk(extractFields)
-
             klass.vars = extractFields.variables
             
-			klasses.append(klass)
+            let extractAliases = ExtractTypealiases()
+            member.walk(extractAliases)
+            klass.typeAliases = extractAliases.aliases
+            klasses.append(klass)
 		}
 		return .skipChildren
 	}
