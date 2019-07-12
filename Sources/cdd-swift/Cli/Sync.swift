@@ -23,6 +23,7 @@ class SyncCommand: Command {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
 
 			switch projectReader.generateProject() {
+
 			case .success(let project):
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.")
 				project.diff(against: projectReader.specFile)
