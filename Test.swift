@@ -1,5 +1,12 @@
 struct Testy: APIModel {
-    var yep: String
+    var someString:    String
+    var someInt: Int
+    var someArray: [Testy]
+    var flo: Float = 0
+    var hidenString =    "fssfs"
+    var hidInt = 433
+    var hidBool = true
+    var hidFloat = 4.44
 }
 
 struct Gob : APIRequest {
@@ -10,3 +17,4 @@ struct Gob : APIRequest {
     let tourId: String?
     let scheduleId: String?
 }
+

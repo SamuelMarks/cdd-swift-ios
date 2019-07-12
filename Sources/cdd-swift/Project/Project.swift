@@ -24,13 +24,20 @@ struct ProjectInfo {
 
 struct Model {
 	let name: String
-    let fields: [Field]
+    let vars: [Variable]
 }
 
-struct Field {
+struct Variable {
     let name: String
-    let required: Bool
-    let type: Type
+    var optional: Bool
+    var type: Type
+    var value: String?
+    
+    init(name: String) {
+        self.name = name
+        optional = false
+        type = .primitive(.String)
+    }
 }
 
 indirect enum Type {

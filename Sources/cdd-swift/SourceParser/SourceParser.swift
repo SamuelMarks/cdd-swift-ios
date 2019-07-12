@@ -20,7 +20,7 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
 
 	for klass in visitor.klasses {
 		if klass.interfaces.contains(MODEL_PROTOCOL) {
-			models[klass.name] = Model(name: klass.name, fields: Array(klass.vars.values))
+			models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values))
 		}
 	}
 
@@ -60,7 +60,7 @@ func parseProjectInfo(_ source: SourceFile) -> Result<ProjectInfo, Swift.Error> 
 			ProjectError.InvalidSettingsFile("Cannot find HOST or ENDPOINT variables in Settings.swift"))
 	}
 
-	guard let hosturl = URL(string: hostname + endpoint) else {
+    guard let hosturl = URL(string: (hostname.value ?? "") + (endpoint.value ?? "")) else {
 		return .failure(
 			ProjectError.InvalidHostname("Invalid hostname format: \(hostname), \(endpoint)"))
 	}

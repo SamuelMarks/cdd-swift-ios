@@ -57,3 +57,9 @@ func fileLastModifiedDate(url: URL) throws -> Date {
 		throw ProjectError.InvalidSettingsFile("could not determine modified date for file: \(url.path)")
 	}
 }
+
+extension String {
+    var trimmedWhiteSpaces: String {
+        return trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}

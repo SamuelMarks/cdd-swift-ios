@@ -6,7 +6,7 @@ import SwiftSyntax
 struct Klass {
 	let name: String
 	var interfaces: [String] = []
-    var vars: [String:Field] = [:]
+    var vars: [String:Variable] = [:]
 
 	init(name: String) {
 		self.name = name
@@ -32,33 +32,13 @@ class ClassVisitor : SyntaxVisitor {
 			let extractFields = ExtractVariables()
 			member.walk(extractFields)
 
-			for (varName, varType) in extractFields.variables {
-                let required = varType.suffix(1) != "?"
-                let cleanType = varType.replacingOccurrences(of: "?", with: "")
-                klass.vars[varName] = Field(name: varName, required: required, type: typeFor(type: cleanType))
-			}
+            klass.vars = extractFields.variables
+            
 			klasses.append(klass)
 		}
 		return .skipChildren
 	}
     
-    func typeFor(type:String) -> Type {
-        guard type.first != "["  else {
-            let inType = String(type.dropFirst().dropLast())
-            return Type.array(typeFor(type: inType))
-        }
-        switch type {
-        case "String":
-            return Type.primitive(.String)
-        case "Int":
-            return Type.primitive(.Int)
-        case "Bool":
-            return Type.primitive(.Bool)
-        case "Float":
-            return Type.primitive(.Float)
-        default:
-            return Type.complex(type)
-        }
-    }
+   
 }
 
