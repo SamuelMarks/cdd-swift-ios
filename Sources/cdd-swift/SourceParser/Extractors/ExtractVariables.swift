@@ -1,24 +1,5 @@
 import SwiftSyntax
 
-struct VariableDeclaration {
-	let variableName, variableType: String
-}
-
-func ParseVariables(_ syntax: SourceFileSyntax) -> Dictionary<String, Variable> {
-	let visitor = ExtractVariables()
-	syntax.walk(visitor)
-	return visitor.variables
-}
-
-class ExtractReturnValue : SyntaxVisitor {
-	var returnValue: String = ""
-
-	override func visit(_ node: StringLiteralExprSyntax) -> SyntaxVisitorContinueKind {
-		self.returnValue = trim("\(node)")
-		return .skipChildren
-	}
-}
-
 class ExtractVariables : SyntaxVisitor {
 	var variables: Dictionary<String, Variable> = [:]
 
@@ -33,7 +14,7 @@ class ExtractVariables : SyntaxVisitor {
                 }
                 variable = Variable(name:"\(child)".trimmedWhiteSpaces)
 			}
-
+            
 			if type(of: child) == InitializerClauseSyntax.self {
 					for c in child.children {
                         var value = "\(c)".trimmedWhiteSpaces
@@ -62,11 +43,18 @@ class ExtractVariables : SyntaxVisitor {
             }
             
 
-//            if type(of: child) == CodeBlockSyntax.self {
-//                let returnWalker = ExtractReturnValue()
-//                child.walk(returnWalker)
-//                self.variables["\(varName)"] = "\(returnWalker.returnValue)"
-//            }
+            if type(of: child) == CodeBlockSyntax.self {
+                for c in child.children {
+                    if type(of: c) == CodeBlockItemListSyntax.self {
+                        let walkers = [ExtractComlexPath(),ExtractMethodType(),ExtractReturnValue()]
+                        walkers.forEach {
+                            if let value = $0.walk(in: c) {
+                                variable?.value = value
+                            }
+                        }
+                    }
+                }
+            }
 		}
         
         if let variable = variable {

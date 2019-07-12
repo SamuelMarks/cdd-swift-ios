@@ -56,9 +56,13 @@ enum PrimitiveType: String {
 struct Request {
 	let method: Method
     let urlPath: String
+    let responseType: String
+    let errorType: String
+    let vars: [Variable]
 }
 
-enum Method {
+enum Method: String {
 	case get
 	case put
+    case post
 }
