@@ -66,7 +66,7 @@ class ProjectReader {
 			)
 			self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_DIR)/Settings.swift")
 			self.sourceFiles = try [
-				"\(self.projectPath + MODELS_DIR)/API.swift"
+				"\(self.projectPath + MODELS_DIR)/Test.swift"
 			].map({ path in
 				try SourceFile(path: path)
 			})
@@ -84,7 +84,7 @@ class ProjectReader {
 		return .success(Project(
 			info: projectInfo,
 			models: parseModels(sourceFiles: self.sourceFiles),
-			routes: parseRequests(sourceFiles: self.sourceFiles)
+			requests: parseRequests(sourceFiles: self.sourceFiles)
 		))
 	}
 

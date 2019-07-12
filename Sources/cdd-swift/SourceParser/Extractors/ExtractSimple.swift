@@ -19,7 +19,7 @@ class ExtractReturnValue : ValueVisitor {
 class ExtractComlexPath : ValueVisitor {
     
     override func visit(_ node: StringInterpolationSegmentsSyntax) -> SyntaxVisitorContinueKind {
-        self.value = trim("\(node)").replacingOccurrences(of: "\\(", with: "").replacingOccurrences(of: ")", with: "")
+        self.value = trim("\(node)").replacingOccurrences(of: "\\(", with: "{").replacingOccurrences(of: ")", with: "}")
         return .skipChildren
     }
 }
