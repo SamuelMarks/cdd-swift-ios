@@ -19,7 +19,7 @@ struct FileResult<T> {
 struct SourceFile {
 	let path: URL
 	let modificationDate: Date
-	let syntax: SourceFileSyntax
+	var syntax: SourceFileSyntax
 
 	init(path: String) throws {
 		do {
@@ -27,6 +27,17 @@ struct SourceFile {
 			self.path = url
 			self.modificationDate = try fileLastModifiedDate(url: url)
 			self.syntax = try SyntaxTreeParser.parse(url)
+		}
+	}
+
+	mutating func apply(projectInfo: ProjectInfo) -> Result<String, Swift.Error> {
+		do {
+			let source = try SyntaxTreeParser.parse(self.path)
+			let rewriter = VariableRewriter()
+			self.syntax = rewriter.visit(source) as! SourceFileSyntax
+			return .success("successfully rewrote \(self.path.path)")
+		} catch let err {
+			return .failure(err)
 		}
 	}
 }
@@ -40,7 +51,7 @@ struct SpecFile {
 class ProjectReader {
 	let projectPath: String
 	let specFile: SpecFile
-	let settingsFile: SourceFile
+	var settingsFile: SourceFile
 	let sourceFiles: [SourceFile]
 
 	init(path: String) throws {
