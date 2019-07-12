@@ -9,7 +9,9 @@ import Foundation
 
 import SwiftSyntax
 
-public class VariableRewriter: SyntaxRewriter {
+public class VariableValueRewriter: SyntaxRewriter {
+	var varName: String? = nil, varValue: String? = nil
+
 	public override func visit(_ token: TokenSyntax) -> Syntax {
 //		print("--\(token) \(token.tokenKind)")
 //		guard case let .identifier(varName) = token.tokenKind {

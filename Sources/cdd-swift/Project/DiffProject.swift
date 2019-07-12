@@ -12,7 +12,10 @@ enum LogEntry {
 	case failure(String)
 }
 
+
+
 extension ProjectReader {
+
 	func diff(against project: Project) {
 		// Settings.swift
 		if self.specFile.modificationDate.compare(project.info.modificationDate) == .orderedDescending {
@@ -23,6 +26,12 @@ extension ProjectReader {
 			try self.settingsFile.apply(projectInfo: project.info)
 //			self.specFile.syntax.info.update(projectInfo: project.info)
 		}
+
+		// models
+
+		
+
+		// requests
 	}
 
 //	func diff(against spec: SpecFile) -> Project {

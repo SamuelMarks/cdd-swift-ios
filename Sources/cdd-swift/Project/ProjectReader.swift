@@ -34,6 +34,10 @@ struct SourceFile {
 		do {
 			let source = try SyntaxTreeParser.parse(self.path)
 			let rewriter = VariableRewriter()
+
+			rewriter.varName = "HOST"
+			rewriter.varValue = "shoe:80"
+			
 			self.syntax = rewriter.visit(source) as! SourceFileSyntax
 			return .success("successfully rewrote \(self.path.path)")
 		} catch let err {
