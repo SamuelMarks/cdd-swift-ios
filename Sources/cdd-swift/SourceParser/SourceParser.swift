@@ -39,8 +39,6 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
             }
         }
     }
-    
-    print(requests)
 
 	return models
 }
