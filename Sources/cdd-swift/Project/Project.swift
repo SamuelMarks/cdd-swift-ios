@@ -14,7 +14,7 @@ struct Settings {
 struct Project {
 	var info: ProjectInfo
 	var models: [String: Model]
-	var routes: [String: Route]
+	var routes: [Request]
 }
 
 struct ProjectInfo {
@@ -53,17 +53,9 @@ enum PrimitiveType: String {
     case Bool
 }
 
-struct Route {
-	let paths: [RoutePath]
-}
-
-struct RoutePath {
-	let urlPath: String
-	let requests: [Request]
-}
-
 struct Request {
 	let method: Method
+    let urlPath: String
 }
 
 enum Method {

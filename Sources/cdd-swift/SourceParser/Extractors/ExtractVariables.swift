@@ -36,9 +36,10 @@ class ExtractVariables : SyntaxVisitor {
 
 			if type(of: child) == InitializerClauseSyntax.self {
 					for c in child.children {
-                        let value = "\(c)".trimmedWhiteSpaces
+                        var value = "\(c)".trimmedWhiteSpaces
 						if type(of: c) == StringLiteralExprSyntax.self {
                             variable?.type = Type.primitive(.String)
+                            value = value.replacingOccurrences(of: "\"", with: "")
                         }
                         else if type(of: c) == IntegerLiteralExprSyntax.self {
                             variable?.type = Type.primitive(.Int)
