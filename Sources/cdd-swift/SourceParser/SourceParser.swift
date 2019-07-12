@@ -10,12 +10,12 @@ import SwiftSyntax
 
 let MODEL_PROTOCOL = "APIModel"
 
-func parseModels(syntaxes: [SourceFileSyntax]) -> [String: Model] {
+func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
 	let visitor = ClassVisitor()
 	var models: [String: Model] = [:]
 
-	for syntax in syntaxes {
-		syntax.walk(visitor)
+	for sourceFile in sourceFiles {
+		sourceFile.syntax.walk(visitor)
 	}
 
 	for klass in visitor.klasses {
@@ -29,12 +29,12 @@ func parseModels(syntaxes: [SourceFileSyntax]) -> [String: Model] {
 
 let ROUTE_PROTOCOL = "APIRequest"
 
-func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
+func parseRoutes(sourceFiles: [SourceFile]) -> [String: Route] {
 	let visitor = ClassVisitor()
 	var routes: [String: Route] = [:]
 
-	for syntax in syntaxes {
-		syntax.walk(visitor)
+	for sourceFile in sourceFiles {
+		sourceFile.syntax.walk(visitor)
 	}
 
 	for klass in visitor.klasses {
@@ -51,9 +51,9 @@ func parseRoutes(syntaxes: [SourceFileSyntax]) -> [String: Route] {
 	return routes
 }
 
-func parseProjectInfo(syntax: SourceFileSyntax) -> Result<ProjectInfo, Swift.Error> {
+func parseProjectInfo(_ source: SourceFile) -> Result<ProjectInfo, Swift.Error> {
 	let visitor = ExtractVariables()
-	syntax.walk(visitor)
+	source.syntax.walk(visitor)
 
 	guard let hostname = visitor.variables["HOST"], let endpoint = visitor.variables["ENDPOINT"] else {
 		return .failure(
@@ -65,5 +65,5 @@ func parseProjectInfo(syntax: SourceFileSyntax) -> Result<ProjectInfo, Swift.Err
 			ProjectError.InvalidHostname("Invalid hostname format: \(hostname), \(endpoint)"))
 	}
 
-	return .success(ProjectInfo(hostname: hosturl))
+	return .success(ProjectInfo(modificationDate: source.modificationDate, hostname: hosturl))
 }

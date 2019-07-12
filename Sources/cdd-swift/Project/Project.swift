@@ -18,6 +18,7 @@ struct Project {
 }
 
 struct ProjectInfo {
+	var modificationDate: Date
 	var hostname: URL
 }
 

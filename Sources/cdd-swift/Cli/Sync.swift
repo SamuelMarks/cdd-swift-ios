@@ -10,12 +10,7 @@ class SyncCommand: Command {
 	let spec = SwiftCLI.Parameter()
 
 	func execute() throws {
-
-		// spec
-		let specURL: URL
-		if let url = URL(string: spec.value) {
-			specURL = url
-		} else {
+		guard let specURL: URL = URL(string: spec.value) else {
 			exitWithError("Must pass valid spec. It can be a path or a url")
 		}
 
@@ -26,24 +21,29 @@ class SyncCommand: Command {
 
 		do {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
-			let specFile = try readOpenApi(path: spec.absoluteString)
 
-			printFileResults(fileResults: [projectReader.settingsSyntax])
-			printFileResults(fileResults: projectReader.parsableFiles)
+//			printFileResults(fileResults: [projectReader.settingsSyntax])
+//			printFileResults(fileResults: projectReader.parsableFiles)
 
 			switch projectReader.generateProject() {
 			case .success(let project):
-				print("[OK] Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.".green)
+				printSuccess("Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.")
 
-				let _ = project.syncSettings(spec: specFile)
+//				let _ = project.syncSettings(spec: projectReader.specFile)
 				// todo write result
+
+				project.diff(against: projectReader.specFile)
 
 			case .failure(let error):
 				printError(error)
 			}
-			
+
+//			printSuccess("Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.")
+
+
+
 		} catch (let err) {
-			exitWithError("\(err.localizedDescription)")
+			exitWithError(err)
 		}
 	}
 }
@@ -63,8 +63,17 @@ func printFileResults<T>(fileResults: [FileResult<T>]) {
 	}
 }
 
+func printSuccess(_ string: String) {
+	print("[OK] \(string)".green)
+}
+
 func exitWithError(_ string: String) -> Never {
 	print("[Error] \(string)".red)
+	exit(EXIT_FAILURE)
+}
+
+func exitWithError(_ error: Swift.Error) -> Never {
+	print("[Error] \(error)".red)
 	exit(EXIT_FAILURE)
 }
 

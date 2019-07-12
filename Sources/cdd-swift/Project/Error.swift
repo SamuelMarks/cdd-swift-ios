@@ -10,6 +10,7 @@ import Foundation
 enum ProjectError : Error {
 	case InvalidSettingsFile(String)
 	case InvalidHostname(String)
+	case OpenAPIFile(String)
 
 	var localizedDescription: String {
 		switch self {
@@ -17,7 +18,8 @@ enum ProjectError : Error {
 			return "Invalid hostname: \(msg)"
 		case .InvalidSettingsFile(let msg):
 			return "Invalid settings file: \(msg)"
+		case .OpenAPIFile(let msg):
+			return "OpenAPI file: \(msg)"
 		}
 	}
 }
-

@@ -15,16 +15,16 @@ class GenerateCommand: Command {
 		do {
 			let result = try syntax.result.get()
 
-			for (_, model) in parseModels(syntaxes: [result]) {
-				print(model)
-			}
-
-			for (_, route) in parseRoutes(syntaxes: [result]) {
-				print(route)
-			}
+//			for (_, model) in parseModels(sourceFiles: [result]) {
+//				print(model)
+//			}
+//
+//			for (_, route) in parseRoutes(sourceFiles: [result]) {
+//				print(route)
+//			}
 		} catch (let err) {
-            throw err
 			print("error \(err)")
+            throw err
 		}
 	}
 

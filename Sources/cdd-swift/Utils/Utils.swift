@@ -36,3 +36,24 @@ func trim(_ string: String) -> String {
 		.trimmingCharacters(in: .whitespacesAndNewlines)
 		.replacingOccurrences(of: "\"", with: "")
 }
+
+func fileLastModifiedDate(file: String) -> Date? {
+	do {
+		let attributes = try FileManager.default.attributesOfItem(atPath: file)
+		return attributes[FileAttributeKey.modificationDate] as? Date
+	}
+	catch let error as NSError {
+		print("Ooops! Something went wrong: \(error)")
+		return nil
+	}
+}
+
+func fileLastModifiedDate(url: URL) throws -> Date {
+	do {
+		let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+		return attributes[FileAttributeKey.modificationDate] as! Date
+	}
+	catch let error {
+		throw ProjectError.InvalidSettingsFile("could not determine modified date for file: \(url.path)")
+	}
+}
