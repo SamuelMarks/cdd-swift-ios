@@ -10,7 +10,7 @@ class SyncCommand: Command {
 	let spec = SwiftCLI.Parameter()
 
 	func execute() throws {
-		guard let specURL: URL = URL(string: "/Users/alexei/Documents/Projects/cdd-swift-ios/Template") else {
+		guard let specURL: URL = URL(string: spec.value) else {
 			exitWithError("Must pass valid spec. It can be a path or a url")
 		}
 
@@ -20,7 +20,7 @@ class SyncCommand: Command {
 	func sync(spec: URL) {
 
 		do {
-			let projectReader = try ProjectReader(path: spec.path)
+			let projectReader = try ProjectReader(path: spec.absoluteString)
 
 			switch projectReader.generateProject() {
 			case .success(let project):
