@@ -22,25 +22,14 @@ class SyncCommand: Command {
 		do {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
 
-//			printFileResults(fileResults: [projectReader.settingsSyntax])
-//			printFileResults(fileResults: projectReader.parsableFiles)
-
 			switch projectReader.generateProject() {
 			case .success(let project):
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.")
-
-//				let _ = project.syncSettings(spec: projectReader.specFile)
-				// todo write result
-
 				project.diff(against: projectReader.specFile)
 
 			case .failure(let error):
 				printError(error)
 			}
-
-//			printSuccess("Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.")
-
-
 
 		} catch (let err) {
 			exitWithError(err)
