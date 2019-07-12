@@ -9,29 +9,55 @@ import Foundation
 
 import SwiftSyntax
 
-public class VariableRewriter: SyntaxRewriter {
-	public override func visit(_ token: TokenSyntax) -> Syntax {
-//		print("--\(token) \(token.tokenKind)")
-//		guard case let .identifier(varName) = token.tokenKind {
-//			print("found car name: \(varName)")
-//		}
+extension SourceFile {
+	mutating func renameVariable(varName: String, varValue: String) -> Result<(), Swift.Error> {
+		do {
+			let rewriter = VariableValueRewriter()
+			rewriter.varName = "HOST"
+			rewriter.varValue = "FUCKYOU:999"
+			self.syntax = rewriter.visit(self.syntax) as! SourceFileSyntax
+			return .success(())
 
+		} catch let err {
+			return .failure(err)
+		}
+
+	}
+}
+
+public class VariableValueRewriter: SyntaxRewriter {
+	var varName: String? = nil
+	var varValue: String? = nil
+	var node: Syntax?
+
+	public override func visit(_ node: PatternBindingSyntax) -> Syntax {
+		let rewriter = StringLiteralRewriter()
+
+		for child in node.children {
+			if type(of: child) == IdentifierPatternSyntax.self {
+				if trim("\(child)") == self.varName {
+					rewriter.varValue = self.varValue
+				}
+			}
+		}
+
+		return rewriter.visit(node)
+	}
+}
+
+public class StringLiteralRewriter: SyntaxRewriter {
+	var varValue: String? = nil
+
+	public override func visit(_ token: TokenSyntax) -> Syntax {
 		switch token.tokenKind {
-		case .identifier(let varName):
-//			print("found varName name: \(varName)")
-			()
-		case .stringLiteral(let stringLiteral):
-//			print("found stringLiteral name: \(stringLiteral)")
-			()
+		case .stringLiteral(_):
+			if case let .some(vv) = varValue {
+				return token.withKind(.stringLiteral(vv))
+			}
 		default:
 			()
 		}
 
-//		guard case let  (text) = token.tokenKind else {
-//			return token
-//		}
-//
-//		return token.withKind(.stringLiteral(zalgo(text)))
 		return token
 	}
 }
