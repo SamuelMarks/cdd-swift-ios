@@ -32,15 +32,8 @@ struct SourceFile {
 
 	mutating func apply(projectInfo: ProjectInfo) -> Result<String, Swift.Error> {
 		do {
-			self.renameVariable(varName: "HOST", varValue: "yes:80")
-
-//			let source = try SyntaxTreeParser.parse(self.path)
-//			let rewriter = VariableRewriter()
-//
-//			rewriter.varName = "HOST"
-//			rewriter.varValue = "shoe:80"
-//
-//			self.syntax = rewriter.visit(source) as! SourceFileSyntax
+			try self.renameVariable(varName: "HOST", varValue: projectInfo.hostname.absoluteString).get()
+			
 			return .success("successfully rewrote \(self.path.path)")
 		} catch let err {
 			return .failure(err)

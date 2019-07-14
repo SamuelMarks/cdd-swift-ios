@@ -7,6 +7,7 @@ class SyncCommand: Command {
 	let shortDescription = "Synchronizes OpenAPI spec to a CDD-Swift project"
 	//		let verbose = Flag("--verbose", "-v", description: "Show verbose output", defaultValue: false)
 	//		let silent = Flag("--silent", "-s", description: "Silence standard output", defaultValue: false)
+	//		let silent = Flag("--dry-run", "-d", description: "Dry run; no changes are written to disk", defaultValue: false)
 	let spec = SwiftCLI.Parameter()
 
 	func execute() throws {
@@ -28,6 +29,13 @@ class SyncCommand: Command {
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
 				projectReader.diff(against: project)
+
+				print(projectReader.settingsFile.syntax)
+
+//				if let .success(project) = projectReader.generateProject() {
+//					print(project.info.)
+//				}
+
 //				projectReader.write()
 //				let spec = project.diff(against: projectReader.specFile)
 

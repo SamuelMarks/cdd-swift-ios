@@ -13,8 +13,8 @@ extension SourceFile {
 	mutating func renameVariable(varName: String, varValue: String) -> Result<(), Swift.Error> {
 		do {
 			let rewriter = VariableValueRewriter()
-			rewriter.varName = "HOST"
-			rewriter.varValue = "FUCKYOU:999"
+			rewriter.varName = varName
+			rewriter.varValue = varValue
 			self.syntax = rewriter.visit(self.syntax) as! SourceFileSyntax
 			return .success(())
 
