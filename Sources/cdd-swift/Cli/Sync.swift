@@ -25,7 +25,7 @@ class SyncCommand: Command {
 			switch projectReader.generateProject() {
 
 			case .success(let project):
-				printSuccess("Successfully generated project with \(project.models.count) models, \(project.routes.count) routes.")
+				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
 				projectReader.diff(against: project)
 //				projectReader.write()
