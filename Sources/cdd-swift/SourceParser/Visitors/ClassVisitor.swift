@@ -38,6 +38,7 @@ class ClassVisitor : SyntaxVisitor {
             klass.typeAliases = extractAliases.aliases
             klasses.append(klass)
 		}
+        
 		return .skipChildren
 	}
     

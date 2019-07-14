@@ -6,6 +6,16 @@
 //
 import Foundation
 
+private extension String {
+    func formated() -> String {
+        let bookedWords = ["Error","Class"]
+        var text = self.capitalizingFirstLetter()
+        for word in bookedWords {
+            text = text.replacingOccurrences(of: word, with: "API\(word)")
+        }
+        return text
+    }
+}
 extension PrimitiveType {
     static func fromSwagger(string: String) -> PrimitiveType? {
         if string == "integer" {
@@ -24,7 +34,7 @@ extension PrimitiveType {
 extension Project {
     
     private static func generateRequestName(path:String, method:String) -> String {
-        return path.components(separatedBy: ["/","\\","(",")"]).map {$0.capitalizingFirstLetter()}.joined() + method.capitalizingFirstLetter() + "Request"
+        return path.components(separatedBy: ["/","\\","(",")","{","}"]).map {$0.formated()}.joined() + method.formated() + "Request"
     }
     
     private static func parseType(_ json: [String:Any], couldBeObjectName: String = "") -> (Type?,Model?) {
@@ -75,8 +85,10 @@ extension Project {
         return model
     }
     
+
+    
     static func fromSwagger(_ spec: SwaggerSpec) -> Project? {
-        let bookedWords = ["Error","Class"]
+        
         
         var arrayTypes: [(name:String,type:String)] = []
         var models:[Model] = []
@@ -85,13 +97,13 @@ extension Project {
             if let dataType = schema.value.metadata.type {
                 switch dataType {
                 case .object:
-                    if let model = parseObject(name: schema.name, json: schema.value.metadata.json) {
+                    if let model = parseObject(name: schema.name.formated(), json: schema.value.metadata.json) {
                         models.append(model)
                     }
                 case .array:
                     if let items = schema.value.metadata.json["items"] as? [String:Any] {
                         if let ref = items["$ref"] as? String, let type = ref.components(separatedBy: "/").last {
-                            arrayTypes.append((schema.name.capitalizingFirstLetter(),"[\(type.capitalizingFirstLetter())]"))
+                            arrayTypes.append((schema.name.formated(),"[\(type.formated())]"))
                         }
                         else
                             if var model = parseObject(name: schema.name, json: items) {
@@ -101,7 +113,7 @@ extension Project {
                             else if let type = items["type"] as? String {
                                 var field = APIFieldD(name: schema.name, type: type)
                                 field.description = schema.value.metadata.description
-                                arrayTypes.append((schema.name.capitalizingFirstLetter(),"[\(field.type)]"))
+                                arrayTypes.append((schema.name.formated(),"[\(field.type)]"))
                         }
                     }
                 case .string:
@@ -136,7 +148,7 @@ extension Project {
                     }
                     else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
                         var field = Variable(name: name)
-                        field.type = .complex(name.capitalizingFirstLetter())
+                        field.type = .complex(name.formated())
                         field.optional = required
                         field.description = parameter.value.description
                         fields.append(field)
@@ -158,7 +170,7 @@ extension Project {
                                 let schema = (content.values.first as? [String:Any])?.values.first as? [String:Any],
                                 let ref = schema["$ref"] as? String,
                                 let name = ref.components(separatedBy: "/").last{
-                                errorNameResponse = name.capitalizingFirstLetter()
+                                errorNameResponse = name.formated()
                             }
                         }
                         else {
@@ -167,14 +179,14 @@ extension Project {
                                 if let ref = schema["$ref"] as? String,
                                     let name = ref.components(separatedBy: "/").last{
                                     
-                                    responseName = name.capitalizingFirstLetter()
+                                    responseName = name.formated()
                                 }
                                 else if let type = schema["type"] as? String {
                                     if type == "array",
                                         let items = schema["items"] as? [String:Any],
                                         let ref = items["$ref"] as? String,
                                         let name = ref.components(separatedBy: "/").last{
-                                        responseName = "[\(name.capitalizingFirstLetter())]"
+                                        responseName = "[\(name.formated())]"
                                     }
                                 }
                             }
@@ -187,7 +199,7 @@ extension Project {
             }) {
                 responseName = arrType.type
             }
-            let path = operation.path.replacingOccurrences(of: "{", with: "\\(").replacingOccurrences(of: "}", with: ")")
+            let path = operation.path
             
             let request = Request(name: generateRequestName(path: path, method: method),
                                   method: Method(rawValue: method) ?? .post,

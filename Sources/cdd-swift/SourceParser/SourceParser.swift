@@ -11,17 +11,17 @@ import SwiftSyntax
 let MODEL_PROTOCOL = "APIModel"
 let REQUEST_PROTOCOL = "APIRequest"
 
-func parseModels(sourceFiles: [SourceFile]) -> [Model] {
+func parse(sourceFiles: [SourceFile]) -> ([Model],[Request]) {
 	let visitor = ClassVisitor()
-	var models: [Model] = []
-    var requests:[Request] = []
+    var models: [String:Model] = [:]
+    var requests:[String:Request] = [:]
 	for sourceFile in sourceFiles {
 		sourceFile.syntax.walk(visitor)
 	}
 
 	for klass in visitor.klasses {
 		if klass.interfaces.contains(MODEL_PROTOCOL) {
-			models.append(Model(name: klass.name, vars: Array(klass.vars.values)))
+			models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values))
 		}
 	}
     
@@ -35,36 +35,12 @@ func parseModels(sourceFiles: [SourceFile]) -> [Model] {
                 var vars = klass.vars
                 vars.removeValue(forKey: "urlPath")
                 vars.removeValue(forKey: "method")
-                requests.append(Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
+                requests[klass.name] = Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values))
             }
         }
     }
 
-	return models
-}
-
-func parseRequests(sourceFiles: [SourceFile]) -> [Request] {
-    let visitor = ClassVisitor()
-    var requests:[Request] = []
-    for sourceFile in sourceFiles {
-        sourceFile.syntax.walk(visitor)
-    }
-    
-    for klass in visitor.klasses {
-        if klass.interfaces.contains(REQUEST_PROTOCOL) {
-            if let responseType = klass.typeAliases["ResponseType"],
-                let errorType = klass.typeAliases["ErrorType"],
-                let path = klass.vars["urlPath"]?.value,
-                let methodRaw = klass.vars["method"]?.value,
-                let method = Method(rawValue:methodRaw){
-                var vars = klass.vars
-                vars.removeValue(forKey: "urlPath")
-                vars.removeValue(forKey: "method")
-                requests.append(Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
-            }
-        }
-    }
-    return requests
+	return (Array(models.values),Array(requests.values))
 }
 
 func parseProjectInfo(_ source: SourceFile) -> Result<ProjectInfo, Swift.Error> {

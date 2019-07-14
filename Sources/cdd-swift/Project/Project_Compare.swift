@@ -56,8 +56,22 @@ extension SwaggerSpec {
     mutating func apply(_ changes: [Changes]) {
         for change in changes {
             switch change {
-            case .insertion(_):
+            case .insertion(let object):
+                switch object {
+                case .model(let model, _):
+                    
+//                    ComponentObject(name: model, value: Schema(metadata: , type: <#T##SchemaType#>))
+//                case .request(let request, _):
+//                    break
+//                }
+//
+//
+//                Schema(metadata: <#T##Metadata#>, type: SchemaType.)
                 break
+                case .request(let request, _):
+                    break
+                    
+                }
             case .deletion(let object):
                 switch object {
                 case .model(let model, _):

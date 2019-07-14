@@ -31,6 +31,6 @@ struct PetsPetIdGetRequest : APIRequest {
     var urlPath: String { return "/pets/\(petId)" }
     var method: String { return .get }
     /// The id of the pet to retrieve
-    let petId: String
+    let petId: Float
 }
 

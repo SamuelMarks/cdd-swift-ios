@@ -80,10 +80,11 @@ class ProjectReader {
 				ProjectError.InvalidSettingsFile("Cannot parse Settings.swift"))
 		}
 
+        let objects = parse(sourceFiles: self.sourceFiles)
 		return .success(Project(
 			info: projectInfo,
-			models: parseModels(sourceFiles: self.sourceFiles),
-			requests: parseRequests(sourceFiles: self.sourceFiles)
+			models: objects.0,
+			requests: objects.1
 		))
 	}
 
