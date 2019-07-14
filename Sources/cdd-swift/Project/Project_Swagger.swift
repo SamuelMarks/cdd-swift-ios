@@ -1,86 +1,86 @@
 //
-//  YmlToSwift.swift
+//  Project_Swagger.swift
 //  cdd-swift
 //
-//  Created by Alexei on 08/07/2019.
+//  Created by Alexei on 14/07/2019.
 //
 import Foundation
-//import PathKit
-import Yams
-import JSONUtilities
 
-class YmlToSwift {
-    
-    static let testUrl = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/swagger.yaml")
-    static let testUrlForSwift = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/REST.swift")
-    
-    static let testUrlForTestObjects = URL(fileURLWithPath: "/Users/alexei/Documents/Projects/cdd-swift-ios/Examples/TestObjects.string")
-    
-    
-    func getSpec(url: URL) throws -> SwaggerSpec {
-        let data: Data
-        do {
-            data = try Data(contentsOf: url)
-        } catch {
-            throw SwaggerError.loadError(url)
+extension PrimitiveType {
+    static func fromSwagger(string: String) -> PrimitiveType? {
+        if string == "integer" {
+            return .Int
         }
-        
-        if let string = String(data: data, encoding: .utf8) {
-            return try SwaggerSpec.init(string: string)
-        } else if let string = String(data: data, encoding: .ascii) {
-            return try SwaggerSpec.init(string: string)
-        } else {
-            throw SwaggerError.parseError("Swagger doc is not utf8 or ascii encoded")
+        else if string == "number" {
+            return .Float
         }
+        else if string == "boolean" {
+            return .Bool
+        }
+        return .String
+    }
+}
+
+extension Project {
+    
+    private static func generateRequestName(path:String, method:String) -> String {
+        return path.components(separatedBy: ["/","\\","(",")"]).map {$0.capitalizingFirstLetter()}.joined() + method.capitalizingFirstLetter() + "Request"
     }
     
-    func parseType(_ json: [String:Any], couldBeObjectName: String = "") -> (String,APIModelD?) {
+    private static func parseType(_ json: [String:Any], couldBeObjectName: String = "") -> (Type?,Model?) {
         if let type = json["type"] as? String {
             if type == "array", let items = json["items"] as? [String:Any] {
-                let res = parseType(items,couldBeObjectName: couldBeObjectName)
-                return ("[" + res.0 + "]", res.1)
+                let res = parseType(items, couldBeObjectName: couldBeObjectName)
+                if let type = res.0 {
+                    return (.array(type), res.1)
+                }
+                else {
+                    return (nil, res.1)
+                }
             }
             else
                 if type == "object" {
                     if let model = parseObject(name: couldBeObjectName, json: json) {
-                        return (couldBeObjectName, model)
+                        return (.complex(couldBeObjectName), model)
                     }
                 }
-                else {
-                    return (type,nil)
+                else if let type = PrimitiveType.fromSwagger(string: type) {
+                    return (.primitive(type),nil)
             }
         }
-        return ("",nil)
+        
+        return (nil,nil)
     }
     
-    func parseObject(name: String, json: [String:Any]) -> APIModelD? {
+    private static func parseObject(name: String, json: [String:Any]) -> Model? {
         guard let properties = json["properties"] as? [String:[String:Any]] else { return nil }
         let required = (json["required"] as? [String]) ?? []
-        var fields: [APIFieldD] = []
-        var additionalModels: [APIModelD] = []
+        var fields: [Variable] = []
+        var additionalModels: [Model] = []
         for property in properties {
             let result = parseType(property.value, couldBeObjectName: property.key)
             if let model = result.1 {
                 additionalModels.append(model)
             }
-            var field = APIFieldD(name: property.key, type: result.0 + (required.contains(property.key) ? "" : "?"))
-            field.description = property.value["description"] as? String
-            if field.clearType.count > 0 {
+            if let type = result.0 {
+                var field = Variable(name: property.key)
+                field.optional = required.contains(property.key)
+                field.type = type
+                field.description = property.value["description"] as? String
                 fields.append(field)
             }
         }
-        var model = APIModelD(name: name, fields: fields)
-        model.models = additionalModels
+        var model = Model(name: name, vars: fields)
+//        model.models = additionalModels /// Need to finish
         return model
     }
     
-    func run(urlToSpec: URL, urlForSwiftFile: URL) throws {
+    static func fromSwagger(_ spec: SwaggerSpec) -> Project? {
         let bookedWords = ["Error","Class"]
-        let spec:SwaggerSpec = try getSpec(url: urlToSpec)
         
         var arrayTypes: [(name:String,type:String)] = []
-        var models:[APIModelD] = []
-        var enums: [APIFieldD] = []
+        var models:[Model] = []
+        var enums: [APIFieldD] = [] // need to finish
         for schema in spec.components.schemas {
             if let dataType = schema.value.metadata.type {
                 switch dataType {
@@ -95,9 +95,9 @@ class YmlToSwift {
                         }
                         else
                             if var model = parseObject(name: schema.name, json: items) {
-                                model.shouldBeUsedAsArray = true
+//                                model.shouldBeUsedAsArray = true /// need to finish
                                 models.append(model)
-                        }
+                            }
                             else if let type = items["type"] as? String {
                                 var field = APIFieldD(name: schema.name, type: type)
                                 field.description = schema.value.metadata.description
@@ -117,23 +117,27 @@ class YmlToSwift {
             }
         }
         
-        var requests: [APIRequestD] = []
+        var requests: [Request] = []
         for operation in spec.operations {
             let method = operation.method.rawValue
-            var fields:[APIFieldD] = []
+            var fields:[Variable] = []
             for parameter in operation.parameters {
                 let json = parameter.value.json
                 if let name = json["name"] as? String,
                     let required = json["required"] as? Bool,
                     let schema = json["schema"] as? [String:String] {
                     
-                    if let type = schema["type"] {
-                        var field = APIFieldD(name: name, type: type + (required ? "" : "?"))
+                    if let typeRaw = schema["type"], let type = PrimitiveType.fromSwagger(string: typeRaw) {
+                        var field = Variable(name: name)
+                        field.type = .primitive(type)
+                        field.optional = required
                         field.description = parameter.value.description
                         fields.append(field)
                     }
                     else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
-                        var field = APIFieldD(name: name, type: name.capitalizingFirstLetter())
+                        var field = Variable(name: name)
+                        field.type = .complex(name.capitalizingFirstLetter())
+                        field.optional = required
                         field.description = parameter.value.description
                         fields.append(field)
                     }
@@ -184,41 +188,21 @@ class YmlToSwift {
                 responseName = arrType.type
             }
             let path = operation.path.replacingOccurrences(of: "{", with: "\\(").replacingOccurrences(of: "}", with: ")")
-            let request = APIRequestD(path: path, method: method, fields: fields, responseType: responseName.capitalizingFirstLetter(),errorType: errorNameResponse.capitalizingFirstLetter(), description: operation.description)
+            
+            let request = Request(name: generateRequestName(path: path, method: method),
+                                  method: Method(rawValue: method) ?? .post,
+                                  urlPath: path,
+                                  responseType: responseName,
+                                  errorType: errorNameResponse,
+                                  vars: fields)
             requests.append(request)
         }
+
         
-        var text = ""
-        for enumm in enums {
-            text += SwiftWriter().writeEnum(enumm)
-            text += "\n"
-        }
-        for model in models {
-            text += SwiftWriter().writeModel(model)
-            text += "\n"
-        }
-        
-        for request in requests {
-            text += SwiftWriter().writeRequest(request)
-            text += "\n"
-        }
-        
-        for word in bookedWords {
-            text = text.replacingOccurrences(of: " \(word) ", with: " API\(word)")
-        }
+        guard let path = spec.servers.first?.url, let url = URL(string:path) else { return nil }
         
         
-        print(text)
-        try text.write(to: urlForSwiftFile, atomically: false, encoding: .utf8)
-        //print(spec)
-        
-        let modelsJSON = models.map {$0.json()}
-        let requestsJSON = requests.map {$0.json()}
-        let JSON = ["models":modelsJSON,"requests":requestsJSON]
-        
-        let jsonData = try? JSONSerialization.data(withJSONObject: JSON, options: .prettyPrinted)
-        try? jsonData?.write(to: YmlToSwift.testUrlForTestObjects)
-        
+        return Project(info: ProjectInfo(modificationDate: Date(), hostname: url), models: models, requests: requests)
     }
     
 }

@@ -28,7 +28,7 @@ class WriteToYmlTest {
         }
     }
     
-    func run() throws {
+    func writeChangesToYaml() throws {
         let spec:SwaggerSpec = try getSpec(url: testUrl)
         
         guard let data = try? JSONEncoder().encode(spec),
@@ -38,11 +38,7 @@ class WriteToYmlTest {
         
         
         print(json)
-        
-//        if let jsonData = try? JSONSerialization.data(withJSONObject: spec.json, options: .prettyPrinted),
-//        let json = try? JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? [String: Any]  {
-//            print(json)
-//        }
+     
         
         
     }

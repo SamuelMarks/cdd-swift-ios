@@ -11,9 +11,9 @@ import SwiftSyntax
 let MODEL_PROTOCOL = "APIModel"
 let REQUEST_PROTOCOL = "APIRequest"
 
-func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
+func parseModels(sourceFiles: [SourceFile]) -> [Model] {
 	let visitor = ClassVisitor()
-	var models: [String: Model] = [:]
+	var models: [Model] = []
     var requests:[Request] = []
 	for sourceFile in sourceFiles {
 		sourceFile.syntax.walk(visitor)
@@ -21,7 +21,7 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
 
 	for klass in visitor.klasses {
 		if klass.interfaces.contains(MODEL_PROTOCOL) {
-			models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values))
+			models.append(Model(name: klass.name, vars: Array(klass.vars.values)))
 		}
 	}
     
@@ -35,7 +35,7 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
                 var vars = klass.vars
                 vars.removeValue(forKey: "urlPath")
                 vars.removeValue(forKey: "method")
-                requests.append(Request(method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
+                requests.append(Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
             }
         }
     }
@@ -60,7 +60,7 @@ func parseRequests(sourceFiles: [SourceFile]) -> [Request] {
                 var vars = klass.vars
                 vars.removeValue(forKey: "urlPath")
                 vars.removeValue(forKey: "method")
-                requests.append(Request(method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
+                requests.append(Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
             }
         }
     }

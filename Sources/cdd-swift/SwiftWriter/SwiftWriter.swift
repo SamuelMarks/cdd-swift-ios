@@ -6,6 +6,7 @@
 
 import  Foundation
 class SwiftWriter {
+    
     func writeRequest(_ request: APIRequestD) -> String {
 
         let name = request.path.components(separatedBy: ["/","\\","(",")"]).map {$0.capitalizingFirstLetter()}.joined()
@@ -18,7 +19,7 @@ class SwiftWriter {
         "\ttypealias ResponseType = " + request.responseType,
         "\ttypealias ErrorType = \(request.errorType) ",
         "\tvar urlPath: String { return \"\(request.path)\" }",
-        "\tfunc method() -> HTTPMethod { return .\(request.method) }"]
+        "\tvar method: String { return .\(request.method) }"]
 
         request.fields.forEach { (field) in
             if let description = field.description {

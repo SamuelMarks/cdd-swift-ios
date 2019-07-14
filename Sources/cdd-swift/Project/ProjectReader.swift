@@ -53,7 +53,7 @@ class ProjectReader {
 	let specFile: SpecFile
 	var settingsFile: SourceFile
 	let sourceFiles: [SourceFile]
-
+    
 	init(path: String) throws {
 		self.projectPath = path
 

@@ -1,23 +1,29 @@
-struct Testy: APIModel {
-    var someString:    String
-    
-    
-    var someInt: Int
-//    var someArray: [Testy]
-//    var flo: Float = 0
-//    var hidenString =    "fssfs"
-//    var hidInt = 433
-//    var hidBool = true
-//    var hidFloat = 4.44
+struct Pet : APIModel {
+    let tag: String?
+    let name: String
+    let id: Int
 }
 
-struct Gob : APIRequest {
-    typealias ResponseType = Booking
-    typealias ErrorType = SomeNewResponse
-    
-    var urlPath: String {     return     "/api/v2/booking/create" }
-    var method: HTTPMethod {     return    .post }
-    let tourId: String?
-    let scheduleId: String?
+struct APIError: APIModel {
+    let code: Int
+    let message: String
+}
+
+struct PetsGetRequest : APIRequest {
+    typealias ResponseType = [Pet]
+    typealias ErrorType = APIError
+    var urlPath: String { return "/pets" }
+    var method: String { return .get }
+    /// How many items to return at one time (max 100)
+    let limit: Int?
+}
+
+struct PetsPetIdGetRequest : APIRequest {
+    typealias ResponseType = [Pet]
+    typealias ErrorType = APIError
+    var urlPath: String { return "/pets/\(petId)" }
+    var method: String { return .get }
+    /// The id of the pet to retrieve
+    let petId: String
 }
 
