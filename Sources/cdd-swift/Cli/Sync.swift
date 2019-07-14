@@ -28,7 +28,7 @@ class SyncCommand: Command {
 			case .success(let project):
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
-				projectReader.diff(against: project)
+//				let diffedProject = projectReader.diff()
 
 				print(projectReader.settingsFile.syntax)
 

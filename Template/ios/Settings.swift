@@ -1,2 +1,2 @@
-var HOST = "localhost:80"
-let ENDPOINT = "/api/v1"
+var HOST = "http://petstore.swagger.io"
+let ENDPOINT = "/v1"

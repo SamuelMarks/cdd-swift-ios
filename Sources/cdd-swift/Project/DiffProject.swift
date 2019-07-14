@@ -13,18 +13,25 @@ enum LogEntry {
 }
 
 
-
 extension ProjectReader {
 
-	func diff(against project: Project) {
+	func diff() -> Project {
+		var info: ProjectInfo
+		var models:[Model] = []
+		var requests:[Request] = []
+		let project:Project = self.generateProject()
+		let specProject:Project = self.specFile.generateProject()
+
 		// Settings.swift
 		if self.specFile.modificationDate.compare(project.info.modificationDate) == .orderedDescending {
 			// spec is newer
-			try self.settingsFile.apply(projectInfo: project.info)
+//			try self.settingsFile.apply(projectInfo: project.info)
+			info = specProject.info
 		} else {
 			// settings.swift is newer
-			try self.settingsFile.apply(projectInfo: project.info)
+//			try self.settingsFile.apply(projectInfo: project.info)
 //			self.specFile.syntax.info.update(projectInfo: project.info)
+			info = project.info
 		}
 
 		// models

@@ -32,8 +32,9 @@ struct SourceFile {
 
 	mutating func apply(projectInfo: ProjectInfo) -> Result<String, Swift.Error> {
 		do {
-			try self.renameVariable(varName: "HOST", varValue: projectInfo.hostname.absoluteString).get()
-			
+			try self.renameVariable(varName: "HOST", varValue: projectInfo.hostname.host!).get()
+			try self.renameVariable(varName: "ENDPOINT", varValue: projectInfo.hostname.path).get()
+
 			return .success("successfully rewrote \(self.path.path)")
 		} catch let err {
 			return .failure(err)
