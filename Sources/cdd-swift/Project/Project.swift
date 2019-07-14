@@ -13,6 +13,17 @@ enum VariableChange {
     case optional(Bool)
 }
 
+enum Changes {
+    case insertion(APIObjectChange)
+    case deletion(APIObjectChange)
+    case update(APIObjectChange)
+}
+
+enum APIObjectChange {
+    case model(Model,ModelChange?)
+    case request(Request,RequestChange?)
+}
+
 enum ModelChange {
     case deletion(Variable)
     case insertion(Variable)
@@ -112,6 +123,7 @@ enum PrimitiveType: String {
 }
 
 struct Request {
+    let name: String
 	let method: Method
     let urlPath: String
     let responseType: String

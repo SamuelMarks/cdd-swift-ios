@@ -29,7 +29,7 @@ extension Components: Encodable {
 
 public struct Components {
     public let securitySchemes: [ComponentObject<SecurityScheme>]
-    public let schemas: [ComponentObject<Schema>]
+    public var schemas: [ComponentObject<Schema>]
     public let parameters: [ComponentObject<Parameter>]
     public let responses: [ComponentObject<Response>]
     public let requestBodies: [ComponentObject<RequestBody>]

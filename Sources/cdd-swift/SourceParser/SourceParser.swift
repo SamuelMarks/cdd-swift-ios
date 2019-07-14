@@ -35,7 +35,7 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
                 var vars = klass.vars
                 vars.removeValue(forKey: "urlPath")
                 vars.removeValue(forKey: "method")
-                requests.append(Request(method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
+                requests.append(Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
             }
         }
     }
@@ -60,7 +60,7 @@ func parseRequests(sourceFiles: [SourceFile]) -> [Request] {
                 var vars = klass.vars
                 vars.removeValue(forKey: "urlPath")
                 vars.removeValue(forKey: "method")
-                requests.append(Request(method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
+                requests.append(Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values)))
             }
         }
     }

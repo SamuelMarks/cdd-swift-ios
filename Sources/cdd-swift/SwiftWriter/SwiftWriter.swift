@@ -18,7 +18,7 @@ class SwiftWriter {
         "\ttypealias ResponseType = " + request.responseType,
         "\ttypealias ErrorType = \(request.errorType) ",
         "\tvar urlPath: String { return \"\(request.path)\" }",
-        "\tfunc method() -> HTTPMethod { return .\(request.method) }"]
+        "\tvar method: String { return .\(request.method) }"]
 
         request.fields.forEach { (field) in
             if let description = field.description {
