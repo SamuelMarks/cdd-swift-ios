@@ -10,8 +10,8 @@ extension Project {
     func compare(_ oldProject: Project) -> [Changes] {
         let project = self
         var projectChanges: [Changes] = []
-        let models = Array(project.models.values)
-        var oldModels = Array(oldProject.models.values)
+        let models = project.models
+        var oldModels = oldProject.models
         
         for model in models {
             if let index = oldModels.firstIndex(where: {$0.name == model.name}) {

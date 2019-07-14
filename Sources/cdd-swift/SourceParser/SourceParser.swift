@@ -11,9 +11,9 @@ import SwiftSyntax
 let MODEL_PROTOCOL = "APIModel"
 let REQUEST_PROTOCOL = "APIRequest"
 
-func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
+func parseModels(sourceFiles: [SourceFile]) -> [Model] {
 	let visitor = ClassVisitor()
-	var models: [String: Model] = [:]
+	var models: [Model] = []
     var requests:[Request] = []
 	for sourceFile in sourceFiles {
 		sourceFile.syntax.walk(visitor)
@@ -21,7 +21,7 @@ func parseModels(sourceFiles: [SourceFile]) -> [String: Model] {
 
 	for klass in visitor.klasses {
 		if klass.interfaces.contains(MODEL_PROTOCOL) {
-			models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values))
+			models.append(Model(name: klass.name, vars: Array(klass.vars.values)))
 		}
 	}
     

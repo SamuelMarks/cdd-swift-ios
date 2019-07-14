@@ -6,6 +6,7 @@
 
 import  Foundation
 class SwiftWriter {
+    
     func writeRequest(_ request: APIRequestD) -> String {
 
         let name = request.path.components(separatedBy: ["/","\\","(",")"]).map {$0.capitalizingFirstLetter()}.joined()

@@ -46,7 +46,7 @@ struct Settings {
 
 struct Project {
 	var info: ProjectInfo
-	var models: [String: Model]
+	var models: [Model]
 	var requests: [Request]
 }
 
@@ -87,6 +87,7 @@ struct Variable {
     var optional: Bool
     var type: Type
     var value: String?
+    var description: String?
     
     init(name: String) {
         self.name = name
