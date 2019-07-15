@@ -1,6 +1,5 @@
 import Foundation
 import SwiftCLI
-import Rainbow
 
 class SyncCommand: Command {
 	let name = "sync"
@@ -21,24 +20,19 @@ class SyncCommand: Command {
 	func sync(spec: URL) {
 
 		do {
-			var projectReader = try ProjectReader(path: spec.absoluteString)
+			let projectReader = try ProjectReader(path: spec.absoluteString)
 
 			switch projectReader.generateProject() {
 
 			case .success(let project):
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
-//				let diffedProject = projectReader.diff()
-
-				print(projectReader.settingsFile.syntax)
-
-//				if let .success(project) = projectReader.generateProject() {
-//					print(project.info.)
-//				}
-
-//				projectReader.write()
-//				let spec = project.diff(against: projectReader.specFile)
-
+				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile.syntax) {
+					for change in project.compare(swaggerProject) {
+//						print("changes: \(project.compare(swaggerProject))")
+						printChangeResult(change.apply())
+					}
+				}
 
 			case .failure(let error):
 				printError(error)
@@ -48,38 +42,4 @@ class SyncCommand: Command {
 			exitWithError(err)
 		}
 	}
-}
-
-func printResult<T>(fileName: String, result: Result<T, Swift.Error>) {
-	switch result {
-	case .success(_):
-		print("[OK] Parsed \(fileName)".green)
-	case .failure(let error):
-		print("[Error] parsing: \(fileName):\n\(error.localizedDescription)".red)
-	}
-}
-
-func printFileResults<T>(fileResults: [FileResult<T>]) {
-	for fileResult in fileResults {
-		printResult(fileName: fileResult.fileName, result: fileResult.result)
-	}
-}
-
-func printSuccess(_ string: String) {
-	print("[OK] \(string)".green)
-}
-
-func exitWithError(_ string: String) -> Never {
-	print("[Error] \(string)".red)
-	exit(EXIT_FAILURE)
-}
-
-func exitWithError(_ error: Swift.Error) -> Never {
-	print("[Error] \(error)".red)
-	exit(EXIT_FAILURE)
-}
-
-// todo: not printing localisedDescription correctly
-func printError(_ error: Swift.Error) {
-	print("[Error] \(error)".red)
 }

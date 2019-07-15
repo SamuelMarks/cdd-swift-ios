@@ -84,7 +84,7 @@ components:
     Pet:
       required:
         - id
-        - name
+        - naame
       properties:
         id:
           type: integer
