@@ -50,66 +50,6 @@ struct Project {
 	var requests: [Request]
 }
 
-struct ProjectInfo {
-	var modificationDate: Date
-	var hostname: URL
-}
-
-struct Model {
-    var name: String
-    var vars: [Variable]
-    
-    func compare(to oldModel:Model) -> [ModelChange] {
-        var changes: [ModelChange] = []
-        var oldVariables = oldModel.vars
-        for variable in self.vars {
-            
-            if let index = oldVariables.firstIndex(where: {$0.name == variable.name}) {
-                let updates = variable.compare(to: oldVariables[index])
-                oldVariables.remove(at: index)
-                if updates.count > 0 {
-                    changes.append(.update(variable.name, updates))
-                }
-            }
-            else {
-                changes.append(.insertion(variable))
-            }
-        }
-        
-        changes.append(contentsOf:oldVariables.map {.deletion($0)})
-        
-        return changes
-    }
-}
-
-struct Variable {
-    let name: String
-    var optional: Bool
-    var type: Type
-    var value: String?
-    var description: String?
-    
-    init(name: String) {
-        self.name = name
-        optional = false
-        type = .primitive(.String)
-    }
-    
-    func compare(to oldVariable:Variable) -> [VariableChange] {
-        var changes: [VariableChange] = []
-        if optional != oldVariable.optional {
-            changes.append(.optional(optional))
-        }
-        if type != oldVariable.type {
-            changes.append(.type(type))
-        }
-        if value != oldVariable.value {
-            changes.append(.value(value))
-        }
-        return changes
-    }
-}
-
 indirect enum Type: Equatable {
     case primitive(PrimitiveType)
     case array(Type)

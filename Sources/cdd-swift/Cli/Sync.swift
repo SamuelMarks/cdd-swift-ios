@@ -27,7 +27,11 @@ class SyncCommand: Command {
 			case .success(let project):
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
-				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile.syntax) {
+				let mergedProject = projectReader.sync()
+
+				print(mergedProject)
+
+				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile) {
 					for change in project.compare(swaggerProject) {
 //						print("changes: \(project.compare(swaggerProject))")
 						printChangeResult(change.apply())

@@ -8,7 +8,7 @@ import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
 let MODELS_DIR = "/ios/API"
-let SETTINGS_DIR = "/ios"
+let SETTINGS_FILE = "/ios/Settings.swift"
 
 struct FileResult<T> {
 	let fileName: String
@@ -54,6 +54,7 @@ class ProjectReader {
 	var settingsFile: SourceFile
 	let sourceFiles: [SourceFile]
     var classToSourceFile: [String:URL] = [:]
+
 	init(path: String) throws {
 		self.projectPath = path
 
@@ -64,7 +65,7 @@ class ProjectReader {
 				modificationDate: try fileLastModifiedDate(url: specUrl),
 				syntax: try SwaggerSpec.init(url: specUrl)
 			)
-			self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_DIR)/Settings.swift")
+			self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_FILE)")
 			self.sourceFiles = try [
 				"\(self.projectPath + MODELS_DIR)/Test.swift"
 			].map({ path in
@@ -78,7 +79,7 @@ class ProjectReader {
 	func generateProject() -> Result<Project, Swift.Error> {
 		guard case let .success(projectInfo) = parseProjectInfo(self.settingsFile) else {
 			return .failure(
-				ProjectError.InvalidSettingsFile("Cannot parse Settings.swift"))
+				ProjectError.InvalidSettingsFile("Cannot parse \(SETTINGS_FILE)"))
 		}
 
         let objects = parse(sourceFiles: self.sourceFiles)
@@ -90,32 +91,70 @@ class ProjectReader {
 		))
 	}
 
-    func sync() {
-        let project:Project = try! self.generateProject().get()
-        let specProject:Project = try! Project.fromSwagger(self.specFile.syntax)!
-        
-        let changes = specProject.compare(project)
-        
-        writeToSwiftFiles(changes: changes)
-        
-        
-        let changes2 = project.compare(specProject)
-        
-        writeToSwaggerFiles(changes: changes2)
+    func sync() -> Result<(), Swift.Error> {
+		do {
+			let projectFiles = try self.generateProject().get()
+
+			// todo: convert interface to .generateProject() -> Result
+			let spec = Project.fromSwagger(self.specFile)
+
+			// todo: fix spec to return properly
+			let mergedProject = spec!.merge(with: projectFiles)
+
+			print(mergedProject)
+
+//			for file in self.sourceFiles {
+//				if file.modificationDate.compare(self.specFile.modificationDate) == .orderedAscending {
+//					print("file \(file.modificationDate) is older than spec \(self.specFile.modificationDate)")
+//
+//					let (models, requests, _) = parse(sourceFiles: [file])
+//					for model in spec.models {
+//
+//					}
+//
+//				} else {
+//					print("file \(file.modificationDate) is newer than spec \(self.specFile.modificationDate)")
+//					// todo: clean this.
+//					let (models, requests, _) = parse(sourceFiles: [file])
+//					for model in models {
+//						if case let .some(model) = model.find(in: models) {
+//							// model is in this m
+////							model.compare(to: <#T##Model#>)
+//						}
+//					}
+//				}
+//			}
+
+			return .success(())
+		} catch (let err) {
+			return .failure(err)
+		}
+
+
+//        let project:Project = try! self.generateProject().get()
+//        let specProject:Project = try! Project.fromSwagger(self.specFile.syntax)!
+//
+//        let changes = specProject.compare(project)
+//		printSuccess("found \(changes.count) changes to write to swift project.")
+//
+//        writeToSwiftFiles(changes: changes)
+//
+//
+//        let changes2 = project.compare(specProject)
+//
+//        writeToSwaggerFiles(changes: changes2)
     }
     
     func writeToSwiftFiles(changes:[Change]) {
         for change in changes {
             if let url = classToSourceFile[change.objectName()],
                 let sourceFile = sourceFiles.first(where: {$0.path == url}) {
-                apply(change: change, to: sourceFile)
+//                apply(change: change, to: sourceFile)
+
+				sourceFile.apply(change)
             }
         }
 	}
-    
-    func apply(change: Change, to source: SourceFile) {
-        
-    }
     
     func writeToSwaggerFiles(changes:[Change]) {
         self.specFile.syntax.apply(changes)

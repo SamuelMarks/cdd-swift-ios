@@ -4,6 +4,11 @@ struct Pet : APIModel {
     let id: String
 }
 
+struct Person : APIModel {
+	let name: String
+	let age: Int
+}
+
 struct APIError: APIModel {
     let code: Int
     let message: String

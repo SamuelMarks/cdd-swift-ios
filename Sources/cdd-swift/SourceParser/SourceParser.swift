@@ -21,7 +21,7 @@ func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
         
         for klass in visitor.klasses {
             if klass.interfaces.contains(MODEL_PROTOCOL) {
-                models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values))
+				models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values), modificationDate: sourceFile.modificationDate)
                 
                 classToSourceFile[klass.name] = sourceFile.path
             }

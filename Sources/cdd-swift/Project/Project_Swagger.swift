@@ -37,10 +37,10 @@ extension Project {
         return path.components(separatedBy: ["/","\\","(",")","{","}"]).map {$0.formated()}.joined() + method.formated() + "Request"
     }
     
-    private static func parseType(_ json: [String:Any], couldBeObjectName: String = "") -> (Type?,Model?) {
+	private static func parseType(_ json: [String:Any], couldBeObjectName: String = "", modificationDate: Date) -> (Type?,Model?) {
         if let type = json["type"] as? String {
             if type == "array", let items = json["items"] as? [String:Any] {
-                let res = parseType(items, couldBeObjectName: couldBeObjectName)
+				let res = parseType(items, couldBeObjectName: couldBeObjectName, modificationDate: modificationDate)
                 if let type = res.0 {
                     return (.array(type), res.1)
                 }
@@ -50,7 +50,7 @@ extension Project {
             }
             else
                 if type == "object" {
-                    if let model = parseObject(name: couldBeObjectName, json: json) {
+					if let model = parseObject(name: couldBeObjectName, json: json, modificationDate: modificationDate) {
                         return (.complex(couldBeObjectName), model)
                     }
                 }
@@ -62,13 +62,13 @@ extension Project {
         return (nil,nil)
     }
     
-    private static func parseObject(name: String, json: [String:Any]) -> Model? {
+    private static func parseObject(name: String, json: [String:Any], modificationDate: Date) -> Model? {
         guard let properties = json["properties"] as? [String:[String:Any]] else { return nil }
         let required = (json["required"] as? [String]) ?? []
         var fields: [Variable] = []
         var additionalModels: [Model] = []
         for property in properties {
-            let result = parseType(property.value, couldBeObjectName: property.key)
+			let result = parseType(property.value, couldBeObjectName: property.key, modificationDate: modificationDate)
             if let model = result.1 {
                 additionalModels.append(model)
             }
@@ -80,14 +80,13 @@ extension Project {
                 fields.append(field)
             }
         }
-        var model = Model(name: name, vars: fields)
-//        model.models = additionalModels /// Need to finish
-        return model
+        return Model(name: name, vars: fields, modificationDate: modificationDate)
     }
     
 
     
-    static func fromSwagger(_ spec: SwaggerSpec) -> Project? {
+    static func fromSwagger(_ specFile: SpecFile) -> Project? {
+		let spec = specFile.syntax
         
         
         var arrayTypes: [(name:String,type:String)] = []
@@ -97,7 +96,7 @@ extension Project {
             if let dataType = schema.value.metadata.type {
                 switch dataType {
                 case .object:
-                    if let model = parseObject(name: schema.name.formated(), json: schema.value.metadata.json) {
+					if let model = parseObject(name: schema.name.formated(), json: schema.value.metadata.json, modificationDate: specFile.modificationDate) {
                         models.append(model)
                     }
                 case .array:
@@ -106,7 +105,7 @@ extension Project {
                             arrayTypes.append((schema.name.formated(),"[\(type.formated())]"))
                         }
                         else
-                            if var model = parseObject(name: schema.name, json: items) {
+							if var model = parseObject(name: schema.name, json: items, modificationDate: specFile.modificationDate) {
 //                                model.shouldBeUsedAsArray = true /// need to finish
                                 models.append(model)
                             }

@@ -7,7 +7,37 @@
 
 import Foundation
 
+//enum ChangeTask {
+//	case AddModel(Model)
+//
+//}
+
 extension Project {
+
+	func merge(with swiftProject: Project) -> Project {
+		var models: [Model] = []
+
+		for specModel in models {
+//			let (newModel, oldModel) = Model.order(model, )
+			if case let .some(foundModel) = specModel.find(in: swiftProject.models) {
+				print("found model: \(foundModel) \(foundModel.modificationDate)")
+				// model exists, merge it with the existing one
+				models.append(specModel.merge(with: foundModel))
+			} else {
+				// model is new, add it directly
+				models.append(specModel)
+			}
+
+			// find remaining models
+		}
+
+		return Project(
+			info: self.info.merge(with: swiftProject.info),
+			models: models,
+			requests: []
+		)
+	}
+
     func compare(_ oldProject: Project) -> [Change] {
         let project = self
         var projectChanges: [Change] = []
