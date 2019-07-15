@@ -1,7 +1,7 @@
 struct Pet : APIModel {
     let tag: String?
     let name: String
-    let id: Int
+    let id: String
 }
 
 struct APIError: APIModel {
@@ -31,6 +31,20 @@ struct PetsPetIdGetRequest : APIRequest {
     var urlPath: String { return "/pets/\(petId)" }
     var method: String { return .get }
     /// The id of the pet to retrieve
-    let petId: Float
+    let petId: String
 }
 
+//
+//struct Man : APIModel {
+//    let tag: String?
+//    let name: String
+//    let id: Int
+//}
+//
+//struct MensPostRequest : APIRequest {
+//    typealias ResponseType = EmptyResponse
+//    typealias ErrorType = APIError
+//    var urlPath: String { return "/men" }
+//    var method: String { return .post }
+//    var men: Man
+//}

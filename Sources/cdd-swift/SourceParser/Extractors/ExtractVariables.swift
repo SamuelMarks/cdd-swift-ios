@@ -38,7 +38,7 @@ class ExtractVariables : SyntaxVisitor {
             
             if type(of: child) == TypeAnnotationSyntax.self {
                 let type = "\(child)".replacingOccurrences(of: ":", with: "").trimmedWhiteSpaces
-                variable?.optional = type.suffix(1) != "?"
+                variable?.optional = type.suffix(1) == "?"
                 variable?.type = typeFor(type: type.replacingOccurrences(of: "?", with: ""))
             }
             

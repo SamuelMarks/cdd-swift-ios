@@ -9,7 +9,7 @@ extension ComponentObject : Encodable where T: Encodable {
 
 public struct ComponentObject<T> {
     public let name: String
-    public let value: T
+    public var value: T
 }
 
 public protocol Component: JSONObjectConvertible {

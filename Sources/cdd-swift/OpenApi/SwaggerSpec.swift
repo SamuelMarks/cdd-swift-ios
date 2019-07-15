@@ -33,7 +33,7 @@ extension SwaggerSpec : Encodable {
 }
 
 public struct SwaggerSpec {
-	public let json: [String: Any]
+	public var json: [String: Any]
 	public var version: String
 	public var info: Info
 	public var paths: [Path]
