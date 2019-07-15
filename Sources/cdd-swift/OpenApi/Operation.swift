@@ -36,13 +36,13 @@ extension Operation : Encodable {
 public struct Operation {
 
 	public let json: [String: Any]
-	public let path: String
-	public let method: Method
+	public var path: String
+	public var method: Method
 	public let summary: String?
 	public let description: String?
 	public let requestBody: PossibleReference<RequestBody>?
 	public let pathParameters: [PossibleReference<Parameter>]
-	public let operationParameters: [PossibleReference<Parameter>]
+	public var operationParameters: [PossibleReference<Parameter>]
 
 	public var parameters: [PossibleReference<Parameter>] {
 		return pathParameters.filter { pathParam in
@@ -50,8 +50,8 @@ public struct Operation {
 			} + operationParameters
 	}
 
-	public let responses: [OperationResponse]
-	public let defaultResponse: PossibleReference<Response>?
+	public var responses: [OperationResponse]
+	public var defaultResponse: PossibleReference<Response>?
 	public let deprecated: Bool
 	public let identifier: String?
 	public let tags: [String]

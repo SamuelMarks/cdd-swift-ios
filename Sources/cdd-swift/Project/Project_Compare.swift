@@ -126,6 +126,7 @@ extension SwaggerSpec {
     }
     
     mutating func apply(_ changes: [Change]) {
+        
         for change in changes {
             switch change {
             case .insertion(let change):
@@ -176,58 +177,89 @@ extension SwaggerSpec {
                     guard let index = components.schemas.firstIndex(where: {$0.name == model.name}) else {return}
                     var schema = components.schemas[index]
                     guard case .object(let object) = schema.value.type else { return }
-                    
+                    var properties = object.properties
                     switch update {
                     case .deletion(let variable):
-                        var properties = object.properties
                         properties.removeAll(where: {$0.name == variable.name})
                         
                         schema.value.type = objectType(for: properties)
                         components.schemas[index] = schema
                         break
                     case .insertion(let variable):
-                        var properties = object.properties
                         properties.append(variable.property())
-                        schema.value.type = objectType(for: properties)
-                        components.schemas[index] = schema
                         break
                     case .update(let name, let changes):
-                        var properties = object.properties
                         guard let index = properties.firstIndex(where: {$0.name == name}) else { return }
-                        var property = object.properties[index]
+                        var property = properties[index]
                         for change in changes {
                             switch change {
                             case .optional(let optional):
                                 property.required = !optional
                             case .type(let newType):
                                 property.schema = newType.schema()
-                            case .value(let newValue):
+                            case .value(_):
                                 break
                             }
                         }
                         properties[index] = property
-                        schema.value.type = objectType(for: properties)
-                        components.schemas[index] = schema
+                        
                         break
                     }
+                    components.schemas[index] = schema
+                    schema.value.type = objectType(for: properties)
+                    components.schemas[index] = schema
+                    
                 case .request(let request, let update):
                     guard let update = update else { return }
+                    guard var pathIndex = paths.firstIndex(where:{$0.path == request.urlPath}) else { return }
+                    var path = paths[pathIndex]
+                    guard let method = Operation.Method(rawValue: request.method.rawValue) else { return }
+                    guard let operationIndex = path.operations.firstIndex(where: {$0.method == method}) else { return }
+                    var operation = path.operations[operationIndex]
+                    var parameters = operation.operationParameters
+                    
                     switch update {
                     case .deletion(let variable):
-                        break
+                        parameters.removeAll { (reference) -> Bool in
+                            if case .value(let parameter) = reference {
+                                return parameter.name == variable.name
+                            }
+                            return false
+                        }
+                        
                     case .insertion(let variable):
-                        break
+                        parameters.append(.value(variable.parameter()))
+                        
                     case .update(let name, let changes):
-                        break
+                        guard let index = parameters.firstIndex(where: {$0.name == name}) else { return }
+                        guard case .value(var parameter) = parameters[index] else { return }
+                        for change in changes {
+                            switch change {
+                            case .optional(let optional):
+                                parameter.required = !optional
+                            case .type(let newType):
+                                let parType = ParameterType.schema(ParameterSchema(schema: newType.schema(), serializationStyle: .simple, explode: false))
+                                parameter.type = parType
+                            case .value(_):
+                                break
+                            }
+                        }
+                        parameters[index] = .value(parameter)
                     case .responseType(_):
-                        break
+                        let response = request.response()
+                        let responses: [OperationResponse] = response == nil ? [] : [response!]
+                        operation.responses = responses
                     case .errorType(_):
-                        break
+                        operation.defaultResponse = request.defaultResponse()
                     case .path(_):
-                        break
+                        break// if changed so it will be new request
                     case .method(_):
-                        break
+                        break// if changed so it will be new request
                     }
+                    
+                    operation.operationParameters = parameters
+                    path.operations[operationIndex] = operation
+                    paths[pathIndex] = path
                     break
                 }
             }

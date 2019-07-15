@@ -23,10 +23,10 @@ extension Parameter : Encodable {
 public struct Parameter {
 	public let name: String
 	public let location: ParameterLocation
-	public let description: String?
-	public let required: Bool
+	public var description: String?
+	public var required: Bool
 	public let example: Any?
-	public let type: ParameterType
+	public var type: ParameterType
 	public let json: [String: Any]
 }
 
@@ -45,7 +45,7 @@ extension ParameterSchema : Encodable {
 }
 
 public struct ParameterSchema {
-	public let schema: Schema
+	public var schema: Schema
 	public let serializationStyle: SerializationStyle
 	public let explode: Bool
 }
