@@ -53,7 +53,7 @@ class ProjectReader {
 	var specFile: SpecFile
 	var settingsFile: SourceFile
 	let sourceFiles: [SourceFile]
-    
+    var classToSourceFile: [String:URL] = [:]
 	init(path: String) throws {
 		self.projectPath = path
 
@@ -82,6 +82,7 @@ class ProjectReader {
 		}
 
         let objects = parse(sourceFiles: self.sourceFiles)
+        classToSourceFile = objects.2
 		return .success(Project(
 			info: projectInfo,
 			models: objects.0,
@@ -104,10 +105,43 @@ class ProjectReader {
     }
     
     func writeToSwiftFiles(changes:[Change]) {
-		
+        for change in changes {
+            if let url = classToSourceFile[change.objectName()],
+                let sourceFile = sourceFiles.first(where: {$0.path == url}) {
+                apply(change: change, to: sourceFile)
+            }
+        }
 	}
+    
+    func apply(change: Change, to source: SourceFile) {
+        
+    }
     
     func writeToSwaggerFiles(changes:[Change]) {
         self.specFile.syntax.apply(changes)
+    }
+}
+
+extension Change {
+    func objectName() -> String {
+        switch self {
+        case .deletion(let object):
+           return object.objectName()
+        case .insertion(let object):
+          return object.objectName()
+        case .update(let object):
+           return object.objectName()
+        }
+    }
+}
+
+extension APIObjectChange {
+    func objectName() -> String {
+        switch self {
+        case .model(let model, _):
+            return model.name
+        case .request(let request, _):
+            return request.name
+        }
     }
 }
