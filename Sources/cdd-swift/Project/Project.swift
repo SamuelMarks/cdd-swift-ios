@@ -44,18 +44,18 @@ struct Settings {
 	let host: URL
 }
 
-struct Project {
+struct Project: Codable {
 	var info: ProjectInfo
 	var models: [Model]
 	var requests: [Request]
 }
 
-struct ProjectInfo {
+struct ProjectInfo: Codable {
 	var modificationDate: Date
 	var hostname: URL
 }
 
-struct Model {
+struct Model: Codable {
     var name: String
     var vars: [Variable]
     var modificationDate: Date
@@ -84,7 +84,7 @@ struct Model {
     }
 }
 
-struct Variable {
+struct Variable: Codable {
     let name: String
     var optional: Bool
     var type: Type
@@ -112,10 +112,45 @@ struct Variable {
     }
 }
 
-indirect enum Type: Equatable {
+indirect enum Type: Equatable, Codable {
+    
     case primitive(PrimitiveType)
     case array(Type)
     case complex(String)
+    
+    enum CodingKeys: String, CodingKey {
+        case array
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .primitive(let type):
+            try type.rawValue.encode(to: encoder)
+        case .array(let type):
+            try container.encode(type, forKey: .array)
+        case .complex(let type):
+            try type.encode(to: encoder)
+        }
+    }
+    
+    init(from decoder: Decoder) throws {
+        if let container = try? decoder.singleValueContainer(), let value = try? container.decode(String.self)  {
+            if let primitive = PrimitiveType(rawValue: value) {
+                self = .primitive(primitive)
+            }
+            else {
+                self = .complex(value)
+            }
+        }
+        else {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let type = try container.decode(Type.self, forKey: .array)
+            self = .array(type)
+        }
+    }
+    
+    
 }
 
 enum PrimitiveType: String {
@@ -125,7 +160,7 @@ enum PrimitiveType: String {
     case Bool
 }
 
-struct Request {
+struct Request: Codable {
     let name: String
 	let method: Method
     let urlPath: String
@@ -172,7 +207,7 @@ struct Request {
     }
 }
 
-enum Method: String {
+enum Method: String, Codable {
 	case get
 	case put
     case post

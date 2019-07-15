@@ -87,7 +87,7 @@ extension APIRequest {
         
         var request: DataRequest?
         
-        request = sessionManager.request(url, method: method, parameters: params, encoding: JSONEncoding.default, headers: headers())
+        request = sessionManager.request(url + urlPath, method: method, parameters: params, encoding: JSONEncoding.default, headers: headers())
         
         request?.responseString { response in
             guard self.isNeedLog() == true else {
