@@ -28,9 +28,9 @@ extension Change {
 extension APIObjectChange {
 	func apply() -> ChangeResult {
 		switch self {
-		case .model(let model, let modelchange):
-			print(model)
-			return .success("done")
+		case .model(let model, let modelChange):
+			
+			return .success("Updated \(model) with \(String(describing: modelChange))")
 		case .request(let request, let requestChange):
 //			request.update(requestChange)
 			return .success("Updated \(request) with \(String(describing: requestChange))")
