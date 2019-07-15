@@ -15,7 +15,7 @@ extension Path : Encodable {
 
 public struct Path {
     public let path: String
-    public let operations: [Operation]
+    public var operations: [Operation]
     public let parameters: [PossibleReference<Parameter>]
 }
 

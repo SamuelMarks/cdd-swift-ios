@@ -27,8 +27,8 @@ extension Schema : Encodable {
 
 
 public struct Schema {
-    public let metadata: Metadata
-    public let type: SchemaType
+    public var metadata: Metadata
+    public var type: SchemaType
 
     init(metadata: Metadata, type: SchemaType) {
         self.metadata = metadata

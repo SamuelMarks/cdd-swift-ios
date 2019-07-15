@@ -74,7 +74,7 @@ extension Project {
             }
             if let type = result.0 {
                 var field = Variable(name: property.key)
-                field.optional = required.contains(property.key)
+                field.optional = !required.contains(property.key)
                 field.type = type
                 field.description = property.value["description"] as? String
                 fields.append(field)
@@ -142,14 +142,14 @@ extension Project {
                     if let typeRaw = schema["type"], let type = PrimitiveType.fromSwagger(string: typeRaw) {
                         var field = Variable(name: name)
                         field.type = .primitive(type)
-                        field.optional = required
+                        field.optional = !required
                         field.description = parameter.value.description
                         fields.append(field)
                     }
                     else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
                         var field = Variable(name: name)
                         field.type = .complex(name.formated())
-                        field.optional = required
+                        field.optional = !required
                         field.description = parameter.value.description
                         fields.append(field)
                     }

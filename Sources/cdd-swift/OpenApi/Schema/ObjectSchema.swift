@@ -22,9 +22,9 @@ extension ObjectSchema : Encodable {
 
 
 public struct ObjectSchema {
-    public let requiredProperties: [Property]
-    public let optionalProperties: [Property]
-    public let properties: [Property]
+    public var requiredProperties: [Property]
+    public var optionalProperties: [Property]
+    public var properties: [Property]
     public let minProperties: Int?
     public let maxProperties: Int?
     public let additionalProperties: Schema?
@@ -45,8 +45,8 @@ extension Property : Encodable {
 
 public struct Property {
     public let name: String
-    public let required: Bool
-    public let schema: Schema
+    public var required: Bool
+    public var schema: Schema
 }
 
 extension ObjectSchema: JSONObjectConvertible {
