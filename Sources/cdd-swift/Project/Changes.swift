@@ -33,7 +33,7 @@ extension APIObjectChange {
 			return .success("done")
 		case .request(let request, let requestChange):
 //			request.update(requestChange)
-			return .success("Updated \(request) with \(requestChange)")
+			return .success("Updated \(request) with \(String(describing: requestChange))")
 		}
 	}
 }

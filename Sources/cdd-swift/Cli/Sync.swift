@@ -30,6 +30,7 @@ class SyncCommand: Command {
 
 				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile.syntax) {
 					for change in project.compare(swaggerProject) {
+						print("changes: \(project.compare(swaggerProject))")
 						print(change.apply())
 					}
 				}
