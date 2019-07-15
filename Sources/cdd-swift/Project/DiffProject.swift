@@ -39,8 +39,6 @@ extension ProjectReader {
 
 			return .success(project)
 
-
-
 			// requests
 		} catch let err {
 			return .failure(err)

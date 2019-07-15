@@ -21,24 +21,18 @@ class SyncCommand: Command {
 	func sync(spec: URL) {
 
 		do {
-			var projectReader = try ProjectReader(path: spec.absoluteString)
+			let projectReader = try ProjectReader(path: spec.absoluteString)
 
 			switch projectReader.generateProject() {
 
 			case .success(let project):
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
-//				let diffedProject = projectReader.diff()
-
-				print(projectReader.settingsFile.syntax)
-
-//				if let .success(project) = projectReader.generateProject() {
-//					print(project.info.)
-//				}
-
-//				projectReader.write()
-//				let spec = project.diff(against: projectReader.specFile)
-
+				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile.syntax) {
+					for change in project.compare(swaggerProject) {
+						print(change.apply())
+					}
+				}
 
 			case .failure(let error):
 				printError(error)
