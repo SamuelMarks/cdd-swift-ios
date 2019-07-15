@@ -58,8 +58,10 @@ struct ProjectInfo {
 struct Model {
     var name: String
     var vars: [Variable]
+    var modificationDate: Date
     
     func compare(to oldModel:Model) -> [ModelChange] {
+        guard modificationDate.compare(oldModel.modificationDate) == .orderedDescending else { return [] }
         var changes: [ModelChange] = []
         var oldVariables = oldModel.vars
         for variable in self.vars {
@@ -130,8 +132,11 @@ struct Request {
     let responseType: String
     let errorType: String
     let vars: [Variable]
+    var modificationDate: Date
     
     func compare(to oldRequest:Request) -> [RequestChange] {
+        guard modificationDate.compare(oldRequest.modificationDate) == .orderedDescending else { return [] }
+        
         var changes: [RequestChange] = []
         var oldVariables = oldRequest.vars
         for variable in self.vars {

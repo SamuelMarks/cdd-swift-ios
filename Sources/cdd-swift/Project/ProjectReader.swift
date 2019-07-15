@@ -42,11 +42,7 @@ struct SourceFile {
 	}
 }
 
-struct SpecFile {
-	let path: URL
-	let modificationDate: Date
-    var syntax: SwaggerSpec
-}
+
 
 class ProjectReader {
 	let projectPath: String
@@ -92,7 +88,8 @@ class ProjectReader {
 
     func sync() {
         let project:Project = try! self.generateProject().get()
-        let specProject:Project = try! Project.fromSwagger(self.specFile.syntax)!
+        guard let specProject:Project = self.specFile.generateProject() else { return }
+        
         
         let changes = specProject.compare(project)
         
