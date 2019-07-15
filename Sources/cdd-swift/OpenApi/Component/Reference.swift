@@ -64,7 +64,7 @@ extension PossibleReference : Encodable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+//        var container = encoder.container(keyedBy: CodingKeys.self)
         if let parametr = value as? Parameter {
             try parametr.encode(to: encoder)
         }
