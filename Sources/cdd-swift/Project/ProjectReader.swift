@@ -45,12 +45,12 @@ struct SourceFile {
 struct SpecFile {
 	let path: URL
 	let modificationDate: Date
-	let syntax: SwaggerSpec
+    var syntax: SwaggerSpec
 }
 
 class ProjectReader {
 	let projectPath: String
-	let specFile: SpecFile
+	var specFile: SpecFile
 	var settingsFile: SourceFile
 	let sourceFiles: [SourceFile]
     
@@ -89,7 +89,25 @@ class ProjectReader {
 		))
 	}
 
-	func writeProject() {
-		// unimplemented
+    func sync() {
+        let project:Project = try! self.generateProject().get()
+        let specProject:Project = try! Project.fromSwagger(self.specFile.syntax)!
+        
+        let changes = specProject.compare(project)
+        
+        writeToSwiftFiles(changes: changes)
+        
+        
+        let changes2 = project.compare(specProject)
+        
+        writeToSwaggerFiles(changes: changes2)
+    }
+    
+    func writeToSwiftFiles(changes:[Change]) {
+		
 	}
+    
+    func writeToSwaggerFiles(changes:[Change]) {
+        self.specFile.syntax.apply(changes)
+    }
 }
