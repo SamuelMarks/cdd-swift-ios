@@ -8,9 +8,9 @@
 import Foundation
 
 extension Project {
-    func compare(_ oldProject: Project) -> [Changes] {
+    func compare(_ oldProject: Project) -> [Change] {
         let project = self
-        var projectChanges: [Changes] = []
+        var projectChanges: [Change] = []
         let models = project.models
         var oldModels = oldProject.models
         
@@ -29,7 +29,7 @@ extension Project {
             }
             
         }
-        projectChanges.append(contentsOf:oldModels.map {Changes.deletion(.model($0,nil))})
+        projectChanges.append(contentsOf:oldModels.map {Change.deletion(.model($0,nil))})
         
         let requests = project.requests
         var oldRequests = oldProject.requests
@@ -46,7 +46,7 @@ extension Project {
                 projectChanges.append(.insertion(.request(request, nil)))
             }
         }
-        projectChanges.append(contentsOf:oldRequests.map {Changes.deletion(.request($0,nil))})
+        projectChanges.append(contentsOf:oldRequests.map {Change.deletion(.request($0,nil))})
         return projectChanges
     }
     
@@ -125,7 +125,7 @@ extension SwaggerSpec {
         return .object(ObjectSchema(requiredProperties: requiredProperties, optionalProperties: optionalProperties, properties: properties, minProperties: nil, maxProperties: nil, additionalProperties: nil, abstract: false, discriminator: nil))
     }
     
-    mutating func apply(_ changes: [Changes]) {
+    mutating func apply(_ changes: [Change]) {
         for change in changes {
             switch change {
             case .insertion(let change):

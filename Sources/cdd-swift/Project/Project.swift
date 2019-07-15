@@ -13,7 +13,7 @@ enum VariableChange {
     case optional(Bool)
 }
 
-enum Changes {
+enum Change {
     case insertion(APIObjectChange)
     case deletion(APIObjectChange)
     case update(APIObjectChange)
