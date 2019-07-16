@@ -17,19 +17,23 @@ extension Project {
 	func merge(with swiftProject: Project) -> Project {
 		var models: [Model] = []
 
-		for specModel in models {
-//			let (newModel, oldModel) = Model.order(model, )
-			if case let .some(foundModel) = specModel.find(in: swiftProject.models) {
-				print("found model: \(foundModel) \(foundModel.modificationDate)")
+		for specModel in self.models {
+			if case let .some(swiftModel) = specModel.find(in: swiftProject.models) {
 				// model exists, merge it with the existing one
-				models.append(specModel.merge(with: foundModel))
+				models.append(swiftModel.merge(with: specModel))
 			} else {
 				// model is new, add it directly
+				// for now, use spec file as source of truth in missing case
 				models.append(specModel)
 			}
-
-			// find remaining models
 		}
+
+		// find remaining models?
+//		for swiftModel in swiftProject.models {
+//			if !swiftModel.included(in: self.models) {
+//				if swiftModel.
+//			}
+//		}
 
 		return Project(
 			info: self.info.merge(with: swiftProject.info),

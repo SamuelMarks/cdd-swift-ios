@@ -29,14 +29,16 @@ class SyncCommand: Command {
 
 				let mergedProject = projectReader.sync()
 
+				projectReader.writeToSwaggerFiles(changes: <#T##[Change]#>)
+
 				print(mergedProject)
 
-				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile) {
-					for change in project.compare(swaggerProject) {
-//						print("changes: \(project.compare(swaggerProject))")
-						printChangeResult(change.apply())
-					}
-				}
+//				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile) {
+//					for change in project.compare(swaggerProject) {
+////						print("changes: \(project.compare(swaggerProject))")
+//						printChangeResult(change.apply())
+//					}
+//				}
 
 			case .failure(let error):
 				printError(error)

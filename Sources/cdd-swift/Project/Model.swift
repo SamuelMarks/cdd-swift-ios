@@ -16,16 +16,26 @@ struct Model {
 		return left.modificationDate.compare(right.modificationDate) == .orderedAscending ? left : right
 	}
 
-	func merge(with olderModel: Model) -> Model {
-		for variable in self.vars {
+	static func order(_ left: Model, _ right: Model) -> (Model, Model) {
+		return left.modificationDate == Model.newest(left, right).modificationDate ? (left, right) : (right, left)
+	}
+
+	func merge(with otherModel: Model) -> Model {
+		let (newest, oldest) = Model.order(self, otherModel)
+
+		for variable in newest.vars {
 			//			let (newModel, oldModel) = Model.order(model, )
-			if case let .some(variable) = variable.find(in: olderModel.vars) {
+			if case let .some(variable) = variable.find(in: oldest.vars) {
 				print("found var: \(variable)")
 				// model exists, merge it with the existing one
 //				models.append(model.merge(with: otherModel))
 			}
 		}
 		return Model(name: self.name, vars: [], modificationDate: self.modificationDate)
+	}
+
+	func included(in models: [Model]) -> Bool {
+		return models.contains(where: { $0.name == self.name })
 	}
 
 	func find(in models: [Model]) -> Model? {
