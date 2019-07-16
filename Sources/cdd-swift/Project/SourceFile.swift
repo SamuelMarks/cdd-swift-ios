@@ -35,5 +35,9 @@ extension SourceFile {
 			return self
 		}
 	}
+
+	func apply(projectInfo: ProjectInfo) {
+		
+	}
 }
 

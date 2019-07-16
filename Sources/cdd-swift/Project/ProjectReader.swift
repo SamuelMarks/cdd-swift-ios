@@ -91,7 +91,7 @@ class ProjectReader {
 		))
 	}
 
-    func sync() -> Result<(), Swift.Error> {
+    func sync() -> Result<Project, Swift.Error> {
 		do {
 			let projectFiles = try self.generateProject().get()
 
@@ -101,7 +101,14 @@ class ProjectReader {
 			// todo: fix spec to return properly
 			let mergedProject = spec!.merge(with: projectFiles)
 
-			print(mergedProject)
+			// apply project
+
+			// apply settings file
+			self.settingsFile.apply(projectInfo: mergedProject.info)
+			print(self.settingsFile)
+
+
+//			print(mergedProject)
 
 //			for file in self.sourceFiles {
 //				if file.modificationDate.compare(self.specFile.modificationDate) == .orderedAscending {
@@ -125,7 +132,7 @@ class ProjectReader {
 //				}
 //			}
 
-			return .success(())
+			return .success(mergedProject)
 		} catch (let err) {
 			return .failure(err)
 		}
