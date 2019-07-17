@@ -10,7 +10,7 @@ import Foundation
 import SwiftSyntax
 
 extension SourceFile {
-	mutating func renameVariable(varName: String, varValue: String) -> Result<(), Swift.Error> {
+	mutating func renameVariable(_ varName: String, _ varValue: String) -> Result<(), Swift.Error> {
 		do {
 			let rewriter = VariableValueRewriter()
 			rewriter.varName = varName

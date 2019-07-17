@@ -28,9 +28,7 @@ class SyncCommand: Command {
 				printSuccess("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.")
 
 				if case let .success(project) = projectReader.sync() {
-					projectReader.settingsFile.apply(projectInfo: project.info)
-//					projectReader.specFile.apply(project)
-					print(projectReader.settingsFile.syntax)
+					projectReader.apply(project: project)
 				}
 
 //				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile) {

@@ -2,42 +2,50 @@
 //  SourceFile.swift
 //  CYaml
 //
-//  Created by Rob Saunders on 7/15/19.
+//  Created by Rob Saunders on 7/16/19.
 //
 
 import Foundation
+import SwiftSyntax
 
-extension SourceFile {
-	func apply(_ change: Change) -> SourceFile {
-		switch change {
-		case .insertion(let objectType):
-			switch objectType {
-			case .model(let model, let change):
-//				if case let .some(change)
-				()
-//				model.compare(to: )
-			case .request(let request, let change):
-				()
-			}
-//			return .success("insertion")
-			return self
-		case .deletion(let objectType):
-//			return .success("deletion")
-			return self
-		case .update(let objectType):
-//			switch objectType {
-//			case .model(let model, let change):
-//				if let .some(change)
-//			case .request(let request, let change):
-//				()
-//			}
+struct SourceFile {
+	let path: URL
+	let modificationDate: Date
+	var syntax: SourceFileSyntax
 
-			return self
+	init(path: String) throws {
+		do {
+			let url = URL(fileURLWithPath: path)
+			self.path = url
+			self.modificationDate = try fileLastModifiedDate(url: url)
+			self.syntax = try SyntaxTreeParser.parse(url)
 		}
 	}
 
-	func apply(projectInfo: ProjectInfo) {
-		
+	mutating func apply(projectInfo: ProjectInfo) {
+		let host = "\(projectInfo.hostname.scheme!)://\(projectInfo.hostname.host!)"
+		let _ = self.renameVariable("HOST", host)
+		let _ = self.renameVariable("ENDPOINT", projectInfo.hostname.path)
+	}
+
+	mutating func apply(model: Model) {
+		print("todo: update model in source file")
+	}
+
+	mutating func delete(model: Model) {
+		print("todo: delete model in source file")
+	}
+
+	func contains(model name: String) -> Bool {
+		let visitor = ClassVisitor()
+		self.syntax.walk(visitor)
+
+		for klass in visitor.klasses {
+			if klass.interfaces.contains(MODEL_PROTOCOL) && klass.name == name {
+				return true
+			}
+		}
+
+		return false
 	}
 }
-

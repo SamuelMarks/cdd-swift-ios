@@ -21,7 +21,7 @@ struct ProjectInfo {
 	}
 
 	func merge(with otherProject: ProjectInfo) -> ProjectInfo {
-		let (newest, oldest) = ProjectInfo.order(self, otherProject)
+		let (_, newest) = ProjectInfo.order(self, otherProject)
 		return newest
 	}
 }

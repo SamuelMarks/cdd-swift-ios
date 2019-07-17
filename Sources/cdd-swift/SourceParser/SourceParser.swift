@@ -11,6 +11,25 @@ import SwiftSyntax
 let MODEL_PROTOCOL = "APIModel"
 let REQUEST_PROTOCOL = "APIRequest"
 
+extension SourceFile {
+
+}
+
+func modelCount(sourceFile: SourceFile) -> Int {
+	var count: Int = 0
+
+	let visitor = ClassVisitor()
+	sourceFile.syntax.walk(visitor)
+
+	for klass in visitor.klasses {
+		if klass.interfaces.contains(MODEL_PROTOCOL) {
+			count += 1
+		}
+	}
+
+	return count
+}
+
 func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
     var classToSourceFile: [String:URL] = [:]
     var models: [String:Model] = [:]
@@ -44,8 +63,6 @@ func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
         }
         
 	}
-
-	
 
 	return (Array(models.values),Array(requests.values), classToSourceFile)
 }

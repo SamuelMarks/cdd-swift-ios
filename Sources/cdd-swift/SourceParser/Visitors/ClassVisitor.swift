@@ -20,8 +20,6 @@ class ClassVisitor : SyntaxVisitor {
 		let klassName = "\(node.identifier)".trimmingCharacters(in: .whitespaces)
 		var klass = Klass(name: klassName)
 
-//		print(">>>>>\(node)<<<<<<")
-
 		for member in node.children {
 			if type(of: member) == TypeInheritanceClauseSyntax.self {
 				for child in member.children {
@@ -43,7 +41,5 @@ class ClassVisitor : SyntaxVisitor {
         
 		return .skipChildren
 	}
-    
-   
 }
 

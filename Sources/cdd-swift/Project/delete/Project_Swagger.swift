@@ -213,7 +213,7 @@ extension Project {
         guard let path = spec.servers.first?.url, let url = URL(string:path) else { return nil }
         
         
-        return Project(info: ProjectInfo(modificationDate: Date(), hostname: url), models: models, requests: requests)
+        return Project(info: ProjectInfo(modificationDate: specFile.modificationDate, hostname: url), models: models, requests: requests)
     }
     
 }

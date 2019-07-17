@@ -1,2 +1,2 @@
-var HOST = "http://petastore.swagger.io"
+var HOST = "http://petzzzstore.swagger.io"
 let ENDPOINT = "/v1"

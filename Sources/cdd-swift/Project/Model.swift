@@ -22,16 +22,14 @@ struct Model {
 
 	func merge(with otherModel: Model) -> Model {
 		let (newest, oldest) = Model.order(self, otherModel)
-
-		for variable in newest.vars {
-			//			let (newModel, oldModel) = Model.order(model, )
-			if case let .some(variable) = variable.find(in: oldest.vars) {
-				print("found var: \(variable)")
-				// model exists, merge it with the existing one
-//				models.append(model.merge(with: otherModel))
-			}
-		}
-		return Model(name: self.name, vars: [], modificationDate: self.modificationDate)
+//		var vars: [Variable] = []
+//		for variable in newest.vars {
+//			if case let .some(variable) = variable.find(in: oldest.vars) {
+//				// var exists, merge it with the existing one
+//				vars.insert(variable)
+//			}
+//		}
+		return newest
 	}
 
 	func included(in models: [Model]) -> Bool {
