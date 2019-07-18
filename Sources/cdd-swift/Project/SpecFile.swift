@@ -26,7 +26,7 @@ struct SpecFile {
 	}
 
 	mutating func update(model: Model) {
-		log.infoMessage("UNIMPLEMENTED: update(model)")
+		log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
 	}
 
 	mutating func remove(model: String) {

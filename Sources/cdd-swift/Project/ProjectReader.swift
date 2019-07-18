@@ -58,7 +58,7 @@ class ProjectReader {
 		}
 	}
 
-	func generateProject() -> Result<Project, Swift.Error> {
+	private func generateProject() -> Result<Project, Swift.Error> {
 		guard case let .success(projectInfo) = parseProjectInfo(self.settingsFile) else {
 			return .failure(
 				ProjectError.InvalidSettingsFile("Cannot parse \(SETTINGS_FILE)"))
@@ -79,13 +79,13 @@ class ProjectReader {
 		do {
 			// generate a Project from swift files
 			let swiftProject: Project = try self.generateProject().get()
-			log.eventMessage("Successfully generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
+			log.eventMessage("Generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
 			log.infoMessage("- models: \(swiftProject.models.map({$0.name}))")
 
 			// generate a Project from the openapi spec
 			// todo: convert interface to .generateProject() -> Result
 			let specProject: Project = Project.fromSwagger(self.specFile)!
-			log.eventMessage("Successfully generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
+			log.eventMessage("Generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
 			log.infoMessage("- models: \(specProject.models.map({$0.name}))")
 
 			// merge the projects with most recent data from each set

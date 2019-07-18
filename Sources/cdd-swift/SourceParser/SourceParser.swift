@@ -11,10 +11,7 @@ import SwiftSyntax
 let MODEL_PROTOCOL = "APIModel"
 let REQUEST_PROTOCOL = "APIRequest"
 
-extension SourceFile {
-
-}
-
+/// count occurances of valid models
 func modelCount(sourceFile: SourceFile) -> Int {
 	var count: Int = 0
 
@@ -30,6 +27,7 @@ func modelCount(sourceFile: SourceFile) -> Int {
 	return count
 }
 
+/// parse models from source
 func parseModels(sourceFiles: [SourceFile]) -> [Model] {
 	var models: [String:Model] = [:]
 
@@ -49,6 +47,7 @@ func parseModels(sourceFiles: [SourceFile]) -> [Model] {
 	return Array(models.values)
 }
 
+// todo: simplify / remove
 func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
     var classToSourceFile: [String:URL] = [:]
     var models: [String:Model] = [:]

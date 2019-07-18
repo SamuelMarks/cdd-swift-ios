@@ -35,11 +35,12 @@ struct SourceFile {
 	}
 
 	mutating func update(model: Model) {
-		log.infoMessage("UNIMPLEMENTED: update(model) \(model.name)")
+		log.errorMessage("UNIMPLEMENTED: update model in source \(model.name)")
+		self.renameClassVariable(className: model.name, variable: Variable(name: "blah"))
 	}
 
 	mutating func delete(model: Model) {
-		log.infoMessage("UNIMPLEMENTED: delete(model)")
+		log.errorMessage("UNIMPLEMENTED: delete(model)")
 	}
 
 	static func create(path: URL, model: Model) -> SourceFile {

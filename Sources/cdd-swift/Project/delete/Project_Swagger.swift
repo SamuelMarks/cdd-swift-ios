@@ -105,7 +105,7 @@ extension Project {
                             arrayTypes.append((schema.name.formated(),"[\(type.formated())]"))
                         }
                         else
-							if var model = parseObject(name: schema.name, json: items, modificationDate: specFile.modificationDate) {
+							if let model = parseObject(name: schema.name, json: items, modificationDate: specFile.modificationDate) {
 //                                model.shouldBeUsedAsArray = true /// need to finish
                                 models.append(model)
                             }

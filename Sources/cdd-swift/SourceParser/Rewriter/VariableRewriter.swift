@@ -17,11 +17,26 @@ extension SourceFile {
 			rewriter.varValue = varValue
 			self.syntax = rewriter.visit(self.syntax) as! SourceFileSyntax
 			return .success(())
-
 		} catch let err {
 			return .failure(err)
 		}
+	}
 
+	mutating func renameClassVariable(className: String, variable: Variable) -> Result<(), Swift.Error> {
+		do {
+			let rewriter = ClassVariableRewriter()
+			self.syntax = rewriter.visit(self.syntax) as! SourceFileSyntax
+			return .success(())
+		} catch let err {
+			return .failure(err)
+		}
+	}
+}
+
+public class ClassVariableRewriter: SyntaxRewriter {
+	public override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+		let rewriter = StringLiteralRewriter()
+		return rewriter.visit(node)
 	}
 }
 
