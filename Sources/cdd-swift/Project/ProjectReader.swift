@@ -74,7 +74,8 @@ class ProjectReader {
 			))
 	}
 
-    func sync() -> Result<Project, Swift.Error> {
+	/// generate an up to date project file from spec and source files.
+    func merge() -> Result<Project, Swift.Error> {
 		do {
 			// generate a Project from swift files
 			let swiftProject: Project = try self.generateProject().get()
@@ -97,30 +98,37 @@ class ProjectReader {
 		}
     }
 
+	/// update spec and source files with a merged project
 	func apply(project: Project) {
 
-		// apply ProjectInfo to spec file
+		// update ProjectInfo in spec file
 		self.specFile.apply(projectInfo: project.info)
 
-		// apply ProjectInfo to Settings.swift
+		// update ProjectInfo in Settings.swift
 		self.settingsFile.update(projectInfo: project.info)
 
 		for model in project.models {
-			// check for model in spec file
+			// if model exists in spec file,
 			if self.specFile.contains(model: model.name) {
+				// write an update (non destructively update its variables and properties)
 				self.specFile.update(model: model)
 				log.eventMessage("Updated \(model.name) in \(self.specFile.path.path)")
 			} else {
+				// else insert it into the spec file
 				self.specFile.insert(model: model)
 				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
 		}
 
 		for modelFile in self.modelFiles {
+			// for each model in the swift source,
 			for model in parseModels(sourceFiles: [modelFile]) {
-
+				// if the model is fresh, update it
 				if project.models.contains(where: {$0.name == model.name}) {
 					log.errorMessage("UNIMPLEMENTED add model to specfile")
+				} else {
+					// else delete it
+					log.errorMessage("UNIMPLEMENTED delete model from source file")
 				}
 			}
 		}
@@ -135,36 +143,36 @@ class ProjectReader {
 		// clean up additional models in source
 		// ...
 
-		var projectModels = project.models
-		for (fileIndex, file) in self.sourceFiles.enumerated() {
-			// todo: clean syntax of parse()
-			let (swiftModels, routes, _) = parse(sourceFiles: [file])
-
-			log.eventMessage("Parsing \(file.path.path)")
-
-			for swiftModel in swiftModels {
-				if project.models.contains(where: {$0.name == swiftModel.name}) {
-					self.sourceFiles[fileIndex].update(model: swiftModel)
-					log.eventMessage("Updated \(swiftModel.name) in \(file.path.path)")
-				} else {
-					self.sourceFiles[fileIndex].delete(model: swiftModel)
-					log.eventMessage("Deleted \(swiftModel.name) from \(file.path.path)")
-				}
-
-				projectModels = projectModels.filter({$0.name == swiftModel.name})
-			}
-
-			for model in projectModels {
-				// add remaining models as new files
-				let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
-				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
-				log.eventMessage("Created \(fileName) in ---")
-			}
-
-			for route in routes {
-				log.eventMessage("skipping route \(route.name)")
-			}
-		}
+//		var projectModels = project.models
+//		for (fileIndex, file) in self.sourceFiles.enumerated() {
+//			// todo: clean syntax of parse()
+//			let (swiftModels, routes, _) = parse(sourceFiles: [file])
+//
+//			log.eventMessage("Parsing \(file.path.path)")
+//
+//			for swiftModel in swiftModels {
+//				if project.models.contains(where: {$0.name == swiftModel.name}) {
+//					self.sourceFiles[fileIndex].update(model: swiftModel)
+//					log.eventMessage("Updated \(swiftModel.name) in \(file.path.path)")
+//				} else {
+//					self.sourceFiles[fileIndex].delete(model: swiftModel)
+//					log.eventMessage("Deleted \(swiftModel.name) from \(file.path.path)")
+//				}
+//
+//				projectModels = projectModels.filter({$0.name == swiftModel.name})
+//			}
+//
+//			for model in projectModels {
+//				// add remaining models as new files
+//				let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
+//				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
+//				log.eventMessage("Created \(fileName) in ---")
+//			}
+//
+//			for route in routes {
+//				log.eventMessage("skipping route \(route.name)")
+//			}
+//		}
 	}
 
     func writeToSwiftFiles(changes:[Change]) {
