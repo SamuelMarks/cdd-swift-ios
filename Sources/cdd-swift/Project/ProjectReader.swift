@@ -21,10 +21,8 @@ class ProjectReader {
 	let projectPath: String
 	var specFile: SpecFile
 	var settingsFile: SourceFile
-	var sourceFiles: [SourceFile]
 	var modelFiles: [SourceFile]
 //	var requestFiles: [SourceFile]
-    var classToSourceFile: [String:URL] = [:]
 
 	init(path: String) throws {
 		self.projectPath = path
@@ -51,8 +49,6 @@ class ProjectReader {
 				self.modelFiles = []
 			}
 
-			self.sourceFiles = []
-
 		} catch let error {
 			throw error
 		}
@@ -64,13 +60,12 @@ class ProjectReader {
 				ProjectError.InvalidSettingsFile("Cannot parse \(SETTINGS_FILE)"))
 		}
 
-        let objects = parse(sourceFiles: self.sourceFiles)
-        classToSourceFile = objects.2
+		// todo: requests
 		return .success(
 			Project(
 				info: projectInfo,
 				models: parseModels(sourceFiles: self.modelFiles),
-				requests: objects.1
+				requests: []
 			))
 	}
 
@@ -128,7 +123,7 @@ class ProjectReader {
 					log.errorMessage("UNIMPLEMENTED delete model from source: \(model.name)")
 				}
 			} else {
-				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
+				self.modelFiles.append(SourceFile.create(path: fileName, model: model))
 				log.eventMessage("Created \(fileName)")
 			}
 		}
@@ -153,53 +148,7 @@ class ProjectReader {
 				self.specFile.remove(model: specModel.name)
 			}
 		}
-
-		// clean up additional models in source
-		// ...
-
-//		var projectModels = project.models
-//		for (fileIndex, file) in self.sourceFiles.enumerated() {
-//			// todo: clean syntax of parse()
-//			let (swiftModels, routes, _) = parse(sourceFiles: [file])
-//
-//			log.eventMessage("Parsing \(file.path.path)")
-//
-//			for swiftModel in swiftModels {
-//				if project.models.contains(where: {$0.name == swiftModel.name}) {
-//					self.sourceFiles[fileIndex].update(model: swiftModel)
-//					log.eventMessage("Updated \(swiftModel.name) in \(file.path.path)")
-//				} else {
-//					self.sourceFiles[fileIndex].delete(model: swiftModel)
-//					log.eventMessage("Deleted \(swiftModel.name) from \(file.path.path)")
-//				}
-//
-//				projectModels = projectModels.filter({$0.name == swiftModel.name})
-//			}
-//
-//			for model in projectModels {
-//				// add remaining models as new files
-//				let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
-//				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
-//				log.eventMessage("Created \(fileName) in ---")
-//			}
-//
-//			for route in routes {
-//				log.eventMessage("skipping route \(route.name)")
-//			}
-//		}
 	}
-
-    func writeToSwiftFiles(changes:[Change]) {
-        for change in changes {
-            if let url = classToSourceFile[change.objectName()],
-                let _ = sourceFiles.first(where: {$0.path == url}) {
-            }
-        }
-	}
-    
-    func writeToSwaggerFiles(changes:[Change]) {
-//        self.specFile.syntax.apply(changes)
-    }
 }
 
 extension Change {
