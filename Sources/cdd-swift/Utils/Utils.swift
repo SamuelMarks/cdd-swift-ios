@@ -12,7 +12,7 @@ func readDirectory(_ path: String) -> Result<[URL], Swift.Error> {
 	do {
 		let files = try FileManager.default.contentsOfDirectory(at: URL.init(fileURLWithPath: path), includingPropertiesForKeys: [], options:  [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
 
-		return .success(files.map{ URL(fileURLWithPath: $0.lastPathComponent) })
+		return .success(files)
 	}
 	catch let error {
 		return .failure(error)
@@ -53,7 +53,7 @@ func fileLastModifiedDate(url: URL) throws -> Date {
 		let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
 		return attributes[FileAttributeKey.modificationDate] as! Date
 	}
-	catch let error {
+	catch {
 		throw ProjectError.InvalidSettingsFile("could not determine modified date for file: \(url.path)")
 	}
 }
@@ -62,4 +62,8 @@ extension String {
     var trimmedWhiteSpaces: String {
         return trimmingCharacters(in: .whitespacesAndNewlines)
     }
+}
+
+func fileExists(file: String) -> Bool {
+	return FileManager.default.fileExists(atPath: file)
 }

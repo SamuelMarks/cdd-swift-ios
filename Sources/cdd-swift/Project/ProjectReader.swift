@@ -7,8 +7,9 @@ import Yams
 import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
-let MODELS_DIR = "/ios/API"
-let SETTINGS_FILE = "/ios/Settings.swift"
+let MODELS_DIR = "/Source/API/Models"
+let REQUESTS_DIR = "/Source/API/Request"
+let SETTINGS_FILE = "/Source/Settings.swift"
 
 struct FileResult<T> {
 	let fileName: String
@@ -34,11 +35,19 @@ class ProjectReader {
 				syntax: try SwaggerSpec.init(url: specUrl)
 			)
 			self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_FILE)")
-			self.sourceFiles = try [
-				"\(self.projectPath + MODELS_DIR)/Test.swift"
-			].map({ path in
-				try SourceFile(path: path)
-			})
+
+			if case let .success(projectFiles) = readDirectory(self.projectPath + MODELS_DIR) {
+				self.sourceFiles = try projectFiles.map({ file in
+					do {
+						return try SourceFile(path: file.path)
+					} catch let err {
+						throw err
+					}
+				})
+			} else {
+				self.sourceFiles = []
+			}
+
 		} catch let error {
 			throw error
 		}
@@ -62,25 +71,21 @@ class ProjectReader {
     func sync() -> Result<Project, Swift.Error> {
 		do {
 			// generate a Project from swift files
-			let swiftProject = try self.generateProject().get()
+			let swiftProject: Project = try self.generateProject().get()
 
 			// generate a Project from the openapi spec
 			// todo: convert interface to .generateProject() -> Result
-			let specProject = Project.fromSwagger(self.specFile)
+			let specProject: Project = Project.fromSwagger(self.specFile)!
 
 			// merge the projects with most recent data from each set
 			// todo: fix spec to return properly
-			let mergedProject = specProject!.merge(with: swiftProject)
+			let mergedProject = specProject.merge(with: swiftProject)
 
 			return .success(mergedProject)
 		} catch (let err) {
 			return .failure(err)
 		}
     }
-
-	func createModel(model: Model) {
-		
-	}
 
 	func apply(project: Project) {
 
@@ -98,6 +103,10 @@ class ProjectReader {
 				self.specFile.insert(model: model)
 				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
+
+//			if !fileExists(file: "\(MODELS_DIR)/\(model.name).swift") {
+//
+//			}
 		}
 
 		// clean up additional models in spec
