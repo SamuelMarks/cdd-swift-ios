@@ -83,34 +83,59 @@ class ProjectReader {
 		// apply ProjectInfo to spec file
 		self.specFile.apply(projectInfo: project.info)
 
-		// iterate models and routes in specfile here
-
 		// apply ProjectInfo to Settings.swift
-		self.settingsFile.apply(projectInfo: project.info)
+		self.settingsFile.update(projectInfo: project.info)
 
-		for (index, file) in self.sourceFiles.enumerated() {
+		for model in project.models {
+			if self.specFile.contains(model: model.name) {
+				self.specFile.update(model: model)
+			} else {
+				self.specFile.insert(model: model)
+			}
+		}
+
+		// clean up additional models in spec
+		for specModel in self.specFile.generateProject().models {
+			if !project.models.contains(where: {$0.name == specModel.name}) {
+				self.specFile.remove(model: specModel.name)
+			}
+		}
+
+		// clean up additional models in source
+		// ...
+
+		var projectModels = project.models
+		for (fileIndex, file) in self.sourceFiles.enumerated() {
 			// todo: clean syntax of parse()
-			let (models, routes, _) = parse(sourceFiles: [file])
+			let (swiftModels, routes, _) = parse(sourceFiles: [file])
 
-			for model in models {
-				print("found model: \(model.name)")
-				if project.models.contains(where: {$0.name == model.name}) {
-					print("model is supposed to be in project")
-					self.sourceFiles[index].apply(model: model)
+			print("parsing \(file.path.path)")
+//			print(swiftModels.map({$0.name}))
+//			print(project.models.map({$0.name}))
+
+			for swiftModel in swiftModels {
+				if project.models.contains(where: {$0.name == swiftModel.name}) {
+					self.sourceFiles[fileIndex].update(model: swiftModel)
 				} else {
-					// delete model
-					self.sourceFiles[index].delete(model: model)
+					self.sourceFiles[fileIndex].delete(model: swiftModel)
 				}
 
-
-//				if file.contains(model: model.name) {
-//					print("in file: \(file.path)")
-//				}
+				projectModels = projectModels.filter({$0.name == swiftModel.name})
 			}
+
+			for model in projectModels {
+				// add remaining models as new files
+				self.createSourceFile(from: model)
+			}
+
 			for route in routes {
 				print("route: \(route.name)")
 			}
 		}
+	}
+
+	func createSourceFile(from model: Model) {
+
 	}
     
     func writeToSwiftFiles(changes:[Change]) {

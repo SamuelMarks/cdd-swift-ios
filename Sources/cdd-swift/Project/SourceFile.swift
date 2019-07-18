@@ -22,18 +22,22 @@ struct SourceFile {
 		}
 	}
 
-	mutating func apply(projectInfo: ProjectInfo) {
+	mutating func update(projectInfo: ProjectInfo) {
 		let host = "\(projectInfo.hostname.scheme!)://\(projectInfo.hostname.host!)"
 		let _ = self.renameVariable("HOST", host)
 		let _ = self.renameVariable("ENDPOINT", projectInfo.hostname.path)
 	}
 
-	mutating func apply(model: Model) {
-		print("todo: update model in source file")
+	mutating func update(model: Model) {
+		print("UNIMPLEMENTED: apply(model)")
 	}
 
 	mutating func delete(model: Model) {
-		print("todo: delete model in source file")
+		print("UNIMPLEMENTED: delete(model)")
+	}
+
+	mutating func insert(model: Model) {
+		print("UNIMPLEMENTED: insert(model)")
 	}
 
 	func contains(model name: String) -> Bool {
