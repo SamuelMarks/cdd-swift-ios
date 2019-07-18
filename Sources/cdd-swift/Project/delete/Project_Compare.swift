@@ -7,20 +7,7 @@
 
 import Foundation
 
-//
-//extension SwaggerSpec {
-//    
-//    private func schemas(from variables:[Variable]) -> [Property] {
-//        return variables.map({$0.property()})
-//    }
-//    
-//    private func objectType(for properties: [Property]) -> SchemaType {
-//        let requiredProperties = properties.filter { $0.required }
-//        let optionalProperties = properties.filter { !$0.required }
-//        
-//        return .object(ObjectSchema(requiredProperties: requiredProperties, optionalProperties: optionalProperties, properties: properties, minProperties: nil, maxProperties: nil, additionalProperties: nil, abstract: false, discriminator: nil))
-//    }
-//    
+
 //    mutating func apply(_ changes: [Change]) {
 //        
 //        for change in changes {

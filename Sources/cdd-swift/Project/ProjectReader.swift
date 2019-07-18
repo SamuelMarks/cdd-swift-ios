@@ -79,13 +79,13 @@ class ProjectReader {
 			// generate a Project from swift files
 			let swiftProject: Project = try self.generateProject().get()
 			log.eventMessage("Successfully generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
-			log.eventMessage("    models: \(swiftProject.models.map({$0.name}))")
+			log.infoMessage("- models: \(swiftProject.models.map({$0.name}))")
 
 			// generate a Project from the openapi spec
 			// todo: convert interface to .generateProject() -> Result
 			let specProject: Project = Project.fromSwagger(self.specFile)!
 			log.eventMessage("Successfully generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
-			log.eventMessage("    models: \(specProject.models.map({$0.name}))")
+			log.infoMessage("- models: \(specProject.models.map({$0.name}))")
 
 			// merge the projects with most recent data from each set
 			// todo: fix spec to return properly
@@ -114,20 +114,13 @@ class ProjectReader {
 				self.specFile.insert(model: model)
 				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
-
-//			// then check in swift file
-//			let modelFilename = "\(model.name.capitalizingFirstLetter()).swift"
-//			if !fileExists(file: "\(MODELS_DIR)/\(modelFilename)") {
-//				log.eventMessage("Found \(model.name) in \(modelFilename)")
-////				self.modelFiles.
-//			}
 		}
 
 		for modelFile in self.modelFiles {
 			for model in parseModels(sourceFiles: [modelFile]) {
 
 				if project.models.contains(where: {$0.name == model.name}) {
-					print("OKOK")
+					log.errorMessage("UNIMPLEMENTED add model to specfile")
 				}
 			}
 		}

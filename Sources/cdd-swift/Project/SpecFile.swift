@@ -20,7 +20,9 @@ struct SpecFile {
 	}
 
 	mutating func insert(model: Model) {
-		log.infoMessage("UNIMPLEMENTED: insert(model)")
+		let properties = SwaggerSpec.schemas(from: model.vars)
+		let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: SwaggerSpec.objectType(for: properties))
+		self.syntax.components.schemas.append(ComponentObject(name: model.name, value: schema))
 	}
 
 	mutating func update(model: Model) {
@@ -44,5 +46,18 @@ struct SpecFile {
 
 	func contains(model name: String) -> Bool {
 		return self.syntax.components.schemas.contains(where: {$0.name == name})
+	}
+}
+
+extension SwaggerSpec {
+	static func schemas(from variables:[Variable]) -> [Property] {
+		return variables.map({$0.property()})
+	}
+
+	static func objectType(for properties: [Property]) -> SchemaType {
+		let requiredProperties = properties.filter { $0.required }
+		let optionalProperties = properties.filter { !$0.required }
+
+		return .object(ObjectSchema(requiredProperties: requiredProperties, optionalProperties: optionalProperties, properties: properties, minProperties: nil, maxProperties: nil, additionalProperties: nil, abstract: false, discriminator: nil))
 	}
 }

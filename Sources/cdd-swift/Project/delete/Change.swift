@@ -166,7 +166,7 @@ private extension Type {
 }
 
 
-private extension Variable {
+extension Variable {
 	func property() -> Property {
 		return Property(name: name, required: !optional, schema: type.schema())
 	}
