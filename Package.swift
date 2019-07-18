@@ -13,7 +13,6 @@ let package = Package(
         .executable(name: "cdd-swift", targets: ["cdd-swift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-package-manager.git", from: "0.3.0"),
         .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50000.0")),
         .package(url: "https://github.com/jpsim/Yams.git", from: "1.0.2"),
         .package(url: "https://github.com/kylef/PathKit.git", from: "0.9.0"),

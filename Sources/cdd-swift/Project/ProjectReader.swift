@@ -89,8 +89,10 @@ class ProjectReader {
 		for model in project.models {
 			if self.specFile.contains(model: model.name) {
 				self.specFile.update(model: model)
+				log.eventMessage("Updated \(model.name) in \(self.specFile.path.path)")
 			} else {
 				self.specFile.insert(model: model)
+				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
 		}
 
@@ -110,8 +112,6 @@ class ProjectReader {
 			let (swiftModels, routes, _) = parse(sourceFiles: [file])
 
 			log.eventMessage("Parsing \(file.path.path)")
-//			print(swiftModels.map({$0.name}))
-//			print(project.models.map({$0.name}))
 
 			for swiftModel in swiftModels {
 				if project.models.contains(where: {$0.name == swiftModel.name}) {
@@ -131,9 +131,9 @@ class ProjectReader {
 				log.eventMessage("Created \(model.name) in ---")
 			}
 
-			for route in routes {
-				print("route: \(route.name)")
-			}
+//			for route in routes {
+//				print("route: \(route.name)")
+//			}
 		}
 	}
 
