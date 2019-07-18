@@ -6,6 +6,9 @@ import PackageDescription
 
 let package = Package(
     name: "cdd-swift",
+	platforms: [
+		.macOS(.v10_13)
+	],
     products: [
         .executable(name: "cdd-swift", targets: ["cdd-swift"]),
     ],
@@ -16,11 +19,12 @@ let package = Package(
         .package(url: "https://github.com/kylef/PathKit.git", from: "0.9.0"),
         .package(url: "https://github.com/yonaskolb/JSONUtilities.git", from: "4.1.0"),
 		.package(url: "https://github.com/onevcat/Rainbow", from: "3.0.0"),
+		.package(url: "https://github.com/Nike-Inc/Willow.git", from: "5.0.0"),
 		.package(url: "https://github.com/jakeheis/SwiftCLI", from: "5.0.0")
     ],
     targets: [
         .target(
             name: "cdd-swift",
-            dependencies: ["SwiftSyntax", "Yams", "PathKit", "JSONUtilities", "Rainbow", "SwiftCLI"]),
+            dependencies: ["SwiftSyntax", "Yams", "PathKit", "JSONUtilities", "Rainbow", "SwiftCLI", "Willow"]),
     ]
 )

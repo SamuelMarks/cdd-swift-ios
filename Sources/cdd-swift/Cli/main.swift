@@ -1,6 +1,9 @@
 import Foundation
 import SwiftSyntax
 import SwiftCLI
+import Willow
+
+let defaultLogger = Logger(logLevels: [.all], writers: [ConsoleWriter()])
 
 let cli = CLI(
     name: "cdd-swift",
