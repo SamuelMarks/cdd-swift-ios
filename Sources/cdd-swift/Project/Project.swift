@@ -39,18 +39,7 @@ struct Project {
 				models.append(specModel)
 			}
 		}
-
-//		for specModel in self.models {
-//			if case let .some(swiftModel) = specModel.find(in: swiftProject.models) {
-//				// model exists, merge it with the existing one
-//				models.append(swiftModel.merge(with: specModel))
-//			} else {
-//				// model is new, add it directly
-//				// for now, use spec file as source of truth in missing case
-//				models.append(specModel)
-//			}
-//		}
-
+		
 		return Project(
 			info: self.info.merge(with: swiftProject.info),
 			models: models,

@@ -21,14 +21,8 @@ struct Model {
 	}
 
 	func merge(with otherModel: Model) -> Model {
+		// test for newest here?
 		let (newest, _) = Model.order(self, otherModel)
-//		var vars: [Variable] = []
-//		for variable in newest.vars {
-//			if case let .some(variable) = variable.find(in: otherModel.vars) {
-//				// var exists, merge it with the existing one
-//				vars.insert(variable)
-//			}
-//		}
 		return newest
 	}
 

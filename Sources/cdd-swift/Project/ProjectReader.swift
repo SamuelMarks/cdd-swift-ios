@@ -69,7 +69,7 @@ class ProjectReader {
 			))
 	}
 
-	/// generate an up to date project file from spec and source files.
+	/// generate a single up-to-date Project from spec and source files.
     func merge() -> Result<Project, Swift.Error> {
 		do {
 			// generate a Project from swift files
@@ -149,28 +149,4 @@ class ProjectReader {
 			}
 		}
 	}
-}
-
-extension Change {
-    func objectName() -> String {
-        switch self {
-        case .deletion(let object):
-           return object.objectName()
-        case .insertion(let object):
-          return object.objectName()
-        case .update(let object):
-           return object.objectName()
-        }
-    }
-}
-
-extension APIObjectChange {
-    func objectName() -> String {
-        switch self {
-        case .model(let model, _):
-            return model.name
-        case .request(let request, _):
-            return request.name
-        }
-    }
 }
