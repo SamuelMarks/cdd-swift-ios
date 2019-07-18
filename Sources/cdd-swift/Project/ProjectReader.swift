@@ -109,15 +109,17 @@ class ProjectReader {
 			// todo: clean syntax of parse()
 			let (swiftModels, routes, _) = parse(sourceFiles: [file])
 
-			print("parsing \(file.path.path)")
+			log.eventMessage("Parsing \(file.path.path)")
 //			print(swiftModels.map({$0.name}))
 //			print(project.models.map({$0.name}))
 
 			for swiftModel in swiftModels {
 				if project.models.contains(where: {$0.name == swiftModel.name}) {
 					self.sourceFiles[fileIndex].update(model: swiftModel)
+					log.eventMessage("Updated \(swiftModel.name) in \(file.path.path)")
 				} else {
 					self.sourceFiles[fileIndex].delete(model: swiftModel)
+					log.eventMessage("Deleted \(swiftModel.name) from \(file.path.path)")
 				}
 
 				projectModels = projectModels.filter({$0.name == swiftModel.name})
@@ -126,6 +128,7 @@ class ProjectReader {
 			for model in projectModels {
 				// add remaining models as new files
 				self.createSourceFile(from: model)
+				log.eventMessage("Created \(model.name) in ---")
 			}
 
 			for route in routes {

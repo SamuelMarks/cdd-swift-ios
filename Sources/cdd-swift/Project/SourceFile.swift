@@ -29,15 +29,15 @@ struct SourceFile {
 	}
 
 	mutating func update(model: Model) {
-		print("UNIMPLEMENTED: apply(model)")
+		log.infoMessage("UNIMPLEMENTED: apply(model)")
 	}
 
 	mutating func delete(model: Model) {
-		print("UNIMPLEMENTED: delete(model)")
+		log.infoMessage("UNIMPLEMENTED: delete(model)")
 	}
 
 	mutating func insert(model: Model) {
-		print("UNIMPLEMENTED: insert(model)")
+		log.infoMessage("UNIMPLEMENTED: insert(model)")
 	}
 
 	func contains(model name: String) -> Bool {
