@@ -80,13 +80,13 @@ class ProjectReader {
 			// generate a Project from swift files
 			let swiftProject: Project = try self.generateProject().get()
 			log.eventMessage("Generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
-			log.infoMessage("- models: \(swiftProject.models.map({$0.name}))")
+			log.infoMessage("- source models: \(swiftProject.models.map({$0.name}))")
 
 			// generate a Project from the openapi spec
 			// todo: convert interface to .generateProject() -> Result
 			let specProject: Project = Project.fromSwagger(self.specFile)!
 			log.eventMessage("Generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
-			log.infoMessage("- models: \(specProject.models.map({$0.name}))")
+			log.infoMessage("- spec models: \(specProject.models.map({$0.name}))")
 
 			// merge the projects with most recent data from each set
 			// todo: fix spec to return properly
@@ -107,6 +107,7 @@ class ProjectReader {
 		// update ProjectInfo in Settings.swift
 		self.settingsFile.update(projectInfo: project.info)
 
+		// update spec file models:
 		for model in project.models {
 			// if model exists in spec file,
 			if self.specFile.contains(model: model.name) {
@@ -118,17 +119,30 @@ class ProjectReader {
 				self.specFile.insert(model: model)
 				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
+
+			let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
+			if fileExists(file: fileName.path) {
+				if project.models.contains(where: {model.name == $0.name}) {
+					log.errorMessage("UNIMPLEMENTED update model to source: \(model.name)")
+				} else {
+					log.errorMessage("UNIMPLEMENTED delete model from source: \(model.name)")
+				}
+			} else {
+				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
+				log.eventMessage("Created \(fileName)")
+			}
 		}
 
+		// update source file models:
 		for modelFile in self.modelFiles {
 			// for each model in the swift source,
 			for model in parseModels(sourceFiles: [modelFile]) {
 				// if the model is fresh, update it
 				if project.models.contains(where: {$0.name == model.name}) {
-					log.errorMessage("UNIMPLEMENTED add model to specfile")
+					log.errorMessage("UNIMPLEMENTED add model to specfile: \(model.name)")
 				} else {
 					// else delete it
-					log.errorMessage("UNIMPLEMENTED delete model from source file")
+					log.errorMessage("UNIMPLEMENTED delete model from source file: \(model.name)")
 				}
 			}
 		}
