@@ -20,11 +20,11 @@ struct SpecFile {
 	}
 
 	mutating func insert(model: Model) {
-		print("UNIMPLEMENTED: insert(model)")
+		log.infoMessage("UNIMPLEMENTED: insert(model)")
 	}
 
 	mutating func update(model: Model) {
-		print("UNIMPLEMENTED: update(model)")
+		log.infoMessage("UNIMPLEMENTED: update(model)")
 	}
 
 	mutating func remove(model: String) {
@@ -34,7 +34,6 @@ struct SpecFile {
 				print("REMOVED \(model) FROM SPEC")
 			} else {
 				exitWithError("critical error: could not remove \(model) from spec")
-				exit(0)
 			}
 		}
 	}
