@@ -78,6 +78,10 @@ class ProjectReader {
 		}
     }
 
+	func createModel(model: Model) {
+		
+	}
+
 	func apply(project: Project) {
 
 		// apply ProjectInfo to spec file
@@ -128,12 +132,14 @@ class ProjectReader {
 			for model in projectModels {
 				// add remaining models as new files
 				self.createSourceFile(from: model)
-				log.eventMessage("Created \(model.name) in ---")
+				let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
+				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
+				log.eventMessage("Created \(fileName) in ---")
 			}
 
-//			for route in routes {
-//				print("route: \(route.name)")
-//			}
+			for route in routes {
+				log.eventMessage("skipping route \(route.name)")
+			}
 		}
 	}
 

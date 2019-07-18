@@ -22,6 +22,12 @@ struct SourceFile {
 		}
 	}
 
+	private init(path: URL, modificationDate: Date, syntax: SourceFileSyntax) {
+		self.path = path
+		self.modificationDate = modificationDate
+		self.syntax = syntax
+	}
+
 	mutating func update(projectInfo: ProjectInfo) {
 		let host = "\(projectInfo.hostname.scheme!)://\(projectInfo.hostname.host!)"
 		let _ = self.renameVariable("HOST", host)
@@ -29,15 +35,19 @@ struct SourceFile {
 	}
 
 	mutating func update(model: Model) {
-		log.infoMessage("UNIMPLEMENTED: apply(model)")
+		log.infoMessage("UNIMPLEMENTED: update(model) \(model.name)")
 	}
 
 	mutating func delete(model: Model) {
 		log.infoMessage("UNIMPLEMENTED: delete(model)")
 	}
 
-	mutating func insert(model: Model) {
-		log.infoMessage("UNIMPLEMENTED: insert(model)")
+	static func create(path: URL, model: Model) -> SourceFile {
+		// todo: add fields
+		return SourceFile(
+			path: path,
+			modificationDate: Date(),
+			syntax: makeStruct(name: model.name))
 	}
 
 	func contains(model name: String) -> Bool {
