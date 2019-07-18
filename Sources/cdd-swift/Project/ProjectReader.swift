@@ -131,7 +131,6 @@ class ProjectReader {
 
 			for model in projectModels {
 				// add remaining models as new files
-				self.createSourceFile(from: model)
 				let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
 				self.sourceFiles.append(SourceFile.create(path: fileName, model: model))
 				log.eventMessage("Created \(fileName) in ---")
@@ -143,10 +142,6 @@ class ProjectReader {
 		}
 	}
 
-	func createSourceFile(from model: Model) {
-
-	}
-    
     func writeToSwiftFiles(changes:[Change]) {
         for change in changes {
             if let url = classToSourceFile[change.objectName()],
