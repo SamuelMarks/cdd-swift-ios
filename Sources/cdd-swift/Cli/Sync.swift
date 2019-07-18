@@ -22,25 +22,32 @@ class SyncCommand: Command {
 		do {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
 
-			switch projectReader.generateProject() {
-
-			case .success(let project):
-				log.eventMessage("Successfully generated project with \(project.models.count) models, \(project.requests.count) routes.".green)
-
-				if case let .success(project) = projectReader.sync() {
-					projectReader.apply(project: project)
-				}
-
-//				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile) {
-//					for change in project.compare(swaggerProject) {
-////						print("changes: \(project.compare(swaggerProject))")
-//						printChangeResult(change.apply())
-//					}
-//				}
-
-			case .failure(let error):
-				printError(error)
+			if case let .success(project) = projectReader.sync() {
+				log.eventMessage("Generated merged project with \(project.models.count) models: \(project.models.map({$0.name}))")
+				projectReader.apply(project: project)
 			}
+
+//			switch projectReader.generateProject() {
+//
+//			case .success(let project):
+//				log.eventMessage("Successfully generated project from swift project with \(project.models.count) models, \(project.requests.count) routes.".green)
+//				log.eventMessage("Swift models: \(project.models.map({$0.name}))")
+//
+//				if case let .success(project) = projectReader.sync() {
+//					log.eventMessage("Generated merged project with \(project.models.count) models: \(project.models.map({$0.name}))")
+//					projectReader.apply(project: project)
+//				}
+//
+////				if case let .some(swaggerProject) = Project.fromSwagger(projectReader.specFile) {
+////					for change in project.compare(swaggerProject) {
+//////						print("changes: \(project.compare(swaggerProject))")
+////						printChangeResult(change.apply())
+////					}
+////				}
+//
+//			case .failure(let error):
+//				printError(error)
+//			}
 
 		} catch (let err) {
 			exitWithError(err)

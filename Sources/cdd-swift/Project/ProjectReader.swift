@@ -22,13 +22,15 @@ class ProjectReader {
 	var specFile: SpecFile
 	var settingsFile: SourceFile
 	var sourceFiles: [SourceFile]
+	var modelFiles: [SourceFile]
+//	var requestFiles: [SourceFile]
     var classToSourceFile: [String:URL] = [:]
 
 	init(path: String) throws {
 		self.projectPath = path
 
 		do {
-			let specUrl = URL(fileURLWithPath: "\(self.projectPath)/\(SPEC_FILE)")
+			let specUrl = URL(fileURLWithPath: "\(self.projectPath + SPEC_FILE)")
 			self.specFile = SpecFile(
 				path: specUrl,
 				modificationDate: try fileLastModifiedDate(url: specUrl),
@@ -37,16 +39,19 @@ class ProjectReader {
 			self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_FILE)")
 
 			if case let .success(projectFiles) = readDirectory(self.projectPath + MODELS_DIR) {
-				self.sourceFiles = try projectFiles.map({ file in
+				self.modelFiles = try projectFiles.map({ file in
 					do {
+						log.infoMessage("MODEL source found: \(file)")
 						return try SourceFile(path: file.path)
 					} catch let err {
 						throw err
 					}
 				})
 			} else {
-				self.sourceFiles = []
+				self.modelFiles = []
 			}
+
+			self.sourceFiles = []
 
 		} catch let error {
 			throw error
@@ -61,21 +66,26 @@ class ProjectReader {
 
         let objects = parse(sourceFiles: self.sourceFiles)
         classToSourceFile = objects.2
-		return .success(Project(
-			info: projectInfo,
-			models: objects.0,
-			requests: objects.1
-		))
+		return .success(
+			Project(
+				info: projectInfo,
+				models: parseModels(sourceFiles: self.modelFiles),
+				requests: objects.1
+			))
 	}
 
     func sync() -> Result<Project, Swift.Error> {
 		do {
 			// generate a Project from swift files
 			let swiftProject: Project = try self.generateProject().get()
+			log.eventMessage("Successfully generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
+			log.eventMessage("    models: \(swiftProject.models.map({$0.name}))")
 
 			// generate a Project from the openapi spec
 			// todo: convert interface to .generateProject() -> Result
 			let specProject: Project = Project.fromSwagger(self.specFile)!
+			log.eventMessage("Successfully generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
+			log.eventMessage("    models: \(specProject.models.map({$0.name}))")
 
 			// merge the projects with most recent data from each set
 			// todo: fix spec to return properly
@@ -96,6 +106,7 @@ class ProjectReader {
 		self.settingsFile.update(projectInfo: project.info)
 
 		for model in project.models {
+			// check for model in spec file
 			if self.specFile.contains(model: model.name) {
 				self.specFile.update(model: model)
 				log.eventMessage("Updated \(model.name) in \(self.specFile.path.path)")
@@ -104,9 +115,21 @@ class ProjectReader {
 				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
 
-//			if !fileExists(file: "\(MODELS_DIR)/\(model.name).swift") {
-//
+//			// then check in swift file
+//			let modelFilename = "\(model.name.capitalizingFirstLetter()).swift"
+//			if !fileExists(file: "\(MODELS_DIR)/\(modelFilename)") {
+//				log.eventMessage("Found \(model.name) in \(modelFilename)")
+////				self.modelFiles.
 //			}
+		}
+
+		for modelFile in self.modelFiles {
+			for model in parseModels(sourceFiles: [modelFile]) {
+
+				if project.models.contains(where: {$0.name == model.name}) {
+					print("OKOK")
+				}
+			}
 		}
 
 		// clean up additional models in spec

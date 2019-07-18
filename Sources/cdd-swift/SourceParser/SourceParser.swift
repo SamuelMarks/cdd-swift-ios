@@ -30,6 +30,25 @@ func modelCount(sourceFile: SourceFile) -> Int {
 	return count
 }
 
+func parseModels(sourceFiles: [SourceFile]) -> [Model] {
+	var models: [String:Model] = [:]
+
+	for sourceFile in sourceFiles {
+		let visitor = ClassVisitor()
+		sourceFile.syntax.walk(visitor)
+
+		for klass in visitor.klasses {
+			if klass.interfaces.contains(MODEL_PROTOCOL) {
+				models[klass.name] = Model(name: klass.name,
+										   vars: Array(klass.vars.values),
+										   modificationDate: sourceFile.modificationDate)
+			}
+		}
+	}
+
+	return Array(models.values)
+}
+
 func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
     var classToSourceFile: [String:URL] = [:]
     var models: [String:Model] = [:]
