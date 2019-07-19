@@ -36,7 +36,14 @@ struct SourceFile {
 
 	mutating func update(model: Model) {
 		log.errorMessage("UNIMPLEMENTED: update model in source \(model.name)")
-		self.renameClassVariable(className: model.name, variable: Variable(name: "blah"))
+		for variable in model.vars {
+			switch self.renameClassVariable(className: model.name, variable: Variable(name: "blah")) {
+			case .success(_):
+				log.eventMessage("Updated variable: \(variable.name)")
+			case .failure(_):
+				log.errorMessage("Failed to update variable: \(variable.name)")
+			}
+		}
 	}
 
 	mutating func delete(model: Model) {
