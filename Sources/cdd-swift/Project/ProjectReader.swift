@@ -11,12 +11,6 @@ let MODELS_DIR = "/Source/API/Models"
 let REQUESTS_DIR = "/Source/API/Request"
 let SETTINGS_FILE = "/Source/Settings.swift"
 
-struct FileResult<T> {
-	let fileName: String
-	let modificationDate: Date
-	let result: Result<T,Swift.Error>
-}
-
 class ProjectReader {
 	let projectPath: String
 	var specFile: SpecFile

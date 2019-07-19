@@ -26,12 +26,6 @@ func printResult<T>(fileName: String, result: Result<T, Swift.Error>) {
 	}
 }
 
-func printFileResults<T>(fileResults: [FileResult<T>]) {
-	for fileResult in fileResults {
-		printResult(fileName: fileResult.fileName, result: fileResult.result)
-	}
-}
-
 func printSuccess(_ string: String) {
 	print("[OK] \(string)".green)
 }
