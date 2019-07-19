@@ -112,14 +112,19 @@ class ProjectReader {
 				log.eventMessage("Inserted \(model.name) in \(self.specFile.path.path)")
 			}
 
+			// check for existance of model file in the current place
 			let fileName = URL(string: "\(MODELS_DIR)/\(model.name).swift")!
 			if fileExists(file: fileName.path) {
+				// if the file contains that model,
 				if project.models.contains(where: {model.name == $0.name}) {
+					// update it
 					log.errorMessage("UNIMPLEMENTED update model to source: \(model.name)")
 				} else {
+					// otherwise, add it to the source
 					log.errorMessage("UNIMPLEMENTED delete model from source: \(model.name)")
 				}
 			} else {
+				// create new model source file
 				self.modelFiles.append(SourceFile.create(path: fileName, model: model))
 				log.eventMessage("Created \(fileName)")
 			}
@@ -144,6 +149,19 @@ class ProjectReader {
 			if !project.models.contains(where: {$0.name == specModel.name}) {
 				self.specFile.remove(model: specModel.name)
 			}
+		}
+	}
+
+	func write() {
+		do {
+			// write specfile
+			let yaml = try self.specFile.toYAML().get()
+			writeStringToFile(file: self.specFile.path, contents: "\(yaml)")
+
+			// write models
+			// ...
+		} catch let err {
+			log.errorMessage("\(err)")
 		}
 	}
 }

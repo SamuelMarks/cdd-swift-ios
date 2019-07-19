@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Yams
 
 struct SpecFile {
 	let path: URL
@@ -46,6 +47,17 @@ struct SpecFile {
 
 	func contains(model name: String) -> Bool {
 		return self.syntax.components.schemas.contains(where: {$0.name == name})
+	}
+
+	func toYAML() -> Result<String, Swift.Error> {
+		do {
+			let encoder = YAMLEncoder()
+			let encodedYAML = try encoder.encode(self.syntax)
+			return .success(encodedYAML)
+		}
+		catch let err {
+			return .failure(err)
+		}
 	}
 }
 

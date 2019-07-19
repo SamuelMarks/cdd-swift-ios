@@ -24,6 +24,7 @@ class SyncCommand: Command {
 			if case let .success(project) = projectReader.merge() {
 				log.eventMessage("Generated merged project with \(project.models.count) models: \(project.models.map({$0.name}))")
 				projectReader.apply(project: project)
+				projectReader.write()
 			}
 		} catch (let err) {
 			exitWithError(err)

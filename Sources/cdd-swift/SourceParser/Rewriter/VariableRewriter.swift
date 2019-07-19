@@ -36,6 +36,7 @@ extension SourceFile {
 public class ClassVariableRewriter: SyntaxRewriter {
 	public override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
 		let rewriter = StringLiteralRewriter()
+		log.errorMessage("UNFINISHED: ClassVariableRewriter()")
 		return rewriter.visit(node)
 	}
 }

@@ -7,6 +7,11 @@
 
 import Foundation
 
+func writeStringToFile(file: URL, contents: String) {
+	log.errorMessage("UNIMPLEMENTED: writing \(file.path)")
+//	print(contents)
+}
+
 /// read files in a directory to [URL]
 func readDirectory(_ path: String) -> Result<[URL], Swift.Error> {
 	do {
