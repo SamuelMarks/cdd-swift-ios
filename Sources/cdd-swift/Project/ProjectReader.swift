@@ -16,7 +16,7 @@ class ProjectReader {
 	var specFile: SpecFile
 	var settingsFile: SourceFile
 	var modelFiles: [SourceFile]
-//	var requestFiles: [SourceFile]
+	var requestFiles: [SourceFile]
 
 	init(path: String) throws {
 		self.projectPath = path
@@ -42,6 +42,9 @@ class ProjectReader {
 			} else {
 				self.modelFiles = []
 			}
+
+			// todo: incomplete
+			self.requestFiles = []
 
 		} catch let error {
 			throw error
