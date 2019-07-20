@@ -13,10 +13,11 @@ class CheckCommand: Command {
 //		let source = try SourceFile.init(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template/Source/API/Models/Pet.swift")
 
 		var source = makeStruct(name: "Petty")
+//		source.addVariable(variableName: <#T##String#>, variableType: <#T##String#>)
 //		source.addFunction(functionName: "MyFunction")
 
-		source.addVariable(variableName: "a", variableType: "Int")
-		source.addVariable(variableName: "b", variableType: "String")
+		source.addVariable("a", "Int")
+		source.addVariable("b", "String")
 		print(source)
 	}
 

@@ -45,3 +45,7 @@ public class VariableRewriter: SyntaxRewriter {
         return node
     }
 }
+
+public class VariableInsert: SyntaxRewriter {
+	
+}

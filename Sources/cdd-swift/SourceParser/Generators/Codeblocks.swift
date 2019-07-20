@@ -8,11 +8,11 @@
 import Foundation
 import SwiftSyntax
 
-extension SourceFileSyntax {
-	mutating func addVariable(variableName: String, variableType: String) {
-		self = self.addCodeBlockItem(variableCodeBlock(variableName: variableName, variableType: variableType))
-	}
-}
+//extension SourceFileSyntax {
+//	mutating func addVariable(variableName: String, variableType: String) {
+//		self = self.addCodeBlockItem(variableCodeBlock(variableName: variableName, variableType: variableType))
+//	}
+//}
 
 func variableCodeBlock(variableName: String, variableType: String) -> CodeBlockItemSyntax {
 	let Pattern = SyntaxFactory.makePatternBinding(
@@ -31,6 +31,9 @@ func variableCodeBlock(variableName: String, variableType: String) -> CodeBlockI
 
 func functionCodeBlock(functionName: String, functionParam: String) -> CodeBlockItemSyntax {
 	let string = SyntaxFactory.makeStringLiteralExpr(functionName)
+
+
+
 	let printID = SyntaxFactory.makeVariableExpr(functionParam)
 	let arg = FunctionCallArgumentSyntax {
 		$0.useExpression(string)
