@@ -8,7 +8,7 @@
 import Foundation
 import SwiftSyntax
 
-struct SourceFile {
+struct SourceFile: ProjectSource {
 	let path: URL
 	let modificationDate: Date
 	var syntax: SourceFileSyntax
@@ -34,30 +34,63 @@ struct SourceFile {
 		let _ = self.renameVariable("ENDPOINT", projectInfo.hostname.path)
 	}
 
-	mutating func update(model: Model) {
-		for variable in model.vars {
-			switch self.renameClassVariable(className: model.name, variable: Variable(name: "blah")) {
-			case .success(_):
-				log.eventMessage("Updated variable: \(variable.name)")
-			case .failure(_):
-				log.errorMessage("Failed to update variable: \(variable.name)")
-			}
-		}
-	}
-
-	mutating func delete(model: Model) {
-		log.errorMessage("UNIMPLEMENTED: delete(model)")
-	}
-
-	static func create(path: URL, model: Model) -> SourceFile {
+    mutating func remove(model: Model) {
+        log.errorMessage("UNIMPLEMENTED: delete(model)")
+    }
+    
+    mutating func insert(model: Model) {
+        log.errorMessage("UNIMPLEMENTED: insert(model)")
+    }
+    
+    mutating func update(model: Model, changes: [VariableChange]) {
+        for change in changes {
+            switch change {
+            case .deletion(let variable):
+                log.errorMessage("UNIMPLEMENTED: delete(variable)")
+            case .insertion(let variable):
+                log.errorMessage("UNIMPLEMENTED: insert(variable)")
+            }
+        }
+        
+        for variable in model.vars {
+            var varSyntax:Syntax! = nil/// need to implement
+            guard let modelSyntax = find(model: model) else { return }
+            let newModelSyntax = VariableRewriter.rewrite(name: variable.name, syntax: varSyntax, in: modelSyntax)
+            self.syntax = ClassRewriter.rewrite(name: model.name, syntax: newModelSyntax, in: self.syntax)
+        }
+    }
+    
+    mutating func remove(request:Request) {
+        log.errorMessage("UNIMPLEMENTED: remove(request)")
+    }
+    
+    mutating func insert(request:Request) {
+        log.errorMessage("UNIMPLEMENTED: insert(request)")
+    }
+    
+    mutating func update(request:Request,changes:[VariableChange]) {
+        log.errorMessage("UNIMPLEMENTED: update(request)")
+    }
+    
+    
+    func find(model: Model) -> StructDeclSyntax? {
+        let visitor = ClassVisitor()
+        syntax.walk(visitor)
+        return visitor.syntaxes[model.name]
+    }
+    
+	static func create(path: String, name: String) -> SourceFile? {
+        guard let url = URL(string: path) else {
+            return nil
+        }
 		// todo: add fields
 		return SourceFile(
-			path: path,
+			path: url,
 			modificationDate: Date(),
-			syntax: makeStruct(name: model.name))
+			syntax: makeStruct(name: name))
 	}
 
-	func contains(model name: String) -> Bool {
+	func containsClassWith(name: String) -> Bool {
 		let visitor = ClassVisitor()
 		self.syntax.walk(visitor)
 

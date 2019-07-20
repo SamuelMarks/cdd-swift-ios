@@ -20,12 +20,9 @@ class SyncCommand: Command {
 	func sync(spec: URL) {
 		do {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
-
-			if case let .success(project) = projectReader.merge() {
-				log.eventMessage("Generated merged project with \(project.models.count) models: \(project.models.map({$0.name}))")
-				projectReader.apply(project: project)
-				projectReader.write()
-			}
+            try projectReader.sync()
+            log.eventMessage("Project Synced")
+            projectReader.write()
 		} catch (let err) {
 			exitWithError(err)
 		}
