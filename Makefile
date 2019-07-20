@@ -20,6 +20,9 @@ build:
 run: build
 	.build/debug/cdd-swift sync ./Template
 
+check: build
+	.build/debug/cdd-swift check
+
 alex: build
 	.build/debug/cdd-swift generate
 

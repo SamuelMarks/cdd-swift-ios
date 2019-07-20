@@ -27,6 +27,7 @@ let cli = CLI(
     commands: [
         GenerateCommand(),
         SyncCommand(),
+		CheckCommand(),
         TestCommand()
     ]
 )

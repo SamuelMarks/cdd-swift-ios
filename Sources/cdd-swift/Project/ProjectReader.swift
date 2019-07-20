@@ -118,6 +118,7 @@ class ProjectReader {
 				// if the file contains that model,
 				if project.models.contains(where: {model.name == $0.name}) {
 					// update it
+					
 					log.errorMessage("UNIMPLEMENTED update model to source: \(model.name)")
 				} else {
 					// otherwise, add it to the source

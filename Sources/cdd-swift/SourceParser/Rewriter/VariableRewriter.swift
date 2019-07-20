@@ -6,30 +6,44 @@
 //
 
 import Foundation
-
 import SwiftSyntax
+
+extension SourceFileSyntax {
+	mutating func renameVariable(_ varName: String, _ varValue: String) {
+		let rewriter = VariableValueRewriter()
+		rewriter.varName = varName
+		rewriter.varValue = varValue
+		self = rewriter.visit(self) as! SourceFileSyntax
+	}
+}
 
 extension SourceFile {
 	mutating func renameVariable(_ varName: String, _ varValue: String) -> Result<(), Swift.Error> {
-		do {
-			let rewriter = VariableValueRewriter()
-			rewriter.varName = varName
-			rewriter.varValue = varValue
-			self.syntax = rewriter.visit(self.syntax) as! SourceFileSyntax
-			return .success(())
-		} catch let err {
-			return .failure(err)
+		let rewriter = VariableValueRewriter()
+		rewriter.varName = varName
+		rewriter.varValue = varValue
+		guard let syntax = rewriter.visit(self.syntax) as? SourceFileSyntax else {
+			return .failure(ProjectError.SourceFileParser("error converting source syntax"))
 		}
+		self.syntax = syntax
+		return .success(())
 	}
 
 	mutating func renameClassVariable(className: String, variable: Variable) -> Result<(), Swift.Error> {
-		do {
-			let rewriter = ClassVariableRewriter()
-			self.syntax = rewriter.visit(self.syntax) as! SourceFileSyntax
-			return .success(())
-		} catch let err {
-			return .failure(err)
+		let rewriter = ClassVariableRewriter()
+		guard let syntax = rewriter.visit(self.syntax) as? SourceFileSyntax else {
+			return .failure(ProjectError.SourceFileParser("error converting source syntax"))
 		}
+		self.syntax = syntax
+		return .success(())
+	}
+}
+
+public class AddClassVariableRewriter: SyntaxRewriter {
+	public override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+		let rewriter = StringLiteralRewriter()
+		log.errorMessage("UNFINISHED: ClassVariableRewriter()")
+		return rewriter.visit(node)
 	}
 }
 
