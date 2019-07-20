@@ -8,16 +8,16 @@ import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
 let MODELS_DIR = "/Source/API/Models"
-let REQUESTS_DIR = "/Source/API/Request"
+let REQUESTS_DIR = "/Source/API/Requests"
 let SETTINGS_FILE = "/Source/Settings.swift"
 
 protocol ProjectSource {
     mutating func remove(model:Model)
     mutating func insert(model:Model)
-    mutating func update(model:Model,changes:[VariableChange])
+    mutating func update(model:Model)
     mutating func remove(request:Request)
     mutating func insert(request:Request)
-    mutating func update(request:Request,changes:[VariableChange])
+    mutating func update(request:Request)
 }
 
 
@@ -52,7 +52,20 @@ class ProjectReader {
                 self.sourceFiles = []
             }
             
-            // todo: incomplete Requests
+            if case let .success(projectFiles) = readDirectory(self.projectPath + REQUESTS_DIR) {
+                let requestsSourceFiles: [SourceFile] = try projectFiles.map({ file in
+                    do {
+                        log.infoMessage("REQUEST source found: \(file)")
+                        return try SourceFile(path: file.path)
+                    } catch let err {
+                        throw err
+                    }
+                })
+                self.sourceFiles.append(contentsOf:requestsSourceFiles)
+            } else {
+//                self.sourceFiles = []
+            }
+            
             
         } catch let error {
             throw error
@@ -65,12 +78,13 @@ class ProjectReader {
                 ProjectError.InvalidSettingsFile("Cannot parse \(SETTINGS_FILE)"))
         }
         
+        let result = parse(sourceFiles: sourceFiles)
         // todo: requests
         return .success(
             Project(
                 info: projectInfo,
-                models: parseModels(sourceFiles: self.sourceFiles),
-                requests: []
+                models: result.0,
+                requests: result.1
         ))
     }
     
@@ -90,62 +104,87 @@ class ProjectReader {
         // merge the projects with most recent data from each set
         // todo: fix spec to return properly
         
-        let projectInfo = swiftProject.info.merge(with: specProject.info)
-        self.specFile.apply(projectInfo: projectInfo)
-        self.settingsFile.update(projectInfo: projectInfo)
+        let mergedProject = specProject.merge(with: swiftProject)
+        self.specFile.apply(projectInfo: mergedProject.info)
+        self.settingsFile.update(projectInfo: mergedProject.info)
         
-        let changesForSpec = swiftProject.compare(specProject)
-        for change in changesForSpec {
-            self.specFile = apply(change: change, to: self.specFile)
-        }
-        
-        let changesForSource = specProject.compare(swiftProject)
-        for change in changesForSource {
-            var path = ""
-            var name = ""
+        let modelsChanges = mergedProject.models.compare(to: specProject.models)
+        for change in modelsChanges {
             switch change {
-            case .model(let model, _):
-                path = "\(MODELS_DIR)/\(model.name).swift"
-                name = model.name
-            case .request(let request, _):
-                path = "\(REQUESTS_DIR)/\(request.name).swift"
-                name = request.name
-            }
-            
-            if !fileExists(file: path), let file = SourceFile.create(path: path, name: name) {
-                self.sourceFiles.append(file)
-            }
-            if let index = self.sourceFiles.firstIndex(where: {$0.containsClassWith(name: name)}) {
-                self.sourceFiles[index] = apply(change: change, to: self.sourceFiles[index])
+            case .deletion(let model):
+                specFile.remove(model: model)
+            case .insertion(let model):
+                specFile.insert(model: model)
+            case .same(let model):
+                specFile.update(model: model)
             }
         }
+        
+        let requestsChanges = mergedProject.requests.compare(to: specProject.requests)
+        for change in requestsChanges {
+            switch change {
+            case .deletion(let request):
+                specFile.remove(request: request)
+            case .insertion(let request):
+                specFile.insert(request: request)
+            case .same(let request):
+                specFile.update(request: request)
+            }
+        }
+        
+        let modelsChanges1 = mergedProject.models.compare(to: swiftProject.models)
+        for change in modelsChanges1 {
+            guard let index = indexFileFor(object: change.object()) else { return }
+            var sourceFile = sourceFiles[index]
+            switch change {
+            case .deletion(let model):
+                sourceFile.remove(model:model)
+            case .insertion(let model):
+                sourceFile.insert(model:model)
+            case .same(let model):
+               sourceFile.update(model:model)
+            }
+            sourceFiles[index] = sourceFile
+        }
+        
+        let requestsChanges1 = mergedProject.requests.compare(to: swiftProject.requests)
+        for change in requestsChanges1 {
+            guard let index = indexFileFor(object: change.object()) else { return }
+            var sourceFile = sourceFiles[index]
+            
+            switch change {
+            case .deletion(let request):
+                sourceFile.remove(request: request)
+            case .insertion(let request):
+                sourceFile.insert(request: request)
+            case .same(let request):
+                sourceFile.update(request: request)
+            }
+            sourceFiles[index] = sourceFile
+        }
+        
     }
     
-    func apply<T:ProjectSource>(change: ProjectChange, to source:T) -> T {
-        var source = source
-        switch change {
-        case .model(let model, let change):
-            switch change {
-            case .deletion:
-                source.remove(model: model)
-            case .insertion:
-                source.insert(model: model)
-            case .update(_):
-                log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
-            }
-            break
-        case .request(let request, let change):
-            switch change {
-            case .deletion:
-                log.errorMessage("UNIMPLEMENTED delete request to source: \(request.name)")
-            case .insertion:
-                log.errorMessage("UNIMPLEMENTED insert request to source: \(request.name)")
-            case .update(_):
-                log.errorMessage("UNIMPLEMENTED update request to source: \(request.name)")
-            }
-            break
+    func indexFileFor(object: ProjectObject) -> Int? {
+        var path = ""
+        var name = ""
+        if object is Model {
+            path = "\(MODELS_DIR)/\(object.name).swift"
+            name = object.name
         }
-        return source
+        else if object is Request {
+            path = "\(REQUESTS_DIR)/\(object.name).swift"
+            name = object.name
+        }
+        path = self.projectPath + path
+        if !fileExists(file: path), let file = SourceFile.create(path: path, name: name) {
+            self.sourceFiles.append(file)
+        }
+        if let index = self.sourceFiles.firstIndex(where: {$0.containsClassWith(name: name)}) {
+            return index
+        }
+        
+        return nil
     }
     
     func write() {

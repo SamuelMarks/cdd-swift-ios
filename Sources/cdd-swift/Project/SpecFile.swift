@@ -19,6 +19,43 @@ struct SpecFile: ProjectSource {
 			self.syntax.servers.append(Server(name: nil, url: hostname, description: nil, variables: [:]))
 		}
 	}
+    
+    mutating func apply(project: Project) {
+        
+    }
+    
+    mutating func update(request:Request) {
+        guard let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) else { return }
+        var path = syntax.paths[pathIndex]
+        guard let method = Operation.Method(rawValue: request.method.rawValue) else { return }
+        guard let operationIndex = path.operations.firstIndex(where: {$0.method == method}) else { return }
+        
+        let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
+        let response = request.response()
+        let responses: [OperationResponse] = response == nil ? [] : [response!]
+        let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
+        
+        let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
+        
+        path.operations[operationIndex] = operation
+        syntax.paths[pathIndex] = path
+        
+        log.errorMessage("UNIMPLEMENTED: update(request)")
+    }
+    
+    
+    mutating func update(model:Model) {
+        guard let index = syntax.components.schemas.firstIndex(where: {$0.name == model.name}) else {return}
+        var schema = syntax.components.schemas[index]
+        
+        let properties = schemas(from: model.vars)
+        
+        schema.value.type = objectType(for: properties)
+        syntax.components.schemas[index] = schema
+        
+        log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
+    }
+    
 
     mutating func remove(model:Model) {
         for (index, specModel) in self.syntax.components.schemas.enumerated() {
@@ -35,18 +72,6 @@ struct SpecFile: ProjectSource {
         let properties = schemas(from: model.vars)
         let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: objectType(for: properties))
         self.syntax.components.schemas.append(ComponentObject(name: model.name, value: schema))
-    }
-    
-    mutating func update(model:Model,changes:[VariableChange]) {
-        guard let index = syntax.components.schemas.firstIndex(where: {$0.name == model.name}) else {return}
-        var schema = syntax.components.schemas[index]
-        
-        let properties = schemas(from: model.vars)
-        
-        schema.value.type = objectType(for: properties)
-        syntax.components.schemas[index] = schema
-        
-        log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
     }
     
     mutating func remove(request:Request) {
@@ -77,26 +102,6 @@ struct SpecFile: ProjectSource {
             syntax.paths.append(path)
         }
     }
-    
-    mutating func update(request:Request,changes:[VariableChange]) {
-        guard let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) else { return }
-        var path = syntax.paths[pathIndex]
-        guard let method = Operation.Method(rawValue: request.method.rawValue) else { return }
-        guard let operationIndex = path.operations.firstIndex(where: {$0.method == method}) else { return }
-
-        let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
-        let response = request.response()
-        let responses: [OperationResponse] = response == nil ? [] : [response!]
-        let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
-        
-        let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
-        
-        path.operations[operationIndex] = operation
-        syntax.paths[pathIndex] = path
-
-        log.errorMessage("UNIMPLEMENTED: update(request)")
-    }
-    
     
 	func generateProject() -> Project {
 		return Project.fromSwagger(self)!

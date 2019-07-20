@@ -205,7 +205,7 @@ extension Project {
                                   urlPath: path,
                                   responseType: responseName,
                                   errorType: errorNameResponse,
-                                  vars: fields)
+                                  vars: fields, modificationDate:specFile.modificationDate)
             requests.append(request)
         }
 
