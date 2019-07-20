@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Variable {
+struct Variable: ProjectObject {
 	let name: String
 	var optional: Bool
 	var type: Type

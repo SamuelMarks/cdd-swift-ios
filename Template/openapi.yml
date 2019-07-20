@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
 servers:
-  - url: http://pesztstore.swagger.io/v1
+  - url: http://petstore.swagger.io/v1
 paths:
   /pets:
     get:
@@ -65,7 +65,7 @@ paths:
           required: true
           description: The id of the pet to retrieve
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: Expected response to a valid request
@@ -81,7 +81,7 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
-    Pot:
+    Pet:
       required:
         - id
         - name
@@ -90,7 +90,7 @@ components:
           type: integer
           format: int64
         name:
-          type: string
+          type: integer
         tag:
           type: string
     Pets:
@@ -106,4 +106,5 @@ components:
           type: integer
           format: int32
         message:
-          type: string
+          type: integer
+

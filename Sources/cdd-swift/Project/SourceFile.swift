@@ -42,21 +42,27 @@ struct SourceFile: ProjectSource {
         log.errorMessage("UNIMPLEMENTED: insert(model)")
     }
     
-    mutating func update(model: Model, changes: [VariableChange]) {
+    mutating func update(model: Model) {
+        let result = parse(sourceFiles: [self])
+        guard let oldModel = result.0.first(where: {$0.name == model.name}) else { return }
+        update(vars: model.vars,oldVars: oldModel.vars, inClass: model.name)
+    }
+    
+    mutating func update(vars: [Variable], oldVars: [Variable], inClass name:String) {
+        let changes = vars.compare(to: oldVars)
+        
         for change in changes {
+            guard let classSyntax = findClass(name: name) else { return }
+            
             switch change {
             case .deletion(let variable):
-                log.errorMessage("UNIMPLEMENTED: delete(variable)")
+                log.errorMessage("UNIMPLEMENTED: remove (Variable) \(variable)")
             case .insertion(let variable):
-                log.errorMessage("UNIMPLEMENTED: insert(variable)")
+                log.errorMessage("UNIMPLEMENTED: insert (Variable) \(variable)")
+            case .same(let variable):
+                let newModelSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
+                self.syntax = ClassRewriter.rewrite(name: name, syntax: newModelSyntax, in: self.syntax)
             }
-        }
-        
-        for variable in model.vars {
-            var varSyntax:Syntax! = nil/// need to implement
-            guard let modelSyntax = find(model: model) else { return }
-            let newModelSyntax = VariableRewriter.rewrite(name: variable.name, syntax: varSyntax, in: modelSyntax)
-            self.syntax = ClassRewriter.rewrite(name: model.name, syntax: newModelSyntax, in: self.syntax)
         }
     }
     
@@ -68,15 +74,25 @@ struct SourceFile: ProjectSource {
         log.errorMessage("UNIMPLEMENTED: insert(request)")
     }
     
-    mutating func update(request:Request,changes:[VariableChange]) {
-        log.errorMessage("UNIMPLEMENTED: update(request)")
+    mutating func update(request:Request) {
+//        print(syntax)
+        let result = parse(sourceFiles: [self])
+        guard let oldRequest = result.1.first(where: {$0.name == request.name}) else { return }
+        update(vars: request.vars,oldVars: oldRequest.vars, inClass: request.name)
+        
+        /// need finish for response url method error
+//        let responseSyntax = request.responseTypeSyntax()
+//        let newModelSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
+//        self.syntax = ClassRewriter.rewrite(name: name, syntax: newModelSyntax, in: self.syntax)
+        
+//        print(syntax)
     }
     
     
-    func find(model: Model) -> StructDeclSyntax? {
+    func findClass(name: String) -> StructDeclSyntax? {
         let visitor = ClassVisitor()
         syntax.walk(visitor)
-        return visitor.syntaxes[model.name]
+        return visitor.syntaxes[name]
     }
     
 	static func create(path: String, name: String) -> SourceFile? {
@@ -93,13 +109,47 @@ struct SourceFile: ProjectSource {
 	func containsClassWith(name: String) -> Bool {
 		let visitor = ClassVisitor()
 		self.syntax.walk(visitor)
-
-		for klass in visitor.klasses {
-			if klass.interfaces.contains(MODEL_PROTOCOL) && klass.name == name {
-				return true
-			}
-		}
-
-		return false
+        return visitor.klasses.contains(where: {$0.name == name})
 	}
+}
+
+extension Request {
+    func methodSyntax() -> Syntax {
+        return SyntaxFactory.makeStringSegment("method: String { return .\(method) }")
+    }
+    
+    func urlSyntax() -> Syntax {
+        return SyntaxFactory.makeStringSegment("urlPath: String { return \"\(urlPath)\" }")
+    }
+    
+    func responseTypeSyntax() -> Syntax {
+        return SyntaxFactory.makeStringSegment("typealias ResponseType = " + responseType)
+    }
+    
+    func errorTypeSyntax() -> Syntax {
+        return SyntaxFactory.makeStringSegment("typealias ErrorType = \(errorType) ")
+    }
+}
+
+extension Variable {
+    func syntax() -> Syntax {
+        return SyntaxFactory.makeStringSegment(swiftCode())
+    }
+    
+    func swiftCode() -> String {
+        return name + ": " + type.swiftCode() + (optional ? "?" : "")
+    }
+}
+
+extension Type {
+    func swiftCode() -> String {
+        switch self {
+        case .primitive(let type):
+            return type.rawValue
+        case .array(let type):
+            return "[\(type.swiftCode())]"
+        case .complex(let type):
+            return type
+        }
+    }
 }
