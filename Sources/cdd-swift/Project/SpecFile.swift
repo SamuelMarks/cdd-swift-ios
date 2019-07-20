@@ -8,7 +8,7 @@
 import Foundation
 import Yams
 
-struct SpecFile {
+struct SpecFile: ProjectSource {
 	let path: URL
 	let modificationDate: Date
 	var syntax: SwaggerSpec
@@ -20,27 +20,84 @@ struct SpecFile {
 		}
 	}
 
-	mutating func insert(model: Model) {
-		let properties = SwaggerSpec.schemas(from: model.vars)
-		let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: SwaggerSpec.objectType(for: properties))
-		self.syntax.components.schemas.append(ComponentObject(name: model.name, value: schema))
-	}
+    mutating func remove(model:Model) {
+        for (index, specModel) in self.syntax.components.schemas.enumerated() {
+            if model.name == specModel.name {
+                self.syntax.components.schemas.remove(at: index)
+                print("REMOVED \(model.name) FROM SPEC")
+            } else {
+                exitWithError("critical error: could not remove \(model.name) from spec")
+            }
+        }
+    }
+    
+    mutating func insert(model:Model) {
+        let properties = schemas(from: model.vars)
+        let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: objectType(for: properties))
+        self.syntax.components.schemas.append(ComponentObject(name: model.name, value: schema))
+    }
+    
+    mutating func update(model:Model,changes:[VariableChange]) {
+        guard let index = syntax.components.schemas.firstIndex(where: {$0.name == model.name}) else {return}
+        var schema = syntax.components.schemas[index]
+        
+        let properties = schemas(from: model.vars)
+        
+        schema.value.type = objectType(for: properties)
+        syntax.components.schemas[index] = schema
+        
+        log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
+    }
+    
+    mutating func remove(request:Request) {
+        let method = Operation.Method(rawValue: request.method.rawValue) ?? .post
+        if var path = syntax.paths.first(where:{$0.path == request.urlPath}) {
+            path.operations.removeAll(where: {$0.method == method})
+            if path.operations.count == 0 {
+                syntax.paths.removeAll(where: {$0.path == request.urlPath})
+            }
+        }
+        log.errorMessage("UNIMPLEMENTED: remove(request)")
+    }
+    
+    mutating func insert(request:Request) {
+        let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
+        let response = request.response()
+        let responses: [OperationResponse] = response == nil ? [] : [response!]
+        let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
+        var path = syntax.paths.first(where:{$0.path == request.urlPath}) ?? Path(path: request.urlPath, operations: [], parameters: [])
+        let method = Operation.Method(rawValue: request.method.rawValue) ?? .post
+        
+        let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
+        path.operations.append(operation)
+        if let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) {
+            syntax.paths[pathIndex] = path
+        }
+        else {
+            syntax.paths.append(path)
+        }
+    }
+    
+    mutating func update(request:Request,changes:[VariableChange]) {
+        guard let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) else { return }
+        var path = syntax.paths[pathIndex]
+        guard let method = Operation.Method(rawValue: request.method.rawValue) else { return }
+        guard let operationIndex = path.operations.firstIndex(where: {$0.method == method}) else { return }
 
-	mutating func update(model: Model) {
-		log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
-	}
+        let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
+        let response = request.response()
+        let responses: [OperationResponse] = response == nil ? [] : [response!]
+        let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
+        
+        let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
+        
+        path.operations[operationIndex] = operation
+        syntax.paths[pathIndex] = path
 
-	mutating func remove(model: String) {
-		for (index, specModel) in self.syntax.components.schemas.enumerated() {
-			if model == specModel.name {
-				self.syntax.components.schemas.remove(at: index)
-				print("REMOVED \(model) FROM SPEC")
-			} else {
-				exitWithError("critical error: could not remove \(model) from spec")
-			}
-		}
-	}
-
+        log.errorMessage("UNIMPLEMENTED: update(request)")
+    }
+    
+    
 	func generateProject() -> Project {
 		return Project.fromSwagger(self)!
 	}
@@ -59,17 +116,32 @@ struct SpecFile {
 			return .failure(err)
 		}
 	}
+    
+    func schemas(from variables:[Variable]) -> [Property] {
+        return variables.map({$0.property()})
+    }
+    
+    func objectType(for properties: [Property]) -> SchemaType {
+        let requiredProperties = properties.filter { $0.required }
+        let optionalProperties = properties.filter { !$0.required }
+        
+        return .object(ObjectSchema(requiredProperties: requiredProperties, optionalProperties: optionalProperties, properties: properties, minProperties: nil, maxProperties: nil, additionalProperties: nil, abstract: false, discriminator: nil))
+    }
 }
 
-extension SwaggerSpec {
-	static func schemas(from variables:[Variable]) -> [Property] {
-		return variables.map({$0.property()})
-	}
 
-	static func objectType(for properties: [Property]) -> SchemaType {
-		let requiredProperties = properties.filter { $0.required }
-		let optionalProperties = properties.filter { !$0.required }
-
-		return .object(ObjectSchema(requiredProperties: requiredProperties, optionalProperties: optionalProperties, properties: properties, minProperties: nil, maxProperties: nil, additionalProperties: nil, abstract: false, discriminator: nil))
-	}
+private extension Request {
+    func response() -> OperationResponse? {
+        if responseType == "EmptyResponse" {
+            return nil
+        }
+        return OperationResponse(statusCode: 200, response: PossibleReference.reference(Reference("#/components/schemas" + responseType + "\"")))
+    }
+    
+    func defaultResponse() -> PossibleReference<Response>? {
+        if errorType == "EmptyResponse" {
+            return nil
+        }
+        return PossibleReference.reference(Reference("$ref: \"#/components/schemas/" + errorType + "\""))
+    }
 }
