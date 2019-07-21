@@ -10,15 +10,11 @@ import SwiftCLI
 
 class CheckCommand: Command {
 	func execute() throws {
-//		let source = try SourceFile.init(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template/Source/API/Models/Pet.swift")
+		var source = try SourceFile.init(path: "/Users/rob/Projects/paid.workspace/cdd/connectors/cdd-swift-ios/Template/Source/API/Models/Pet.swift")
 
-		var source = makeStruct(name: "Petty")
-//		source.addVariable(variableName: <#T##String#>, variableType: <#T##String#>)
-//		source.addFunction(functionName: "MyFunction")
-
-		source.addVariable("a", "Int")
-		source.addVariable("b", "String")
-		print(source)
+		source.syntax.addVariable("aaa", "Int")
+		source.syntax.addVariable("bbb", "String")
+		print(source.syntax)
 	}
 
 	let name = "check"

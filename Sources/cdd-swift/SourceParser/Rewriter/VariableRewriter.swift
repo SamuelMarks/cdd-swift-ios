@@ -17,9 +17,21 @@ extension SourceFileSyntax {
 	}
 
 	mutating func addVariable(_ varName: String, _ varValue: String) {
-		let rewriter = AddClassVariableRewriter()
-		rewriter.varName = varName
-		rewriter.varValue = varValue
+//		let rewriter = AppendClassVariableRewriter(varName: varName, varValue: varValue)
+//		let rewriter = StructContentRewriter {
+//			return $0
+//		}
+
+//		let rewriter = StructContentRewriter {
+//			print($0)
+//			return $0
+//		}
+
+		let rewriter = StructContentRewriter {
+			return $0.appending(
+				variableDecl(variableName: varName, variableType: varValue))
+		}
+
 		if let syntax = rewriter.visit(self) as? SourceFileSyntax {
 			self = syntax
 		} else {
@@ -49,52 +61,123 @@ extension SourceFile {
 		return .success(())
 	}
 }
-
-public class AddClassVariableRewriter: SyntaxRewriter {
-	var varName: String? = nil
-	var varValue: String? = nil
-
-	public override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
-		let rewriter = StringLiteralRewriter()
-		log.errorMessage("UNFINISHED: ClassVariableRewriter()")
-
-//		let code = variableCodeBlock(variableName: "hi", variableType: "Int")
-		let variableName = "hi"
-		let variableType = "Int"
-
-		let Pattern = SyntaxFactory.makePatternBinding(
-			pattern: SyntaxFactory.makeIdentifierPattern(
-				identifier: SyntaxFactory.makeIdentifier(variableName).withLeadingTrivia(.spaces(1))),
-			typeAnnotation: SyntaxFactory.makeTypeAnnotation(
-				colon: SyntaxFactory.makeColonToken().withTrailingTrivia(.spaces(1)),
-				type: SyntaxFactory.makeTypeIdentifier(variableType)),
-			initializer: nil, accessor: nil, trailingComma: nil)
-		let decl = VariableDeclSyntax {
-			$0.useLetOrVarKeyword(SyntaxFactory.makeLetKeyword())
-			$0.addPatternBinding(Pattern)
-		}
-
-		let d = MemberDeclListItemSyntax {
-			$0.useDecl(decl)
-		}
-
-		let b = node.members.addMemberDeclListItem(d)
-		let block = MemberDeclBlockSyntax {
-			$0.useLeftBrace(
-				SyntaxFactory.makeLeftBraceToken(leadingTrivia: .spaces(1), trailingTrivia: .zero))
-			$0.useRightBrace(
-				SyntaxFactory.makeRightBraceToken(leadingTrivia: .newlines(1), trailingTrivia: .zero))
-		}
+//
+//class StructContentRewriter: SyntaxRewriter {
+//	let rewriter: (TokenSyntax) -> TokenSyntax
+//	init(rewriter: @escaping (TokenSyntax) -> TokenSyntax)
+//	{
+//		self.rewriter = rewriter
+//	}
+//
+//	override func visit(_ token: TokenSyntax) -> Syntax {
+//		let token2 = self.rewriter(token)
+//		return super.visit(token2)
+//	}
+//}
 
 
+//class StructRewriter: SyntaxRewriter {
+//	let rewriter: (StructDeclSyntax) -> DeclSyntax
+//
+//	init(rewriter: @escaping (StructDeclSyntax) -> DeclSyntax) {
+//		self.rewriter = rewriter
+//	}
+//
+//	override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+//		let node2 = self.rewriter(node)
+//		return super.visit(node2) as! DeclSyntax
+//	}
+//}
 
-//		node.members = node.members.addMemberDeclListItem(d)
 
-//		node.withMembers(block)
-//		node.withMembers(block)
+class StructContentRewriter: SyntaxRewriter {
+	let rewriter: (MemberDeclListSyntax) -> MemberDeclListSyntax
 
-		return rewriter.visit(node)
+	init(rewriter: @escaping (MemberDeclListSyntax) -> MemberDeclListSyntax) {
+		self.rewriter = rewriter
 	}
+
+	override func visit(_ node: MemberDeclListSyntax) -> Syntax {
+		let node2 = self.rewriter(node)
+		return super.visit(node2)
+	}
+
+
+
+//	override func visit(_ node: ClosureExprSyntax) -> ExprSyntax {
+//		print("--\(node)--")
+//		return super.visit(node)
+//	}
+
+//	override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+////		let klassName = "\(node.identifier)".trimmingCharacters(in: .whitespaces)
+//
+//		let node2 = self.rewriter(node)
+//		return super.visit(node2) as! DeclSyntax
+//	}
+}
+
+open class AppendVariableRewriter: SyntaxRewriter {
+	var varName: String
+	var varValue: String
+
+	init(varName: String, varValue: String) {
+		self.varName = varName
+		self.varValue = varValue
+	}
+
+	open override func visit(_ syntax: CodeBlockItemListSyntax) -> Syntax {
+		let varItem = variableCodeBlock(variableName: self.varName, variableType: self.varValue)
+		return super.visit(syntax.appending(varItem))
+	}
+
+//	open override func visit(_ node: Syntax) -> Syntax {
+//		print("--\(type(of: node))")
+//		return super.visit(node)
+//	}
+
+//	override open func visit(_ token: TokenSyntax) -> Syntax {
+//		print(">>\(token.tokenKind)<<")
+//		return super.visit(token)
+//	}
+
+
+//	public override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+//		let structCode = variableCodeBlock(variableName: "aaaa", variableType: "Int")
+//		node.add
+//		return super.visit(structCode)
+//	}
+
+//	public override func visit(_ node: Syntax) -> Syntax {
+//		let structCode = variableCodeBlock(variableName: "aaaa", variableType: "Int")
+//
+//		return super.visit(structCode)
+//	}
+
+//	public override func visit(_ node: CodeBlockSyntax) -> Syntax {
+//		let returnNode = node.addCodeBlockItem(variableCodeBlock(variableName: "aaaa", variableType: "Int"))
+//		return super.visit(returnNode)
+//	}
+
+//	public override func visit(_ syntax: SourceFileSyntax) -> Syntax {
+//		var itemList = syntax.statements
+//		let newItem = SyntaxFactory.makeCodeBlockItem(
+//			item: variableCodeBlock(variableName: "thing", variableType: "Int"),
+//			semicolon: nil,
+//			errorTokens: nil)
+//		itemList = itemList.appending(newItem)
+//
+//		print(newItem)
+//		print(syntax.withStatements(itemList))
+//
+//
+//
+//		for child in syntax.children {
+//			print("--\(child)")
+//		}
+//
+//		return super.visit(syntax.withStatements(itemList))
+//	}
 }
 
 public class ClassVariableRewriter: SyntaxRewriter {

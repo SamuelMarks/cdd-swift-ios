@@ -43,7 +43,7 @@ class ProjectReader {
                 self.sourceFiles = try projectFiles.map({ file in
                     do {
                         log.infoMessage("MODEL source found: \(file)")
-                        return try SourceFile(path: file.path)
+                        return try SourceFile(path: file.path )
                     } catch let err {
                         throw err
                     }
