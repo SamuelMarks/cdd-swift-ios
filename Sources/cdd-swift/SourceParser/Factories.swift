@@ -10,8 +10,6 @@ import SwiftSyntax
 
 let STRUCT_TEMPLATE = """
 struct $0 : ApiModel {
-	let a: String = "hi"
-	let b: Int
 }
 """
 

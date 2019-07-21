@@ -35,11 +35,11 @@ struct SourceFile: ProjectSource {
 	}
 
     mutating func remove(model: Model) {
-        log.errorMessage("UNIMPLEMENTED: delete(model)")
+        self.syntax = ClassRemover.remove(name: model.name, in: self.syntax)
     }
     
     mutating func insert(model: Model) {
-        log.errorMessage("UNIMPLEMENTED: insert(model)")
+        update(vars:model.vars,oldVars:[],inClass:model.name)
     }
     
     mutating func update(model: Model) {
@@ -56,36 +56,33 @@ struct SourceFile: ProjectSource {
             
             switch change {
             case .deletion(let variable):
-                log.errorMessage("UNIMPLEMENTED: remove (Variable) \(variable)")
+                let newClassSyntax = VariableRemover.remove(name: variable.name, in: classSyntax)
+                self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
             case .insertion(let variable):
-                log.errorMessage("UNIMPLEMENTED: insert (Variable) \(variable)")
+                let rewriter = StructContentRewriter {
+                    return $0.appending(variable.syntax())
+                }
+                let newClassSyntax = rewriter.visit(classSyntax)
+                self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
             case .same(let variable):
-                let newModelSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
-                self.syntax = ClassRewriter.rewrite(name: name, syntax: newModelSyntax, in: self.syntax)
+                let newClassSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
+                self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
             }
         }
     }
     
     mutating func remove(request:Request) {
-        log.errorMessage("UNIMPLEMENTED: remove(request)")
+        self.syntax = ClassRemover.remove(name: request.name, in: self.syntax)
     }
     
     mutating func insert(request:Request) {
-        log.errorMessage("UNIMPLEMENTED: insert(request)")
+        update(vars:request.vars,oldVars:[],inClass:request.name)
     }
     
     mutating func update(request:Request) {
-//        print(syntax)
         let result = parse(sourceFiles: [self])
         guard let oldRequest = result.1.first(where: {$0.name == request.name}) else { return }
         update(vars: request.vars,oldVars: oldRequest.vars, inClass: request.name)
-        
-        /// need finish for response url method error
-//        let responseSyntax = request.responseTypeSyntax()
-//        let newModelSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
-//        self.syntax = ClassRewriter.rewrite(name: name, syntax: newModelSyntax, in: self.syntax)
-        
-//        print(syntax)
     }
     
     
@@ -132,8 +129,27 @@ extension Request {
 }
 
 extension Variable {
-    func syntax() -> Syntax {
-        return SyntaxFactory.makeStringSegment(swiftCode())
+//    func syntax() -> Syntax {
+//        return SyntaxFactory.makeStringSegment(swiftCode())
+//    }
+    
+    func syntax() -> MemberDeclListItemSyntax {
+        let type = self.type.swiftCode() + (optional ? "?" : "")
+        let Pattern = SyntaxFactory.makePatternBinding(
+            pattern: SyntaxFactory.makeIdentifierPattern(
+                identifier: SyntaxFactory.makeIdentifier(name).withLeadingTrivia(.spaces(1))),
+            typeAnnotation: SyntaxFactory.makeTypeAnnotation(
+                colon: SyntaxFactory.makeColonToken().withTrailingTrivia(.spaces(1)),
+                type: SyntaxFactory.makeTypeIdentifier(type)),
+            initializer: nil, accessor: nil, trailingComma: nil)
+        
+        let decl = VariableDeclSyntax {
+            $0.useLetOrVarKeyword(SyntaxFactory.makeLetKeyword().withLeadingTrivia([.carriageReturns(1), .tabs(1)]))
+            $0.addPatternBinding(Pattern)
+        }
+        
+        let listItem = SyntaxFactory.makeMemberDeclListItem(decl: decl, semicolon: nil)
+        return listItem
     }
     
     func swiftCode() -> String {

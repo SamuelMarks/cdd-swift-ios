@@ -81,7 +81,7 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
-    Pet:
+    Pett:
       required:
         - id
         - name
@@ -91,7 +91,7 @@ components:
           format: int64
         name:
           type: integer
-        tag:
+        tag2:
           type: string
     Pets:
       type: array
