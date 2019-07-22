@@ -77,12 +77,34 @@ struct SourceFile: ProjectSource {
     
     mutating func insert(request:Request) {
         update(vars:request.vars,oldVars:[],inClass:request.name)
+        
+        let responseTypeItem = SyntaxFactory.makeMemberDeclListItem(decl: request.responseTypeSyntax(), semicolon: nil)
+        let errorTypeItem = SyntaxFactory.makeMemberDeclListItem(decl: request.errorTypeSyntax(), semicolon: nil)
+        let rewriter = StructContentRewriter {
+            return $0.inserting(request.methodSyntax(), at: 0)
+                .inserting(request.urlSyntax(), at: 0)
+                .inserting(errorTypeItem, at: 0)
+                .inserting(responseTypeItem, at: 0)
+        }
+        
+        guard let classSyntax = findClass(name: request.name) else { return }
+        let newClassSyntax = rewriter.visit(classSyntax)
+        self.syntax = ClassRewriter.rewrite(name: request.name, syntax: newClassSyntax, in: self.syntax)
     }
     
     mutating func update(request:Request) {
         let result = parse(sourceFiles: [self])
         guard let oldRequest = result.1.first(where: {$0.name == request.name}) else { return }
         update(vars: request.vars,oldVars: oldRequest.vars, inClass: request.name)
+        
+        
+        guard let classSyntax = findClass(name: request.name) else { return }
+        
+        var newClassSyntax = TypeAliasRewriter.rewrite(name: "ResponseType", syntax: request.responseTypeSyntax(), in: classSyntax)
+        newClassSyntax = TypeAliasRewriter.rewrite(name: "ErrorType", syntax: request.errorTypeSyntax(), in: newClassSyntax)
+        newClassSyntax = VariableRewriter.rewrite(name: "urlPath", syntax: request.urlSyntax(), in: newClassSyntax)
+        newClassSyntax = VariableRewriter.rewrite(name: "method", syntax: request.methodSyntax(), in: newClassSyntax)
+        self.syntax = ClassRewriter.rewrite(name: request.name, syntax: newClassSyntax, in: self.syntax)
     }
     
     
@@ -111,28 +133,78 @@ struct SourceFile: ProjectSource {
 }
 
 extension Request {
-    func methodSyntax() -> Syntax {
-        return SyntaxFactory.makeStringSegment("method: String { return .\(method) }")
+    
+    func methodSyntax() -> MemberDeclListItemSyntax {
+        return closureSyntax(name: "method", type: "Method", returnValue: "." + self.method.rawValue)
     }
     
-    func urlSyntax() -> Syntax {
-        return SyntaxFactory.makeStringSegment("urlPath: String { return \"\(urlPath)\" }")
+    func urlSyntax() -> MemberDeclListItemSyntax {
+        let convertedUrlPath = urlPath.replacingOccurrences(of: "{", with: "\\(").replacingOccurrences(of: "}", with: ")")
+        return closureSyntax(name: "urlPath", type: "String", returnValue: "\"" + convertedUrlPath + "\"")
     }
     
-    func responseTypeSyntax() -> Syntax {
-        return SyntaxFactory.makeStringSegment("typealias ResponseType = " + responseType)
+    func responseTypeSyntax() -> TypealiasDeclSyntax {
+        return typealiasSyntax(name: "ResponseType", type: responseType)
     }
     
-    func errorTypeSyntax() -> Syntax {
-        return SyntaxFactory.makeStringSegment("typealias ErrorType = \(errorType) ")
+    func errorTypeSyntax() -> TypealiasDeclSyntax {
+        return typealiasSyntax(name: "ErrorType", type: errorType)
+    }
+    
+    private func typealiasSyntax(name: String, type: String) -> TypealiasDeclSyntax {
+        
+        let initializer = TypeInitializerClauseSyntax {
+            $0.useEqual(SyntaxFactory.makeEqualToken().withLeadingTrivia(.spaces(1)).withTrailingTrivia(.spaces(1)))
+            $0.useValue(SyntaxFactory.makeTypeIdentifier(type))
+        }
+        
+        let decl = TypealiasDeclSyntax {
+            $0.useTypealiasKeyword(SyntaxFactory.makeTypealiasKeyword().withLeadingTrivia([.carriageReturns(1), .tabs(1)]))
+            $0.useIdentifier(SyntaxFactory.makeStringLiteral(name).withLeadingTrivia(.spaces(1)))
+            $0.useInitializer(initializer)
+        }
+        
+        return decl
+    }
+    
+    
+    private func closureSyntax(name: String, type: String, returnValue: String) -> MemberDeclListItemSyntax {
+        
+        let codeBlock = CodeBlockItemSyntax {
+            $0.useItem(SyntaxFactory.makeReturnKeyword().withLeadingTrivia(.spaces(1)))
+        }
+        let codeBlock2 = CodeBlockItemSyntax {
+            $0.useItem(SyntaxFactory.makeStringLiteral(returnValue).withTrailingTrivia(.spaces(1)).withLeadingTrivia(.spaces(1)))
+        }
+        
+        let closure = ClosureExprSyntax {
+            $0.useLeftBrace(SyntaxFactory.makeLeftBraceToken())
+            $0.addCodeBlockItem(codeBlock)
+            $0.addCodeBlockItem(codeBlock2)
+            $0.useRightBrace(SyntaxFactory.makeRightBraceToken())
+        }
+        
+        let initializer = SyntaxFactory.makeInitializerClause(equal: SyntaxFactory.makeEqualToken().withTrailingTrivia(.spaces(1)).withLeadingTrivia(.spaces(1)), value: closure)
+        let Pattern = SyntaxFactory.makePatternBinding(
+            pattern: SyntaxFactory.makeIdentifierPattern(
+                identifier: SyntaxFactory.makeIdentifier(name).withLeadingTrivia(.spaces(1))),
+            typeAnnotation: SyntaxFactory.makeTypeAnnotation(
+                colon: SyntaxFactory.makeColonToken().withTrailingTrivia(.spaces(1)),
+                type: SyntaxFactory.makeTypeIdentifier(type)),
+            initializer: initializer, accessor: nil, trailingComma: nil)
+        
+        
+        let decl = VariableDeclSyntax {
+            $0.useLetOrVarKeyword(SyntaxFactory.makeVarKeyword().withLeadingTrivia([.carriageReturns(1), .tabs(1)]))
+            $0.addPatternBinding(Pattern)
+        }
+        
+        let listItem = SyntaxFactory.makeMemberDeclListItem(decl: decl, semicolon: nil)
+        return listItem
     }
 }
 
 extension Variable {
-//    func syntax() -> Syntax {
-//        return SyntaxFactory.makeStringSegment(swiftCode())
-//    }
-    
     func syntax() -> MemberDeclListItemSyntax {
         let type = self.type.swiftCode() + (optional ? "?" : "")
         let Pattern = SyntaxFactory.makePatternBinding(

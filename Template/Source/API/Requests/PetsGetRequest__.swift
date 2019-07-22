@@ -1,4 +1,4 @@
-struct PetsGetRequest : APIRequest {
+struct PetsGetRequest___ : APIRequest {
     typealias ResponseType = [Pet]
     typealias ErrorType = APIError
     var urlPath: String { return "/pets" }

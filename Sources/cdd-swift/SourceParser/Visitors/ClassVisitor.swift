@@ -43,7 +43,5 @@ class ClassVisitor : SyntaxVisitor {
         
         return .skipChildren
     }
-    
-    
 }
 

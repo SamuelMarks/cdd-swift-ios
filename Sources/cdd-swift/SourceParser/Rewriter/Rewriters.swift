@@ -11,6 +11,7 @@ import Foundation
 import SwiftSyntax
 
 
+
 public class ClassRewriter: SyntaxRewriter {
     static func rewrite(name: String, syntax:Syntax, in sourceFileSyntax:SourceFileSyntax) -> SourceFileSyntax {
         let rewriter = ClassRewriter()
@@ -82,6 +83,27 @@ public class ClassRemover: SyntaxRewriter {
         node.walk(visitor)
         if visitor.klasses.first?.name == name {
             return SyntaxFactory.makeStringSegment("")
+        }
+        return node
+    }
+}
+
+
+public class TypeAliasRewriter: SyntaxRewriter {
+    static func rewrite(name: String, syntax:DeclSyntax, in mainSyntax:Syntax) -> Syntax {
+        let rewriter = TypeAliasRewriter()
+        rewriter.syntax = syntax
+        rewriter.name = name
+        return rewriter.visit(mainSyntax)
+    }
+    var syntax: DeclSyntax!
+    var name: String!
+    override public func visit(_ node: TypealiasDeclSyntax) -> DeclSyntax {
+        let extractor = ExtractTypealiases()
+        node.walk(extractor)
+        
+        if extractor.aliases.keys.first == name {
+            return syntax
         }
         return node
     }
