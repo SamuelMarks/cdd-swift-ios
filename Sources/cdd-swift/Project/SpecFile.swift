@@ -40,7 +40,7 @@ struct SpecFile: ProjectSource {
         path.operations[operationIndex] = operation
         syntax.paths[pathIndex] = path
         
-        log.errorMessage("UNIMPLEMENTED: update(request)")
+        log.errorMessage("UNIMPLEMENTED: update request \(request.name) in specfile")
     }
     
     
@@ -53,7 +53,7 @@ struct SpecFile: ProjectSource {
         schema.value.type = objectType(for: properties)
         syntax.components.schemas[index] = schema
         
-        log.errorMessage("UNIMPLEMENTED: update \(model.name) in specfile")
+        log.errorMessage("UNIMPLEMENTED: update model \(model.name) in specfile")
     }
     
 

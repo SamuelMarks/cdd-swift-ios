@@ -17,16 +17,6 @@ extension SourceFileSyntax {
 	}
 
 	mutating func addVariable(_ varName: String, _ varValue: String) {
-//		let rewriter = AppendClassVariableRewriter(varName: varName, varValue: varValue)
-//		let rewriter = StructContentRewriter {
-//			return $0
-//		}
-
-//		let rewriter = StructContentRewriter {
-//			print($0)
-//			return $0
-//		}
-
 		let rewriter = StructContentRewriter {
 			return $0.appending(
 				variableDecl(variableName: varName, variableType: varValue))
