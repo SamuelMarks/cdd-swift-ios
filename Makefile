@@ -18,7 +18,7 @@ build:
 	swift build
 	
 run: build
-	.build/debug/cdd-swift sync ./Template
+	.build/debug/cdd-swift sync --dry-run ./Template
 
 check: build
 	.build/debug/cdd-swift check
