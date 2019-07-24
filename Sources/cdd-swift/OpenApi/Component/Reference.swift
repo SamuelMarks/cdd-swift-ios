@@ -60,20 +60,27 @@ public class Reference<T: Component> {
 
 extension PossibleReference : Encodable {
     enum CodingKeys: String, CodingKey {
-       case componentType
+        case componentType
+        case ref = "$ref"
     }
     
     public func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-        if let parametr = value as? Parameter {
-            try parametr.encode(to: encoder)
-        }
-        else
-            if let response = value as? Response {
-                try response.encode(to: encoder)
-        }
-            else if let header = value as? Header {
-                try header.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .value(let value):
+            if let parametr = value as? Parameter {
+                try parametr.encode(to: encoder)
+            }
+            else
+                if let response = value as? Response {
+                    try response.encode(to: encoder)
+                }
+                else if let header = value as? Header {
+                    try header.encode(to: encoder)
+            }
+        case .reference(let ref):
+            print(ref.string)
+            try container.encode(ref.string, forKey: .ref)
         }
     }
 }

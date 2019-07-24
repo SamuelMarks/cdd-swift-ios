@@ -25,22 +25,21 @@ struct SpecFile: ProjectSource {
     }
     
     mutating func update(request:Request) {
+        checkForComplexResponse(request: request)
         guard let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) else { return }
         var path = syntax.paths[pathIndex]
         guard let method = Operation.Method(rawValue: request.method.rawValue) else { return }
         guard let operationIndex = path.operations.firstIndex(where: {$0.method == method}) else { return }
-        
+
         let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
         let response = request.response()
         let responses: [OperationResponse] = response == nil ? [] : [response!]
         let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
-        
+
         let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
-        
+
         path.operations[operationIndex] = operation
         syntax.paths[pathIndex] = path
-        
-        log.errorMessage("UNIMPLEMENTED: update request \(request.name) in specfile")
     }
     
     
@@ -52,8 +51,6 @@ struct SpecFile: ProjectSource {
         
         schema.value.type = objectType(for: properties)
         syntax.components.schemas[index] = schema
-        
-        log.errorMessage("UNIMPLEMENTED: update model \(model.name) in specfile")
     }
     
 
@@ -82,17 +79,39 @@ struct SpecFile: ProjectSource {
                 syntax.paths.removeAll(where: {$0.path == request.urlPath})
             }
         }
-        log.errorMessage("UNIMPLEMENTED: remove(request)")
+    }
+    
+    mutating func checkForComplexResponse(request:Request) {
+        if request.responseType != request.swaggerResponseType {
+            let singleObjectType = request.responseType.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+            
+            let type = "#/components/schemas/" + singleObjectType
+            let ref = Reference<Schema>(type)
+            
+            let objects = syntax.components.schemas
+            if let object = objects.first(where: { $0.name == singleObjectType }) {
+                ref.resolve(with: object.value)
+            }
+            
+            let schemaRef = Schema(metadata: Metadata(jsonDictionary: ["type":"array"]), type: .reference(ref))
+            
+            let arrSchema = ArraySchema(items: .single(schemaRef), minItems: nil, maxItems: nil, additionalItems: nil, uniqueItems: false)
+            
+            let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: .array(arrSchema))
+            self.syntax.components.schemas.append(ComponentObject(name: request.swaggerResponseType, value: schema))
+        }
     }
     
     mutating func insert(request:Request) {
+        checkForComplexResponse(request: request)
+
         let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
         let response = request.response()
         let responses: [OperationResponse] = response == nil ? [] : [response!]
         let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
         var path = syntax.paths.first(where:{$0.path == request.urlPath}) ?? Path(path: request.urlPath, operations: [], parameters: [])
         let method = Operation.Method(rawValue: request.method.rawValue) ?? .post
-        
+
         let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
         path.operations.append(operation)
         if let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) {
@@ -140,13 +159,14 @@ private extension Request {
         if responseType == "EmptyResponse" {
             return nil
         }
-        return OperationResponse(statusCode: 200, response: PossibleReference.reference(Reference("#/components/schemas" + responseType + "\"")))
+        
+        return OperationResponse(statusCode: 200, response: PossibleReference.reference(Reference("#/components/schemas/" + swaggerResponseType)))
     }
     
     func defaultResponse() -> PossibleReference<Response>? {
         if errorType == "EmptyResponse" {
             return nil
         }
-        return PossibleReference.reference(Reference("$ref: \"#/components/schemas/" + errorType + "\""))
+        return PossibleReference.reference(Reference("#/components/schemas/" + errorType))
     }
 }

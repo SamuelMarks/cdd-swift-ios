@@ -14,6 +14,14 @@ struct Request: ProjectObject {
 	let errorType: String
 	let vars: [Variable]
     var modificationDate: Date
+    
+    var swaggerResponseType: String {
+        var type = responseType
+        if responseType.prefix(1) == "[" {
+            type = responseType.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "") + "s"
+        }
+        return type
+    }
 }
 
 enum Method: String {

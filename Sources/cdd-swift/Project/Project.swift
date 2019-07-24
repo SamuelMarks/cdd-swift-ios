@@ -39,6 +39,9 @@ extension Array where Element: ProjectObject {
             if let index = self.firstIndex(where: {$0.name == item.name}) {
                 newArray[index] = item
             }
+            else {
+                newArray.append(item)
+            }
         }
         return newArray
     }

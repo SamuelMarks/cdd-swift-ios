@@ -67,7 +67,8 @@ private extension Type {
             let arrSchema = ArraySchema(items: .single(itemSchema), minItems: nil, maxItems: nil, additionalItems: nil, uniqueItems: false)
             return Schema(metadata: Metadata(jsonDictionary: ["type":"array"]), type: .array(arrSchema))
         case .complex(let objectName):
-            return Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: .reference(Reference("$ref: \"#/components/schemas/" + objectName + "\"")))
+            
+            return Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: .reference(Reference("#/components/schemas/" + objectName)))
         }
     }
 }

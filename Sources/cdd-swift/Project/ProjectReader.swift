@@ -103,8 +103,13 @@ class ProjectReader {
         
         // merge the projects with most recent data from each set
         // todo: fix spec to return properly
-        
+
         let mergedProject = specProject.merge(with: swiftProject)
+        
+        log.eventMessage("Mergerd project with \(mergedProject.models.count) models, \(mergedProject.requests.count) routes.".green)
+        log.infoMessage("- Mergerd project models: \(mergedProject.models.map({$0.name}))")
+        log.infoMessage("- Mergerd project requests: \(mergedProject.requests.map({$0.name}))")
+        
         self.specFile.apply(projectInfo: mergedProject.info)
         self.settingsFile.update(projectInfo: mergedProject.info)
         
@@ -163,6 +168,19 @@ class ProjectReader {
             sourceFiles[index] = sourceFile
         }
         
+        guard let data = try? JSONEncoder().encode(specFile.syntax),
+            let userJson = (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)) as? [String: Any] else { return }
+        
+        
+        print(userJson)
+//        let resolver = ComponentResolver(spec: specFile.syntax)
+//        resolver.resolve()
+        
+//        guard let data = try? JSONEncoder().encode(specFile.syntax),
+//            let userJson = (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)) as? [String: Any] else { return }
+//
+//
+//        print(userJson)
     }
     
     func indexFileFor(object: ProjectObject) -> Int? {
