@@ -31,9 +31,7 @@ let cli = CLI(
     description: "Compiler Driven Development: Swift Adaptor",
     commands: [
         GenerateCommand(),
-        SyncCommand(),
-		CheckCommand(),
-        TestCommand()
+        SyncCommand()
     ]
 )
 
