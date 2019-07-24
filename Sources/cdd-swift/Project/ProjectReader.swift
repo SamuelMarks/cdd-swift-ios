@@ -106,9 +106,9 @@ class ProjectReader {
 
         let mergedProject = specProject.merge(with: swiftProject)
         
-        log.eventMessage("Mergerd project with \(mergedProject.models.count) models, \(mergedProject.requests.count) routes.".green)
-        log.infoMessage("- Mergerd project models: \(mergedProject.models.map({$0.name}))")
-        log.infoMessage("- Mergerd project requests: \(mergedProject.requests.map({$0.name}))")
+        log.eventMessage("Merged project with \(mergedProject.models.count) models, \(mergedProject.requests.count) routes.".green)
+        log.infoMessage("- Merged project models: \(mergedProject.models.map({$0.name}))")
+        log.infoMessage("- Merged project requests: \(mergedProject.requests.map({$0.name}))")
         
         self.specFile.apply(projectInfo: mergedProject.info)
         self.settingsFile.update(projectInfo: mergedProject.info)
