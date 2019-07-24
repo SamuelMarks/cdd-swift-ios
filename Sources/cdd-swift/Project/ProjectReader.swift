@@ -191,16 +191,31 @@ class ProjectReader {
         return nil
     }
     
-    func write() {
+    func write() -> Result<(), Swift.Error> {
         do {
             // write specfile
             let yaml = try self.specFile.toYAML().get()
             writeStringToFile(file: self.specFile.path, contents: "\(yaml)")
-            
+
             // write models
-            // ...
+			for sourceFile in self.sourceFiles {
+				logFileWrite(
+					result: writeStringToFile(file: sourceFile.path, contents: "\(sourceFile.syntax)"),
+					filePath: sourceFile.path.path)
+			}
         } catch let err {
-            log.errorMessage("\(err)")
+            return .failure(err)
         }
+
+		return .success(())
     }
+}
+
+func logFileWrite(result: Result<(), Swift.Error>, filePath: String) {
+	switch result {
+	case .success(_):
+		log.eventMessage("WROTE \(filePath)")
+	case .failure(let err):
+		log.errorMessage("ERROR WRITING \(filePath): \(err)")
+	}
 }

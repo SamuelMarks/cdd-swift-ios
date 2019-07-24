@@ -79,7 +79,6 @@ extension PossibleReference : Encodable {
                     try header.encode(to: encoder)
             }
         case .reference(let ref):
-            print(ref.string)
             try container.encode(ref.string, forKey: .ref)
         }
     }
