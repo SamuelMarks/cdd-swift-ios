@@ -9,7 +9,7 @@ import Foundation
 import SwiftSyntax
 
 let STRUCT_TEMPLATE = """
-struct $0 : ApiModel {
+struct $0 : $1 {
 }
 """
 
@@ -31,6 +31,6 @@ extension SourceFileSyntax {
 	}
 }
 
-func makeStruct(name: String) -> SourceFileSyntax {
-	return try! SourceFileSyntax.fromString(STRUCT_TEMPLATE.replacingOccurrences(of: "$0", with: name))
+func makeStruct(name: String, type: String) -> SourceFileSyntax {
+	return try! SourceFileSyntax.fromString(STRUCT_TEMPLATE.replacingOccurrences(of: "$0", with: name).replacingOccurrences(of: "$1", with: type))
 }

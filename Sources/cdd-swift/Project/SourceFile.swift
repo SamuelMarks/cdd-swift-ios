@@ -114,7 +114,7 @@ struct SourceFile: ProjectSource {
         return visitor.syntaxes[name]
     }
     
-	static func create(path: String, name: String) -> SourceFile? {
+    static func create(path: String, name: String, structType: String) -> SourceFile? {
         guard let url = URL(string: path) else {
             return nil
         }
@@ -122,7 +122,7 @@ struct SourceFile: ProjectSource {
 		return SourceFile(
 			path: url,
 			modificationDate: Date(),
-			syntax: makeStruct(name: name))
+            syntax: makeStruct(name: name, type:structType))
 	}
 
 	func containsClassWith(name: String) -> Bool {
@@ -178,20 +178,19 @@ extension Request {
         }
         
         let closure = ClosureExprSyntax {
-            $0.useLeftBrace(SyntaxFactory.makeLeftBraceToken())
+            $0.useLeftBrace(SyntaxFactory.makeLeftBraceToken().withLeadingTrivia(.spaces(1)))
             $0.addCodeBlockItem(codeBlock)
             $0.addCodeBlockItem(codeBlock2)
             $0.useRightBrace(SyntaxFactory.makeRightBraceToken())
         }
         
-        let initializer = SyntaxFactory.makeInitializerClause(equal: SyntaxFactory.makeEqualToken().withTrailingTrivia(.spaces(1)).withLeadingTrivia(.spaces(1)), value: closure)
         let Pattern = SyntaxFactory.makePatternBinding(
             pattern: SyntaxFactory.makeIdentifierPattern(
                 identifier: SyntaxFactory.makeIdentifier(name).withLeadingTrivia(.spaces(1))),
             typeAnnotation: SyntaxFactory.makeTypeAnnotation(
                 colon: SyntaxFactory.makeColonToken().withTrailingTrivia(.spaces(1)),
                 type: SyntaxFactory.makeTypeIdentifier(type)),
-            initializer: initializer, accessor: nil, trailingComma: nil)
+            initializer: nil, accessor: closure, trailingComma: nil)
         
         
         let decl = VariableDeclSyntax {

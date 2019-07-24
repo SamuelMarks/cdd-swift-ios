@@ -94,13 +94,13 @@ class ProjectReader {
         
         log.eventMessage("Generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
         log.infoMessage("- source models: \(swiftProject.models.map({$0.name}))")
-        
+        log.infoMessage("- source requests: \(swiftProject.requests.map({$0.name}))")
         // generate a Project from the openapi spec
         // todo: convert interface to .generateProject() -> Result
         let specProject: Project = Project.fromSwagger(self.specFile)!
         log.eventMessage("Generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
         log.infoMessage("- spec models: \(specProject.models.map({$0.name}))")
-        
+        log.infoMessage("- spec project requests: \(specProject.requests.map({$0.name}))")
         // merge the projects with most recent data from each set
         // todo: fix spec to return properly
 
@@ -172,16 +172,19 @@ class ProjectReader {
     func indexFileFor(object: ProjectObject) -> Int? {
         var path = ""
         var name = ""
+        var structType = ""
         if object is Model {
             path = "\(MODELS_DIR)/\(object.name).swift"
             name = object.name
+            structType = MODEL_PROTOCOL
         }
         else if object is Request {
             path = "\(REQUESTS_DIR)/\(object.name).swift"
             name = object.name
+            structType = REQUEST_PROTOCOL
         }
         path = self.projectPath + path
-        if !fileExists(file: path), let file = SourceFile.create(path: path, name: name) {
+        if !fileExists(file: path), let file = SourceFile.create(path: path, name: name, structType: structType) {
             self.sourceFiles.append(file)
         }
         if let index = self.sourceFiles.firstIndex(where: {$0.containsClassWith(name: name)}) {

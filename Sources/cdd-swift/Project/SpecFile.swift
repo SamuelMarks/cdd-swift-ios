@@ -162,13 +162,21 @@ private extension Request {
             return nil
         }
         
-        return OperationResponse(statusCode: 200, response: PossibleReference.reference(Reference("#/components/schemas/" + swaggerResponseType)))
+        let schema = Schema(metadata: Metadata(jsonDictionary: [:]), type: .reference(Reference("#/components/schemas/" + swaggerResponseType)))
+        let content = Content(mediaItems: [Content.MediaType.json.rawValue:MediaItem(schema: schema)])
+        let response = Response(description: "", content: content, headers: [:])
+        return OperationResponse(statusCode: 200, response: .value(response))
     }
     
     func defaultResponse() -> PossibleReference<Response>? {
         if errorType == "EmptyResponse" {
             return nil
         }
-        return PossibleReference.reference(Reference("#/components/schemas/" + errorType))
+        
+        let schema = Schema(metadata: Metadata(jsonDictionary: [:]), type: .reference(Reference("#/components/schemas/" + swaggerResponseType)))
+        let content = Content(mediaItems: [Content.MediaType.json.rawValue:MediaItem(schema: schema)])
+        let response = Response(description: "", content: content, headers: [:])
+        
+        return .value(response)
     }
 }
