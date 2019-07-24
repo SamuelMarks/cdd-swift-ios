@@ -167,20 +167,6 @@ class ProjectReader {
             }
             sourceFiles[index] = sourceFile
         }
-        
-        guard let data = try? JSONEncoder().encode(specFile.syntax),
-            let userJson = (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)) as? [String: Any] else { return }
-        
-        
-        print(userJson)
-//        let resolver = ComponentResolver(spec: specFile.syntax)
-//        resolver.resolve()
-        
-//        guard let data = try? JSONEncoder().encode(specFile.syntax),
-//            let userJson = (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)) as? [String: Any] else { return }
-//
-//
-//        print(userJson)
     }
     
     func indexFileFor(object: ProjectObject) -> Int? {

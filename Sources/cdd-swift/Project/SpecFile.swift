@@ -40,6 +40,7 @@ struct SpecFile: ProjectSource {
 
         path.operations[operationIndex] = operation
         syntax.paths[pathIndex] = path
+		log.eventMessage("UPDATED \(request.name) in specfile")
     }
     
     
@@ -51,6 +52,7 @@ struct SpecFile: ProjectSource {
         
         schema.value.type = objectType(for: properties)
         syntax.components.schemas[index] = schema
+		log.eventMessage("UPDATED \(model.name) in specfile")
     }
     
 
@@ -58,7 +60,7 @@ struct SpecFile: ProjectSource {
         for (index, specModel) in self.syntax.components.schemas.enumerated() {
             if model.name == specModel.name {
                 self.syntax.components.schemas.remove(at: index)
-                print("REMOVED \(model.name) FROM SPEC")
+                print("REMOVED \(model.name) from specfile")
             } else {
                 exitWithError("critical error: could not remove \(model.name) from spec")
             }
