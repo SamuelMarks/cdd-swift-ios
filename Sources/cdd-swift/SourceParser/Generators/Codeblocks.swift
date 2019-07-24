@@ -43,9 +43,6 @@ func variableCodeBlock(variableName: String, variableType: String) -> CodeBlockI
 
 func functionCodeBlock(functionName: String, functionParam: String) -> CodeBlockItemSyntax {
 	let string = SyntaxFactory.makeStringLiteralExpr(functionName)
-
-
-
 	let printID = SyntaxFactory.makeVariableExpr(functionParam)
 	let arg = FunctionCallArgumentSyntax {
 		$0.useExpression(string)
@@ -56,7 +53,6 @@ func functionCodeBlock(functionName: String, functionParam: String) -> CodeBlock
 		$0.addFunctionCallArgument(arg)
 		$0.useRightParen(SyntaxFactory.makeRightParenToken())
 	}
-	let trivia = Trivia.newlines(1)
 	return CodeBlockItemSyntax {
 		$0.useItem(call)
 	}

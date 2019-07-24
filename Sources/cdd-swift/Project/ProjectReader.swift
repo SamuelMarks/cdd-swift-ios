@@ -195,7 +195,7 @@ class ProjectReader {
         do {
             // write specfile
             let yaml = try self.specFile.toYAML().get()
-            writeStringToFile(file: self.specFile.path, contents: "\(yaml)")
+            let _ = writeStringToFile(file: self.specFile.path, contents: "\(yaml)")
 
             // write models
 			for sourceFile in self.sourceFiles {

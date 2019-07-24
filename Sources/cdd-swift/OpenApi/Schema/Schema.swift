@@ -72,7 +72,7 @@ public enum SchemaType {
 extension Schema: JSONObjectConvertible {
 
     public init(jsonDictionary: JSONDictionary) throws {
-        metadata = try Metadata(jsonDictionary: jsonDictionary)
+        metadata = Metadata(jsonDictionary: jsonDictionary)
         type = try SchemaType(jsonDictionary: jsonDictionary)
     }
 }

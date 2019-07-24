@@ -30,7 +30,7 @@ class SyncCommand: Command {
 			let projectReader = try ProjectReader(path: spec.absoluteString)
             try projectReader.sync()
             log.eventMessage("Project Synced")
-			if case let .success(_) = projectReader.write() {
+			if case .success(_) = projectReader.write() {
 				log.eventMessage("Successfully wrote project files.")
 			}
 		} catch (let err) {
