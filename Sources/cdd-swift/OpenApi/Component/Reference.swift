@@ -18,6 +18,7 @@ public class Reference<T: Component> {
     private var _value: T?
     public var value: T {
         guard let value = _value else {
+			log.errorMessage("Error decoding spec for reference: \(self.name)")
             fatalError("Reference \(string) is unresolved")
         }
         return value
