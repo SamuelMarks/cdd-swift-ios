@@ -86,7 +86,25 @@ struct Project {
         )
         
     }
+
+    
+    func writeJSON(to path: String) throws {
+        let modelsData = try JSONEncoder().encode(models)
+        let requestsData = try JSONEncoder().encode(requests)
+        let modelsJSON = try JSONSerialization.jsonObject(with: modelsData, options: .allowFragments)
+        let requestsJSON = try JSONSerialization.jsonObject(with: requestsData, options: .allowFragments)
+        let json = ["models": modelsJSON, "requests": requestsJSON]
+        
+        let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+        let url = URL(fileURLWithPath: path)
+        
+        let directory = url.deletingLastPathComponent()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+        try data.write(to: url, options: [.atomic])
+        
+    }
 }
+
 
 
 

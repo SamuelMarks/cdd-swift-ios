@@ -1,2 +1,2 @@
-var HOST = "http://petzzzstore.swagger.io"
-let ENDPOINT = "/v1"
+var HOST = "http://31.184.251.197:5000"
+let ENDPOINT = ""

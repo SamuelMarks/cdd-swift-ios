@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct Request: ProjectObject, Codable {
+struct Request: Codable {
 	let name: String
 	let method: Method
 	let urlPath: String
@@ -28,4 +28,6 @@ enum Method: String, Codable {
 	case get
 	case put
 	case post
+    
+    
 }

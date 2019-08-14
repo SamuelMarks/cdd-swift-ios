@@ -9,7 +9,7 @@ private let configuration: URLSessionConfiguration = {
     configuration.httpShouldSetCookies = true
     return configuration
 }()
-let sessionManager = Alamofire.SessionManager(configuration: configuration)
+private let sessionManager = Alamofire.SessionManager(configuration: configuration)
 
 enum PostTypeCodingError: Error {
     case decoding(String)

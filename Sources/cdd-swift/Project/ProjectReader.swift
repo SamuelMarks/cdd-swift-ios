@@ -72,7 +72,7 @@ class ProjectReader {
         }
     }
     
-    private func generateProject() -> Result<Project, Swift.Error> {
+    func generateProject() -> Result<Project, Swift.Error> {
         guard case let .success(projectInfo) = parseProjectInfo(self.settingsFile) else {
             return .failure(
                 ProjectError.InvalidSettingsFile("Cannot parse \(SETTINGS_FILE)"))

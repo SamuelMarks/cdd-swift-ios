@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Variable: ProjectObject {
+struct Variable: ProjectObject, Codable {
 	let name: String
 	var optional: Bool
 	var type: Type
@@ -28,13 +28,47 @@ struct Variable: ProjectObject {
 }
 
 
-indirect enum Type: Equatable {
+indirect enum Type: Equatable, Codable {
     case primitive(PrimitiveType)
     case array(Type)
     case complex(String)
+    
+    enum CodingKeys: String, CodingKey {
+        case array
+        case primitive
+        case complex
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .primitive(let type):
+            try container.encode(type, forKey: .primitive)
+        case .array(let type):
+            try container.encode(type, forKey: .array)
+        case .complex(let type):
+            try container.encode(type, forKey: .complex)
+        }
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let primitiveType = try? container.decode(PrimitiveType.self, forKey: .primitive)
+        let arrType = try? container.decode(Type.self, forKey: .array)
+        let complexType = try? container.decode(String.self, forKey: .complex)
+        
+        if let type = primitiveType {
+            self = .primitive(type)
+        } else
+        if let type = arrType {
+            self = .array(type)
+        } else  {
+            self = .complex(complexType ?? "")
+        }
+    }
 }
 
-enum PrimitiveType: String {
+enum PrimitiveType: String, Codable {
     case String
     case Int
     case Float

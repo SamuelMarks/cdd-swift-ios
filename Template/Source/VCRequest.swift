@@ -9,11 +9,21 @@
 import UIKit
 import EasyPeasy
 
+
+
 class VCRequest: UIViewController {
-    var btnTagsToField: [Int:(APIFieldD,UIStackView)] = [:]
-    var request: APIRequestD!
+
+    var varsToStackView: [String:UIStackView] = [:]
+    var btnTagsToField: [Int:(Variable,UIStackView)] = [:]
+    var request: Request!
     var stackView = UIStackView()
     var scrollView = UIScrollView()
+    
+    var pickerBool = UIPickerView()
+    var tfToType: [UITextField:PrimitiveType] = [:]
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -25,10 +35,23 @@ class VCRequest: UIViewController {
         stackView.spacing = 5
         stackView.easy.layout([Edges(),Width().like(scrollView)])
         
-        addLabel(request.path).textAlignment = .center
-        request.fields.forEach { self.stackView.addArrangedSubview(viewForField($0))}
+        addLabel(request.urlPath).textAlignment = .center
+        request.vars.forEach { self.stackView.addArrangedSubview(viewForField($0))}
         
-        addRunButton()
+        pickerBool.delegate = self
+        pickerBool.dataSource = self
+    }
+    @IBAction func execute(_ sender: Any) {
+        view.showActivity()
+        execute(onResult: {[weak self] (json) in
+            self?.view.hideActivity()
+            guard let vc = self?.storyboard?.instantiateViewController(withIdentifier: "VCResponse") as? VCResponse else { return }
+            vc.json = json
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }) {[weak self] (error) in
+            self?.view.hideActivity()
+            print(error)
+        }
     }
 
     func addLabel(_ text: String) -> UILabel {
@@ -40,16 +63,7 @@ class VCRequest: UIViewController {
         return label
     }
     
-    func addRunButton() {
-        let btn = UIButton()
-        btn.easy.layout(Height(30))
-        btn.setTitle("Execute", for: .normal)
-        btn.setTitleColor(.blue, for: .normal)
-        btn.addTarget(self, action: #selector(run), for: .touchUpInside)
-        stackView.addArrangedSubview(btn)
-    }
-    
-    func viewForField(_ field: APIFieldD) -> UIView {
+    func viewForField(_ field: Variable) -> UIView {
         let view = UIView()
         
         let label = UILabel()
@@ -57,7 +71,7 @@ class VCRequest: UIViewController {
         view.addSubview(label)
         label.easy.layout([Left(),Top(),Height(40),Width(<=100)])
         
-        if field.type.suffix(1) != "?" {
+        if !field.optional {
             let lblRequired = UILabel()
             lblRequired.text = "*"
             lblRequired.textColor = .red
@@ -66,42 +80,55 @@ class VCRequest: UIViewController {
         }
         
         let descLabel = UILabel()
-        descLabel.text = field.type.replacingOccurrences(of: "?", with: "")
+        descLabel.text = field.type.rawValue
         descLabel.textColor = .darkGray
         view.addSubview(descLabel)
-        descLabel.easy.layout([Top(),Left(110),Height(40)])
+        descLabel.easy.layout([Top(),Left(110),Height(40), Right()])
         
         let fieldsStackView = UIStackView()
         fieldsStackView.axis = .vertical
         view.addSubview(fieldsStackView)
         fieldsStackView.easy.layout(Left(110),Right(),Top().to(descLabel),Bottom())
         
-        if field.isArray {
+        varsToStackView[field.name] = fieldsStackView
+        switch field.type {
+        case .primitive(let type):
+            let view = viewForSimpleField(type:type)
+            fieldsStackView.addArrangedSubview(view)
+        case .array(_):
             let btn = addItemToArrayButton()
             btnTagsToField[btn.tag] = (field,fieldsStackView)
             fieldsStackView.addArrangedSubview(btn)
-        }
-        else
-        if field.isSimple {
-            let view = viewForSimpleField(type:field.clearType)
-            fieldsStackView.addArrangedSubview(view)
-        }
-        else {
-            if let model = VCRequests.models.first(where: { (model) -> Bool in
-                return model.name == field.clearType
-            }) {
-                model.fields.forEach({fieldsStackView.addArrangedSubview(self.viewForField($0))})
-            }
+        case .complex(_):
+            break
+//            if let model = VCRequests.models.first(where: { (model) -> Bool in
+//                return model.name == typeName
+//            }) {
+//                model.vars.forEach({fieldsStackView.addArrangedSubview(self.viewForField($0))})
+//            }
         }
         
         return view
     }
     
-    func viewForSimpleField(type: String) -> UIView {
+    func viewForSimpleField(type: PrimitiveType) -> UIView {
         let tf = UITextField()
         view.addSubview(tf)
         tf.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        tf.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 20))
+        tf.leftViewMode = .always
         tf.easy.layout([Height(40)])
+        tf.delegate = self
+        tfToType[tf] = type
+        switch type {
+        case .Bool:
+            tf.inputView = pickerBool
+        case .Float:
+            tf.keyboardType = .decimalPad
+        case .Int:
+            tf.keyboardType = .numberPad
+        case .String: break
+        }
         return tf
     }
     
@@ -121,25 +148,27 @@ class VCRequest: UIViewController {
         let field = tuple.0
         let fieldsStackView = tuple.1
         
-        if field.isSimple {
-            let view = viewForSimpleField(type:field.clearType)
+        guard case .array(let type) = field.type else { return }
+        
+        switch type {
+        case .primitive(let type):
+            let view = viewForSimpleField(type:type)
             fieldsStackView.insertArrangedSubview(view, at: fieldsStackView.arrangedSubviews.count - 1)
-        }
-        else {
+        case .array(_):
+          break
+        case .complex(let typeName):
             if let model = VCRequests.models.first(where: { (model) -> Bool in
-                return model.name == field.clearType
+                return model.name == typeName
             }) {
-                model.fields.forEach {
+                model.vars.forEach {
                     fieldsStackView.insertArrangedSubview(self.viewForField($0), at: fieldsStackView.arrangedSubviews.count - 1)
                 }
             }
         }
         
         fieldsStackView.insertArrangedSubview(separator(), at: fieldsStackView.arrangedSubviews.count - 1)
-    }
-    
-    @objc func run() {
         
+        fieldsStackView.layoutIfNeeded()
     }
     
     func separator() -> UIView {
@@ -154,5 +183,56 @@ class VCRequest: UIViewController {
         tv.easy.layout(Height(200))
         
         return tv
+    }
+}
+
+extension VCRequest: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return 2
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return ["True","False"][row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        tfToType.keys.forEach {
+            if $0.isFirstResponder {
+                $0.text = ["True","False"][row]
+            }
+        }
+        
+        view.endEditing(true)
+    }
+}
+
+extension VCRequest: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if let type = tfToType[textField] {
+            if type == .Float {
+                let comps = (textField.text ?? "").components(separatedBy: ".")
+                if comps.count > 2 {
+                    textField.text = comps[0] + "." + comps[1]
+                }
+            }
+        }
+    }
+}
+
+extension Type {
+    var rawValue: String {
+        switch self {
+        case .primitive(let type):
+            return type.rawValue
+        case .array(let type):
+            return "[" + type.rawValue + "]"
+        case .complex(let type):
+            return type
+        }
     }
 }

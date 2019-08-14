@@ -135,7 +135,7 @@ struct SourceFile: ProjectSource {
 extension Request {
     
     func methodSyntax() -> MemberDeclListItemSyntax {
-        return closureSyntax(name: "method", type: "Method", returnValue: "." + self.method.rawValue)
+        return closureSyntax(name: "method", type: "HTTPMethod", returnValue: "." + self.method.rawValue)
     }
     
     func urlSyntax() -> MemberDeclListItemSyntax {

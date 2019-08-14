@@ -10,9 +10,9 @@ import UIKit
 import EasyPeasy
 
 class VCRequests: UIViewController {
-    static var models: [APIModelD] = []
-    var tableView = UITableView()
-    var requests:[APIRequestD] = []
+    static var models: [Model] = []
+    @IBOutlet var tableView: UITableView!
+    var requests:[Request] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,19 +22,25 @@ class VCRequests: UIViewController {
             let jsonData = try? Data(contentsOf: url),
             let objects = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String:Any] {
             
+            let decoder = JSONDecoder()
+            
+                
             if let modelsJSON = objects["models"] as? [[String:Any]] {
-                VCRequests.models = modelsJSON.compactMap {APIModelD.fromJson($0)}
+                VCRequests.models = modelsJSON.compactMap {
+                    try? decoder.decode(Model.self, from: JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted))
+                }
             }
             if let requestsJSON = objects["requests"] as? [[String:Any]] {
-                requests = requestsJSON.compactMap {APIRequestD.fromJson($0)}
+                
+                requests = requestsJSON.compactMap {
+                    try? decoder.decode(Request.self, from: JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted))
+                }
             }
         }
         
         view.addSubview(tableView)
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "kCell")
-        tableView.easy.layout(Edges())
-        tableView.delegate = self
-        tableView.dataSource = self
+        
+        
     }
 }
 
@@ -45,14 +51,14 @@ extension VCRequests: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = VCRequest()
+        guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "VCRequest") as? VCRequest else { return }
         vc.request = requests[indexPath.row]
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "kCell", for: indexPath)
-        cell.textLabel?.text = requests[indexPath.row].path
+        cell.textLabel?.text = requests[indexPath.row].urlPath
         return cell
     }
 }
