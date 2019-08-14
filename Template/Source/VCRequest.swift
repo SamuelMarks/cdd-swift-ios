@@ -55,18 +55,26 @@ class VCRequest: UIViewController {
         let label = UILabel()
         label.text = field.name
         view.addSubview(label)
-        label.easy.layout([Left(),Top(),Height(40),Width(100)])
+        label.easy.layout([Left(),Top(),Height(40),Width(<=100)])
+        
+        if field.type.suffix(1) != "?" {
+            let lblRequired = UILabel()
+            lblRequired.text = "*"
+            lblRequired.textColor = .red
+            view.addSubview(lblRequired)
+            lblRequired.easy.layout([Left(4).to(label),Top(5)])
+        }
         
         let descLabel = UILabel()
-        descLabel.text = field.type
+        descLabel.text = field.type.replacingOccurrences(of: "?", with: "")
         descLabel.textColor = .darkGray
         view.addSubview(descLabel)
-        descLabel.easy.layout([Top(),Left(10).to(label),Height(40)])
+        descLabel.easy.layout([Top(),Left(110),Height(40)])
         
         let fieldsStackView = UIStackView()
         fieldsStackView.axis = .vertical
         view.addSubview(fieldsStackView)
-        fieldsStackView.easy.layout(Left(10).to(label),Right(),Top().to(descLabel),Bottom())
+        fieldsStackView.easy.layout(Left(110),Right(),Top().to(descLabel),Bottom())
         
         if field.isArray {
             let btn = addItemToArrayButton()

@@ -1,0 +1,2357 @@
+{
+  "models" : [
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "created_at"
+        },
+        {
+          "name" : "user_id",
+          "type" : "String?"
+        },
+        {
+          "name" : "status",
+          "type" : "String?"
+        },
+        {
+          "name" : "message_id",
+          "type" : "String?"
+        },
+        {
+          "name" : "modified_at",
+          "type" : "String?"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "image"
+        },
+        {
+          "type" : "String?",
+          "name" : "message"
+        },
+        {
+          "type" : "String?",
+          "name" : "thumbnail"
+        }
+      ],
+      "models" : [
+
+      ],
+      "name" : "Message"
+    },
+    {
+      "name" : "Favorite",
+      "fields" : [
+        {
+          "name" : "id",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "tourId"
+        }
+      ],
+      "models" : [
+
+      ]
+    },
+    {
+      "models" : [
+
+      ],
+      "name" : "Tour",
+      "fields" : [
+        {
+          "name" : "language",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "city"
+        },
+        {
+          "type" : "String?",
+          "name" : "id"
+        },
+        {
+          "type" : "Int?",
+          "name" : "ownerUserId"
+        },
+        {
+          "name" : "specialization",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "createdTs",
+          "type" : "Float?"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "name" : "country",
+          "type" : "String?"
+        },
+        {
+          "name" : "images",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "transfer"
+        },
+        {
+          "name" : "tags",
+          "type" : "String?"
+        },
+        {
+          "name" : "updatedTs",
+          "type" : "Float?"
+        },
+        {
+          "type" : "Bool?",
+          "name" : "published"
+        }
+      ]
+    },
+    {
+      "models" : [
+
+      ],
+      "name" : "On_typing",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String?"
+        },
+        {
+          "name" : "user_id",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "id"
+        },
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "ts"
+        },
+        {
+          "name" : "ownerUserId",
+          "type" : "Int?"
+        }
+      ],
+      "name" : "Schedule",
+      "models" : [
+
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "ownerUserId",
+          "type" : "Int?"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "id"
+        },
+        {
+          "name" : "category",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "country"
+        },
+        {
+          "name" : "tags",
+          "type" : "String?"
+        },
+        {
+          "name" : "city",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "updatedTs",
+          "type" : "Float?"
+        },
+        {
+          "type" : "Float?",
+          "name" : "createdTs"
+        },
+        {
+          "name" : "published",
+          "type" : "Bool?"
+        }
+      ],
+      "models" : [
+
+      ],
+      "name" : "Guide"
+    },
+    {
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "room_id"
+        },
+        {
+          "type" : "String?",
+          "name" : "room_name"
+        },
+        {
+          "name" : "user_id",
+          "type" : "String?"
+        },
+        {
+          "name" : "room_name_old",
+          "type" : "String?"
+        }
+      ],
+      "name" : "Room_rename"
+    },
+    {
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "image"
+        },
+        {
+          "type" : "String?",
+          "name" : "owner"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "users"
+        },
+        {
+          "name" : "request_id",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "room_name"
+        }
+      ],
+      "name" : "Room_create"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "hasMore",
+          "type" : "Bool?"
+        }
+      ],
+      "models" : [
+
+      ],
+      "name" : "MessageHistoryList"
+    },
+    {
+      "models" : [
+
+      ],
+      "name" : "On_joined",
+      "fields" : [
+        {
+          "name" : "username",
+          "type" : "String?"
+        },
+        {
+          "name" : "numUsers",
+          "type" : "Int?"
+        }
+      ]
+    },
+    {
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "last_time_string"
+        },
+        {
+          "type" : "Int?",
+          "name" : "last_join_timestamp"
+        },
+        {
+          "type" : "Int?",
+          "name" : "seconds"
+        },
+        {
+          "type" : "Bool?",
+          "name" : "is_online"
+        }
+      ],
+      "name" : "RecentStatus"
+    },
+    {
+      "name" : "Room_preview_full",
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "name" : "last_message",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "room_id"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "name" : "last_messages",
+          "type" : "String?"
+        },
+        {
+          "name" : "image",
+          "type" : "String?"
+        },
+        {
+          "name" : "unread",
+          "type" : "Int?"
+        },
+        {
+          "name" : "type",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "name" : "Attach_room",
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "room_id"
+        },
+        {
+          "type" : "String?",
+          "name" : "user_id"
+        },
+        {
+          "type" : "String?",
+          "name" : "owner"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "logoPath"
+        },
+        {
+          "name" : "gender",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "email"
+        },
+        {
+          "type" : "String?",
+          "name" : "token"
+        },
+        {
+          "name" : "firstName",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "birthdate"
+        },
+        {
+          "type" : "String?",
+          "name" : "specialization"
+        },
+        {
+          "type" : "String?",
+          "name" : "lastName"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "id"
+        },
+        {
+          "type" : "String?",
+          "name" : "city"
+        },
+        {
+          "name" : "phone",
+          "type" : "String?"
+        }
+      ],
+      "name" : "UserAuth",
+      "models" : [
+
+      ]
+    },
+    {
+      "name" : "User",
+      "fields" : [
+        {
+          "name" : "firstName",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "phone"
+        },
+        {
+          "name" : "specialization",
+          "type" : "String?"
+        },
+        {
+          "name" : "birthdate",
+          "type" : "String?"
+        },
+        {
+          "name" : "logoPath",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "id",
+          "type" : "Int?"
+        },
+        {
+          "type" : "String?",
+          "name" : "email"
+        },
+        {
+          "name" : "lastName",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "city"
+        },
+        {
+          "name" : "gender",
+          "type" : "String?"
+        }
+      ],
+      "models" : [
+
+      ]
+    },
+    {
+      "name" : "Delete_message",
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "name" : "message_id",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "user_id"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "models" : [
+
+      ],
+      "name" : "Image",
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "name"
+        },
+        {
+          "name" : "path",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "description"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "description"
+        },
+        {
+          "name" : "geoPosition",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "name"
+        },
+        {
+          "name" : "address",
+          "type" : "String?"
+        }
+      ],
+      "name" : "Guide_places",
+      "models" : [
+
+      ]
+    },
+    {
+      "models" : [
+
+      ],
+      "fields" : [
+        {
+          "name" : "logoPath",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "specialization"
+        },
+        {
+          "name" : "lastName",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "status"
+        },
+        {
+          "type" : "String?",
+          "name" : "firstName"
+        },
+        {
+          "type" : "String?",
+          "name" : "id"
+        },
+        {
+          "type" : "String?",
+          "name" : "description"
+        },
+        {
+          "type" : "String?",
+          "name" : "birthdate"
+        },
+        {
+          "name" : "gender",
+          "type" : "String?"
+        },
+        {
+          "name" : "city",
+          "type" : "String?"
+        },
+        {
+          "name" : "phone",
+          "type" : "String?"
+        },
+        {
+          "name" : "email",
+          "type" : "String?"
+        }
+      ],
+      "name" : "UserOnline"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "transfer",
+          "type" : "String?"
+        },
+        {
+          "name" : "id",
+          "type" : "String?"
+        },
+        {
+          "name" : "language",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "country"
+        },
+        {
+          "name" : "city",
+          "type" : "String?"
+        },
+        {
+          "type" : "Float?",
+          "name" : "updatedTs"
+        },
+        {
+          "type" : "String?",
+          "name" : "name"
+        },
+        {
+          "name" : "tags",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "ownerUserId",
+          "type" : "Int?"
+        },
+        {
+          "name" : "specialization",
+          "type" : "String?"
+        },
+        {
+          "type" : "Float?",
+          "name" : "createdTs"
+        },
+        {
+          "type" : "Bool?",
+          "name" : "published"
+        }
+      ],
+      "models" : [
+
+      ],
+      "name" : "TourFull"
+    },
+    {
+      "name" : "Room_preview",
+      "fields" : [
+        {
+          "name" : "last_messages",
+          "type" : "String?"
+        },
+        {
+          "type" : "[String]?",
+          "name" : "users"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "type"
+        },
+        {
+          "type" : "String?",
+          "name" : "last_message"
+        },
+        {
+          "name" : "unread",
+          "type" : "Int?"
+        },
+        {
+          "name" : "room_name",
+          "type" : "String?"
+        }
+      ],
+      "models" : [
+
+      ]
+    },
+    {
+      "models" : [
+
+      ],
+      "name" : "Booking",
+      "fields" : [
+        {
+          "type" : "Int?",
+          "name" : "ownerUserId"
+        },
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        },
+        {
+          "name" : "status",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "id"
+        },
+        {
+          "type" : "String?",
+          "name" : "scheduleId"
+        },
+        {
+          "name" : "createdTs",
+          "type" : "Int?"
+        },
+        {
+          "name" : "ts",
+          "type" : "Int?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "GuideUserId"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "timestamp"
+        },
+        {
+          "name" : "rating",
+          "type" : "Float?"
+        },
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "id"
+        },
+        {
+          "type" : "String?",
+          "name" : "message"
+        },
+        {
+          "name" : "guideId",
+          "type" : "String?"
+        }
+      ],
+      "name" : "Comment",
+      "models" : [
+
+      ]
+    },
+    {
+      "name" : "Attachment",
+      "fields" : [
+        {
+          "name" : "message",
+          "type" : "String?"
+        },
+        {
+          "name" : "thumbnail",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "uuid"
+        },
+        {
+          "name" : "type",
+          "type" : "String?"
+        },
+        {
+          "name" : "url",
+          "type" : "String?"
+        }
+      ],
+      "models" : [
+
+      ]
+    }
+  ],
+  "requests" : [
+    {
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "room_id"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v1\/room\/\\(room_id)\/undelivered"
+    },
+    {
+      "method" : "get",
+      "path" : "\/api\/v2\/tour\/list",
+      "fields" : [
+
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/guide\/point\/delete",
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "guideId",
+          "type" : "String?"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/room\/\\(room_id)\/new_messages",
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "room_id"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        },
+        {
+          "name" : "ts",
+          "type" : "Int?"
+        },
+        {
+          "name" : "limit",
+          "type" : "Int?"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "room_id"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "type" : "Int?",
+          "name" : "userId"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v2\/room\/\\(room_id)\/images"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "user_id",
+          "type" : "String"
+        }
+      ],
+      "path" : "\/api\/v1\/user\/\\(user_id)\/roomsFull",
+      "method" : "get"
+    },
+    {
+      "method" : "put",
+      "path" : "\/api\/v1\/roomCreate\/\\(room_id)",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "room_id"
+        },
+        {
+          "type" : "String",
+          "name" : "token"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        },
+        {
+          "name" : "room_name",
+          "type" : "String?"
+        },
+        {
+          "name" : "image",
+          "type" : "String?"
+        },
+        {
+          "name" : "is_attach",
+          "type" : "Bool?"
+        },
+        {
+          "type" : "String?",
+          "name" : "type"
+        },
+        {
+          "type" : "String?",
+          "name" : "userList"
+        }
+      ]
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/guide\/update",
+      "fields" : [
+        {
+          "name" : "id",
+          "type" : "String"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "description"
+        },
+        {
+          "name" : "tags",
+          "type" : "String?"
+        },
+        {
+          "name" : "price",
+          "type" : "Float?"
+        },
+        {
+          "name" : "city",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "country"
+        },
+        {
+          "type" : "String?",
+          "name" : "category"
+        },
+        {
+          "name" : "places",
+          "type" : "String?"
+        },
+        {
+          "name" : "published",
+          "type" : "Bool?"
+        }
+      ]
+    },
+    {
+      "method" : "get",
+      "path" : "\/socket\/deattach_room",
+      "fields" : [
+
+      ]
+    },
+    {
+      "fields" : [
+
+      ],
+      "method" : "get",
+      "path" : "\/socket\/message_sent"
+    },
+    {
+      "path" : "\/api\/v2\/rooms\/ban",
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "token"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        }
+      ]
+    },
+    {
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "guideId"
+        }
+      ],
+      "path" : "\/api\/v2\/guide\/get"
+    },
+    {
+      "path" : "\/socket\/delete_message",
+      "method" : "get",
+      "fields" : [
+
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "message_id",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "message_id_list"
+        },
+        {
+          "type" : "Bool?",
+          "name" : "all"
+        }
+      ],
+      "path" : "\/socket\/delete_message",
+      "method" : "post"
+    },
+    {
+      "path" : "\/v2\/message\/send",
+      "fields" : [
+        {
+          "name" : "request_id",
+          "type" : "String"
+        },
+        {
+          "type" : "String?",
+          "name" : "message_id"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "name" : "room_id_list",
+          "type" : "String"
+        },
+        {
+          "name" : "message",
+          "type" : "String"
+        },
+        {
+          "name" : "user_id",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "user_id_list"
+        },
+        {
+          "name" : "type",
+          "type" : "String"
+        },
+        {
+          "name" : "thumbnail",
+          "type" : "String?"
+        },
+        {
+          "name" : "image",
+          "type" : "String?"
+        },
+        {
+          "name" : "attachments",
+          "type" : "String?"
+        }
+      ],
+      "method" : "post"
+    },
+    {
+      "path" : "\/api\/v2\/booking\/create",
+      "method" : "post",
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "tourId"
+        },
+        {
+          "name" : "scheduleId",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "tourId"
+        },
+        {
+          "type" : "Float?",
+          "name" : "timestamp"
+        }
+      ],
+      "path" : "\/api\/v2\/schedule\/create",
+      "method" : "post"
+    },
+    {
+      "path" : "\/api\/v2\/favoritetour\/list",
+      "method" : "get",
+      "fields" : [
+
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        },
+        {
+          "name" : "limit",
+          "type" : "Int?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "date"
+        }
+      ],
+      "path" : "\/api\/v2\/room\/\\(room_id)\/messages",
+      "method" : "get"
+    },
+    {
+      "path" : "\/api\/v2\/tour\/image\/delete",
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "name"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v1\/app\/unregister",
+      "fields" : [
+        {
+          "name" : "token",
+          "type" : "String"
+        }
+      ],
+      "method" : "get"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "tourId"
+        },
+        {
+          "name" : "start",
+          "type" : "Float?"
+        },
+        {
+          "name" : "end",
+          "type" : "Float?"
+        },
+        {
+          "name" : "timeOfTheDay",
+          "type" : "Float?"
+        },
+        {
+          "type" : "String?",
+          "name" : "daysOfTheWeek"
+        }
+      ],
+      "method" : "post",
+      "path" : "\/api\/v2\/schedule\/range"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "guideId"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v2\/guide\/list"
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/room\/\\(room_id)\/leave",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "type" : "Int?",
+          "name" : "userId"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        }
+      ]
+    },
+    {
+      "fields" : [
+
+      ],
+      "path" : "\/socket\/remove_user",
+      "method" : "get"
+    },
+    {
+      "path" : "\/api\/v2\/room\/\\(room_id)\/messageStatus",
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "status"
+        },
+        {
+          "type" : "Int",
+          "name" : "timestamp"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/guide\/search",
+      "fields" : [
+        {
+          "name" : "pattern",
+          "type" : "String?"
+        },
+        {
+          "name" : "city",
+          "type" : "String?"
+        },
+        {
+          "name" : "category",
+          "type" : "String?"
+        }
+      ],
+      "method" : "get"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "guideId"
+        },
+        {
+          "name" : "start",
+          "type" : "Float?"
+        },
+        {
+          "type" : "Float?",
+          "name" : "limit"
+        }
+      ],
+      "path" : "\/api\/v2\/guide\/comment\/list",
+      "method" : "get"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "message"
+        },
+        {
+          "name" : "rating",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "guideId"
+        }
+      ],
+      "method" : "post",
+      "path" : "\/api\/v2\/guide\/comment"
+    },
+    {
+      "path" : "\/api\/v2\/booking\/list\/guide",
+      "fields" : [
+
+      ],
+      "method" : "get"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "userId"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v1\/user\/getLastOnline"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "tourId"
+        }
+      ],
+      "path" : "\/api\/v2\/tour\/get",
+      "method" : "get"
+    },
+    {
+      "path" : "\/api\/v2\/guide\/popular",
+      "method" : "get",
+      "fields" : [
+        {
+          "name" : "city",
+          "type" : "String"
+        },
+        {
+          "name" : "limit",
+          "type" : "Float"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "users"
+        }
+      ],
+      "path" : "\/api\/v1\/app\/check",
+      "method" : "get"
+    },
+    {
+      "method" : "get",
+      "path" : "\/socket\/rooms",
+      "fields" : [
+
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/tour\/create",
+      "fields" : [
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "description"
+        },
+        {
+          "type" : "String?",
+          "name" : "tags"
+        },
+        {
+          "type" : "Float?",
+          "name" : "price"
+        },
+        {
+          "name" : "duration",
+          "type" : "Float?"
+        },
+        {
+          "name" : "startHour",
+          "type" : "Float?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "maxPeople"
+        },
+        {
+          "type" : "String?",
+          "name" : "specialization"
+        },
+        {
+          "name" : "language",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "transfer"
+        },
+        {
+          "name" : "city",
+          "type" : "String?"
+        },
+        {
+          "name" : "country",
+          "type" : "String?"
+        },
+        {
+          "name" : "published",
+          "type" : "Bool?"
+        }
+      ],
+      "method" : "post"
+    },
+    {
+      "path" : "\/api\/v2\/tour\/search",
+      "fields" : [
+        {
+          "name" : "pattern",
+          "type" : "String"
+        },
+        {
+          "name" : "city",
+          "type" : "String"
+        },
+        {
+          "name" : "isGroup",
+          "type" : "Bool"
+        },
+        {
+          "name" : "startDate",
+          "type" : "Float"
+        },
+        {
+          "type" : "Float",
+          "name" : "endDate"
+        }
+      ],
+      "method" : "get"
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/tour\/image\/add",
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "tourId"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "path",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/socket\/on_message",
+      "method" : "get",
+      "fields" : [
+
+      ]
+    },
+    {
+      "path" : "\/socket\/on_message",
+      "method" : "post",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "request_id"
+        },
+        {
+          "name" : "message_id",
+          "type" : "String?"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "name" : "room_id_list",
+          "type" : "String"
+        },
+        {
+          "name" : "message",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "user_id"
+        },
+        {
+          "name" : "user_id_list",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "type"
+        },
+        {
+          "type" : "String?",
+          "name" : "thumbnail"
+        },
+        {
+          "name" : "image",
+          "type" : "String?"
+        },
+        {
+          "name" : "attachments",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/userList",
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "userList"
+        }
+      ]
+    },
+    {
+      "fields" : [
+
+      ],
+      "method" : "get",
+      "path" : "\/api\/v2\/tour\/list\/rate"
+    },
+    {
+      "path" : "\/api\/v2\/favoritetour\/delete",
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "user_id",
+          "type" : "String"
+        }
+      ],
+      "path" : "\/api\/v2\/user\/\\(user_id)\/addressbook"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v2\/tour\/comment\/list"
+    },
+    {
+      "path" : "\/api\/v1\/room\/\\(room_id)\/reset",
+      "method" : "get",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "phones",
+          "type" : "String?"
+        },
+        {
+          "name" : "users",
+          "type" : "String?"
+        },
+        {
+          "type" : "String",
+          "name" : "message"
+        }
+      ],
+      "path" : "\/api\/internal\/push\/send",
+      "method" : "post"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "owner",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "platform"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "name" : "hwid",
+          "type" : "String"
+        },
+        {
+          "name" : "is_dev",
+          "type" : "String"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v1\/app\/register"
+    },
+    {
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "user_id"
+        }
+      ],
+      "path" : "\/api\/v1\/user\/\\(user_id)\/rooms"
+    },
+    {
+      "method" : "get",
+      "path" : "\/socket\/attach_room",
+      "fields" : [
+
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/rooms\/\\(roomId)\/unban",
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "token"
+        },
+        {
+          "type" : "Int?",
+          "name" : "userId"
+        },
+        {
+          "name" : "roomId",
+          "type" : "String"
+        }
+      ]
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/favoritetour\/create",
+      "fields" : [
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "fields" : [
+
+      ],
+      "method" : "get",
+      "path" : "\/socket\/add_user"
+    },
+    {
+      "method" : "get",
+      "path" : "\/api\/v2\/rooms\/\\(roomId)\/ban",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "token"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        },
+        {
+          "type" : "String",
+          "name" : "roomId"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "user_id",
+          "type" : "String"
+        }
+      ],
+      "path" : "\/api\/v1\/user\/\\(user_id)\/roomsCache",
+      "method" : "get"
+    },
+    {
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "name" : "userList",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "image"
+        }
+      ],
+      "path" : "\/api\/v2\/room\/\\(room_id)"
+    },
+    {
+      "fields" : [
+        {
+          "type" : "Float?",
+          "name" : "start"
+        },
+        {
+          "name" : "end",
+          "type" : "Float?"
+        }
+      ],
+      "path" : "\/api\/v2\/schedule\/list\/my",
+      "method" : "get"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "status",
+          "type" : "String"
+        },
+        {
+          "name" : "messages",
+          "type" : "String"
+        }
+      ],
+      "path" : "\/socket\/message_status",
+      "method" : "post"
+    },
+    {
+      "path" : "\/api\/v1\/room\/\\(room_id)",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "token"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        }
+      ],
+      "method" : "delete"
+    },
+    {
+      "path" : "\/api\/v2\/guide\/point\/add",
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "guideId"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "address",
+          "type" : "String?"
+        },
+        {
+          "name" : "geoPosition",
+          "type" : "String?"
+        }
+      ],
+      "method" : "post"
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/schedule\/delete",
+      "fields" : [
+        {
+          "name" : "id",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/socket\/on_joined",
+      "fields" : [
+
+      ],
+      "method" : "get"
+    },
+    {
+      "path" : "\/api\/v2\/booking\/list\/my",
+      "method" : "get",
+      "fields" : [
+
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "id",
+          "type" : "String?"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "description"
+        },
+        {
+          "type" : "String?",
+          "name" : "tags"
+        },
+        {
+          "type" : "Float?",
+          "name" : "price"
+        },
+        {
+          "name" : "duration",
+          "type" : "Float?"
+        },
+        {
+          "name" : "startHour",
+          "type" : "Float?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "maxPeople"
+        },
+        {
+          "name" : "specialization",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "language"
+        },
+        {
+          "name" : "transfer",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "city"
+        },
+        {
+          "type" : "String?",
+          "name" : "country"
+        },
+        {
+          "type" : "Bool?",
+          "name" : "published"
+        }
+      ],
+      "path" : "\/api\/v2\/tour\/update",
+      "method" : "post"
+    },
+    {
+      "path" : "\/api\/v1\/user\/getOnline",
+      "method" : "get",
+      "fields" : [
+        {
+          "name" : "userList",
+          "type" : "String"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "type" : "String?",
+          "name" : "guideId"
+        },
+        {
+          "type" : "String?",
+          "name" : "name"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "name" : "path",
+          "type" : "String?"
+        }
+      ],
+      "path" : "\/api\/v2\/guide\/image\/add",
+      "method" : "post"
+    },
+    {
+      "path" : "\/api\/v2\/tour\/popular",
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "city"
+        },
+        {
+          "name" : "limit",
+          "type" : "Float"
+        }
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "name" : "description",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "tags"
+        },
+        {
+          "name" : "price",
+          "type" : "Float?"
+        },
+        {
+          "type" : "String?",
+          "name" : "city"
+        },
+        {
+          "name" : "country",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "category"
+        },
+        {
+          "name" : "places",
+          "type" : "String?"
+        },
+        {
+          "type" : "Bool?",
+          "name" : "published"
+        }
+      ],
+      "method" : "post",
+      "path" : "\/api\/v2\/guide\/create"
+    },
+    {
+      "path" : "\/socket\/on_message_update",
+      "method" : "post",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "request_id"
+        },
+        {
+          "type" : "String",
+          "name" : "message"
+        },
+        {
+          "name" : "thumbnail",
+          "type" : "String?"
+        },
+        {
+          "name" : "image",
+          "type" : "String?"
+        },
+        {
+          "name" : "attachments",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/roomCreate\/\\(room_id)",
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "image"
+        },
+        {
+          "name" : "type",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "userList"
+        }
+      ]
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/register",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "phone"
+        }
+      ]
+    },
+    {
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "id",
+          "type" : "String?"
+        },
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        },
+        {
+          "type" : "Float?",
+          "name" : "timestamp"
+        }
+      ],
+      "path" : "\/api\/v2\/schedule\/update"
+    },
+    {
+      "path" : "\/api\/v2\/message\/list",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "token"
+        },
+        {
+          "name" : "userId",
+          "type" : "Int?"
+        },
+        {
+          "type" : "Int?",
+          "name" : "limit"
+        },
+        {
+          "type" : "Int?",
+          "name" : "date"
+        }
+      ],
+      "method" : "get"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "id",
+          "type" : "String"
+        }
+      ],
+      "method" : "post",
+      "path" : "\/api\/v2\/tour\/delete"
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/guide\/image\/delete",
+      "fields" : [
+        {
+          "name" : "guideId",
+          "type" : "String?"
+        },
+        {
+          "name" : "name",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/schedule\/list",
+      "fields" : [
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        },
+        {
+          "name" : "start",
+          "type" : "Float?"
+        },
+        {
+          "type" : "Float?",
+          "name" : "end"
+        }
+      ],
+      "method" : "get"
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/profile",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "id"
+        },
+        {
+          "name" : "firstName",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "lastName"
+        },
+        {
+          "name" : "email",
+          "type" : "String"
+        },
+        {
+          "name" : "logoPath",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "description"
+        },
+        {
+          "type" : "String?",
+          "name" : "specialization"
+        },
+        {
+          "name" : "gender",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "city"
+        },
+        {
+          "type" : "String?",
+          "name" : "birthdate"
+        }
+      ]
+    },
+    {
+      "method" : "post",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "username"
+        },
+        {
+          "name" : "tokenauth",
+          "type" : "String"
+        },
+        {
+          "type" : "String",
+          "name" : "tokenapp"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        }
+      ],
+      "path" : "\/socket\/on_join"
+    },
+    {
+      "fields" : [
+        {
+          "name" : "user_id",
+          "type" : "String"
+        }
+      ],
+      "method" : "get",
+      "path" : "\/api\/v1\/user\/\\(user_id)\/roomsFullCache"
+    },
+    {
+      "method" : "get",
+      "fields" : [
+
+      ],
+      "path" : "\/socket\/on_typing"
+    },
+    {
+      "path" : "\/socket\/on_typing",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "room_id"
+        }
+      ],
+      "method" : "post"
+    },
+    {
+      "path" : "\/socket\/message_change",
+      "method" : "get",
+      "fields" : [
+
+      ]
+    },
+    {
+      "fields" : [
+        {
+          "name" : "room_id",
+          "type" : "String"
+        },
+        {
+          "name" : "token",
+          "type" : "String"
+        },
+        {
+          "type" : "Int?",
+          "name" : "userId"
+        },
+        {
+          "type" : "Int?",
+          "name" : "limit"
+        },
+        {
+          "type" : "Int?",
+          "name" : "offset"
+        },
+        {
+          "name" : "status",
+          "type" : "String"
+        },
+        {
+          "name" : "page",
+          "type" : "Int?"
+        },
+        {
+          "name" : "date_start",
+          "type" : "Int?"
+        },
+        {
+          "name" : "date_end",
+          "type" : "Int?"
+        }
+      ],
+      "path" : "\/api\/v1\/room\/\\(room_id)\/messages",
+      "method" : "get"
+    },
+    {
+      "method" : "get",
+      "fields" : [
+        {
+          "name" : "user_id",
+          "type" : "String"
+        }
+      ],
+      "path" : "\/api\/v2\/user\/\\(user_id)"
+    },
+    {
+      "method" : "get",
+      "path" : "\/socket\/stop_typing",
+      "fields" : [
+
+      ]
+    },
+    {
+      "method" : "post",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "room_id"
+        }
+      ],
+      "path" : "\/socket\/stop_typing"
+    },
+    {
+      "method" : "post",
+      "path" : "\/api\/v2\/tour\/comment",
+      "fields" : [
+        {
+          "name" : "message",
+          "type" : "String?"
+        },
+        {
+          "type" : "String?",
+          "name" : "rating"
+        },
+        {
+          "name" : "tourId",
+          "type" : "String?"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v1\/user\/\\(user_id)\/rooms\/\\(room_id)\/delete",
+      "method" : "get",
+      "fields" : [
+        {
+          "type" : "String",
+          "name" : "user_id"
+        },
+        {
+          "name" : "room_id",
+          "type" : "String"
+        }
+      ]
+    },
+    {
+      "path" : "\/api\/v2\/login",
+      "method" : "post",
+      "fields" : [
+        {
+          "name" : "phone",
+          "type" : "String"
+        },
+        {
+          "name" : "code",
+          "type" : "String"
+        }
+      ]
+    }
+  ]
+}

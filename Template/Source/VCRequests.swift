@@ -17,6 +17,7 @@ class VCRequests: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.navigationItem.title = "Requests"
         if let url = Bundle.main.url(forResource: "TestObjects", withExtension: "string"),
             let jsonData = try? Data(contentsOf: url),
             let objects = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String:Any] {
