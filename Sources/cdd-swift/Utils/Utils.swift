@@ -42,6 +42,68 @@ func readFile(_ url: URL) -> Result<String, Swift.Error> {
 	}
 }
 
+func copyDirectory(from sourceDir: String, to targetDir: String) {
+	let fileManager = FileManager.default
+
+	if !fileExists(file: targetDir) {
+		do {
+			try fileManager.createDirectory(atPath: targetDir, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			exitWithError("whoops")
+		}
+	}
+
+	switch readDirectory(sourceDir) {
+	case .success(let files):
+		for filename in files {
+			let sourceFilePath = filename.relativePath
+			let targetFilePath = "\(targetDir)/\(filename.lastPathComponent)"
+
+			if fileIsDir(sourceFilePath) {
+				copyDirectory(from: sourceFilePath, to: targetFilePath)
+			} else {
+				copyFile(from: sourceFilePath, to: targetFilePath)
+			}
+		}
+	case .failure(_):
+		exitWithError("Error copying \(sourceDir) to \(targetDir)")
+	}
+}
+
+func copyFile(from source: String, to target: String) {
+	let fileManager = FileManager.default
+
+	do {
+		try fileManager.copyItem(
+			at: URL(fileURLWithPath: source),
+			to: URL(fileURLWithPath: target))
+	} catch CocoaError.fileWriteFileExists {
+		log.warnMessage("File exists, overwriting \(target)")
+
+		try! fileManager.removeItem(atPath: target)
+		copyFile(from: source, to: target)
+	} catch {
+		log.errorMessage("\(error)")
+		exitWithError("Error copying \(source) to \(target)")
+	}
+}
+
+func fileIsDir(_ sourceFilePath: String) -> Bool {
+	let fileManager = FileManager.default
+
+	do {
+		let attr = try fileManager.attributesOfItem(atPath: sourceFilePath)
+
+		if let fileType = attr[FileAttributeKey.type] as? FileAttributeType {
+			return fileType == FileAttributeType.typeDirectory.self
+		}
+	} catch {
+		return false // throw?
+	}
+
+	return false // throw?
+}
+
 /// trim unnecessary characters from a string
 func trim(_ string: String) -> String {
 	return string
@@ -55,7 +117,7 @@ func fileLastModifiedDate(file: String) -> Date? {
 		return attributes[FileAttributeKey.modificationDate] as? Date
 	}
 	catch let error as NSError {
-		print("Ooops! Something went wrong: \(error)")
+		log.errorMessage("Ooops! Something went wrong: \(error)")
 		return nil
 	}
 }
