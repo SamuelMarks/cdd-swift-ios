@@ -10,9 +10,8 @@ import UIKit
 import EasyPeasy
 
 class VCRequests: UIViewController {
-    static var models: [Model] = []
     @IBOutlet var tableView: UITableView!
-    var requests:[Request] = []
+    @IBOutlet weak var segmentControl: UISegmentedControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,39 +25,48 @@ class VCRequests: UIViewController {
             
                 
             if let modelsJSON = objects["models"] as? [[String:Any]] {
-                VCRequests.models = modelsJSON.compactMap {
+                Core.models = modelsJSON.compactMap {
                     try? decoder.decode(Model.self, from: JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted))
                 }
             }
             if let requestsJSON = objects["requests"] as? [[String:Any]] {
                 
-                requests = requestsJSON.compactMap {
+                Core.requests = requestsJSON.compactMap {
                     try? decoder.decode(Request.self, from: JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted))
                 }
             }
         }
         
         view.addSubview(tableView)
-        
-        
+    }
+    
+    @IBAction func segmentControlChanged(_ sender: Any) {
+        tableView.reloadData()
     }
 }
 
 extension VCRequests: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return requests.count
+        return segmentControl.selectedSegmentIndex == 0 ? Core.requests.count : Core.models.count
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "VCRequest") as? VCRequest else { return }
-        vc.request = requests[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
+        if segmentControl.selectedSegmentIndex == 0 {
+            guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "VCRequest") as? VCRequest else { return }
+            vc.request = Core.requests[indexPath.row]
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        else {
+            guard let vc = self.storyboard?.instantiateViewController(withIdentifier: "VCRequestsForModel") as? VCRequestsForModel else { return }
+            vc.model = Core.models[indexPath.row]
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "kCell", for: indexPath)
-        cell.textLabel?.text = requests[indexPath.row].urlPath
+        cell.textLabel?.text = segmentControl.selectedSegmentIndex == 0 ? Core.requests[indexPath.row].urlPath : Core.models[indexPath.row].name
         return cell
     }
 }

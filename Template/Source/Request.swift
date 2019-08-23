@@ -28,6 +28,5 @@ enum Method: String, Codable {
 	case get
 	case put
 	case post
-    
-    
+    case delete
 }

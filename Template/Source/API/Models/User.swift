@@ -1,4 +1,4 @@
-class User : APIModel {
+struct User : APIModel {
     let city: String
     let firstName: String
     let phone: String

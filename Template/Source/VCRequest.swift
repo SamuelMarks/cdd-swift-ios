@@ -42,15 +42,37 @@ class VCRequest: UIViewController {
         pickerBool.dataSource = self
     }
     @IBAction func execute(_ sender: Any) {
+        
+        let params: [String:Any] = request.vars.reduce(into: [:]) { (res, variable) in
+            guard let stackView = varsToStackView[variable.name],
+                let value = extractVarValue(type: variable.type, stackView: stackView) else { return }
+            res[variable.name] = value
+        }
+        
+        let checkRequired = request.vars.reduce(true) { (res, variable) -> Bool in
+            guard res else { return false }
+            if !variable.optional {
+                return params[variable.name] != nil
+            }
+            return res
+        }
+        
+        guard checkRequired else {
+            Alert.show(text: "Fill all required fields", in: self)
+            return
+        }
+     
+        
         view.showActivity()
-        execute(onResult: {[weak self] (json) in
+        Core.sendRequest(request: request, params: params, onResult: {[weak self] (json) in
             self?.view.hideActivity()
             guard let vc = self?.storyboard?.instantiateViewController(withIdentifier: "VCResponse") as? VCResponse else { return }
             vc.json = json
+            vc.request = self?.request
             self?.navigationController?.pushViewController(vc, animated: true)
         }) {[weak self] (error) in
             self?.view.hideActivity()
-            print(error)
+            Alert.show(error: error, in: self)
         }
     }
 
@@ -101,7 +123,7 @@ class VCRequest: UIViewController {
             fieldsStackView.addArrangedSubview(btn)
         case .complex(_):
             break
-//            if let model = VCRequests.models.first(where: { (model) -> Bool in
+//            if let model = Core.models.first(where: { (model) -> Bool in
 //                return model.name == typeName
 //            }) {
 //                model.vars.forEach({fieldsStackView.addArrangedSubview(self.viewForField($0))})
@@ -157,7 +179,7 @@ class VCRequest: UIViewController {
         case .array(_):
           break
         case .complex(let typeName):
-            if let model = VCRequests.models.first(where: { (model) -> Bool in
+            if let model = Core.models.first(where: { (model) -> Bool in
                 return model.name == typeName
             }) {
                 model.vars.forEach {

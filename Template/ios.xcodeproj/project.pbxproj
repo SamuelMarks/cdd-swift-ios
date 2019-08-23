@@ -33,6 +33,8 @@
 		AA411F8923043B5700A58219 /* RegisterPostRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA411F8823043B5700A58219 /* RegisterPostRequest.swift */; };
 		AA411F8B23043C5600A58219 /* VCResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA411F8A23043C5600A58219 /* VCResponse.swift */; };
 		AA411F8D23043E2700A58219 /* UIView_Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA411F8C23043E2700A58219 /* UIView_Activity.swift */; };
+		AA411F8F2306A33400A58219 /* VCRequestsForModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA411F8E2306A33400A58219 /* VCRequestsForModel.swift */; };
+		AA411F912306A49300A58219 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA411F902306A49300A58219 /* Core.swift */; };
 		D984F57B0FBD07BD21812836 /* Pods_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0651EC1CF3D39A3990E389AE /* Pods_ios.framework */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +68,8 @@
 		AA411F8823043B5700A58219 /* RegisterPostRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPostRequest.swift; sourceTree = "<group>"; };
 		AA411F8A23043C5600A58219 /* VCResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCResponse.swift; sourceTree = "<group>"; };
 		AA411F8C23043E2700A58219 /* UIView_Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIView_Activity.swift; sourceTree = "<group>"; };
+		AA411F8E2306A33400A58219 /* VCRequestsForModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCRequestsForModel.swift; sourceTree = "<group>"; };
+		AA411F902306A49300A58219 /* Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		AAF0277822CCEF3300582CDF /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B13A14A10CAA7F96E5B6F987 /* Pods-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.debug.xcconfig"; path = "Target Support Files/Pods-ios/Pods-ios.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,11 +109,13 @@
 				AA411F762303E3DD00A58219 /* Entity.swift */,
 				AA411F712303E35E00A58219 /* Model.swift */,
 				AA411F722303E35F00A58219 /* Request.swift */,
+				AA411F902306A49300A58219 /* Core.swift */,
 				AA411F702303E35E00A58219 /* Variable.swift */,
 				AA411F2023028B1100A58219 /* VCRequests.swift */,
 				AA411F2423028B1100A58219 /* VCRequest.swift */,
 				AA411F822304254900A58219 /* VCRequest_Execute.swift */,
 				AA411F8A23043C5600A58219 /* VCResponse.swift */,
+				AA411F8E2306A33400A58219 /* VCRequestsForModel.swift */,
 				AA411F2B23028B1100A58219 /* Settings.swift */,
 				AA411F8C23043E2700A58219 /* UIView_Activity.swift */,
 				AA411F2C23028B1100A58219 /* API */,
@@ -307,6 +313,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA411F912306A49300A58219 /* Core.swift in Sources */,
+				AA411F8F2306A33400A58219 /* VCRequestsForModel.swift in Sources */,
 				AA411F742303E35F00A58219 /* Model.swift in Sources */,
 				AA411F8D23043E2700A58219 /* UIView_Activity.swift in Sources */,
 				AA411F752303E35F00A58219 /* Request.swift in Sources */,

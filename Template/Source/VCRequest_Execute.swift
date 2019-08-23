@@ -9,58 +9,9 @@
 import UIKit
 import Alamofire
 
-private let configuration: URLSessionConfiguration = {
-    let configuration = URLSessionConfiguration.default
-    configuration.httpAdditionalHeaders = Alamofire.SessionManager.defaultHTTPHeaders
-    configuration.timeoutIntervalForRequest = 15
-    configuration.httpShouldSetCookies = true
-    return configuration
-}()
 
-private let sessionManager = Alamofire.SessionManager(configuration: configuration)
 
-extension Method{
-    var httpMethod: HTTPMethod {
-        return HTTPMethod(rawValue: self.rawValue.uppercased()) ?? .get
-    }
-}
 extension VCRequest {
-    
-    func execute(onResult: @escaping (_ result: Any) -> Void,
-                 onError: ((_ error: Error) -> Void)? = nil) {
-        
-        let params: [String:Any] = request.vars.reduce(into: [:]) { (res, variable) in
-            guard let stackView = varsToStackView[variable.name],
-            let value = extractVarValue(type: variable.type, stackView: stackView) else { return }
-            res[variable.name] = value
-        }
-        
-        let urlRequest = sessionManager.request(HOST + ENDPOINT + request.urlPath, method: request.method.httpMethod, parameters: params, encoding: URLEncoding.default, headers: headers())
-        
-        urlRequest.responseString { response in
-            var logString = ""
-            logString += "\nCURL:"
-            logString += "\n" + (response.request?.cURL ?? "")
-            
-            logString += "\nRESPONSE:"
-            if let value = response.result.value, let code = response.response?.statusCode {
-                
-                logString += "\nCODE: " + String(code)
-                logString += "\n" + value
-            }
-            
-            print(logString)
-            }
-            .responseJSON(completionHandler: { (response) in
-                switch response.result {
-                case .success(let json):
-                    onResult(json)
-                case .failure(let error):
-                    onError?(error)
-                    
-                }
-            })
-    }
     
     func extractVarValue(type:Type, stackView: UIStackView) -> Any? {
         
@@ -97,9 +48,4 @@ extension VCRequest {
         
         return nil
     }
-    
-    func headers() -> HTTPHeaders {
-        return [:]
-    }
-    
 }
