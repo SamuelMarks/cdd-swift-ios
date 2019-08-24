@@ -1,8 +1,90 @@
+////
+////  Project_Swagger.swift
+////  cdd-swift
+////
+////  Created by Alexei on 14/07/2019.
+////
+//import Foundation
 //
-//  Project_Swagger.swift
-//  cdd-swift
+//private extension String {
+//    func formated() -> String {
+//        let bookedWords = ["Error","Class"]
+//        var text = self.capitalizingFirstLetter()
+//        for word in bookedWords {
+//            text = text.replacingOccurrences(of: word, with: "API\(word)")
+//        }
+//        return text
+//    }
+//}
+//extension PrimitiveType {
+//    static func fromSwagger(string: String) -> PrimitiveType? {
+//        if string == "integer" {
+//            return .Int
+//        }
+//        else if string == "number" {
+//            return .Float
+//        }
+//        else if string == "boolean" {
+//            return .Bool
+//        }
+//        return .String
+//    }
+//}
 //
-//  Created by Alexei on 14/07/2019.
+//extension Project {
+//    
+//    private static func generateRequestName(path:String, method:String) -> String {
+//        return path.components(separatedBy: ["/","\\","(",")","{","}"]).map {$0.formated()}.joined() + method.formated() + "Request"
+//    }
+//    
+//    private static func parseType(_ json: [String:Any], couldBeObjectName: String = "") -> (Type?,Model?) {
+//        if let type = json["type"] as? String {
+//            if type == "array", let items = json["items"] as? [String:Any] {
+//                let res = parseType(items, couldBeObjectName: couldBeObjectName)
+//                if let type = res.0 {
+//                    return (.array(type), res.1)
+//                }
+//                else {
+//                    return (nil, res.1)
+//                }
+//            }
+//            else
+//                if type == "object" {
+//                    if let model = parseObject(name: couldBeObjectName, json: json) {
+//                        return (.complex(couldBeObjectName), model)
+//                    }
+//                }
+//                else if let type = PrimitiveType.fromSwagger(string: type) {
+//                    return (.primitive(type),nil)
+//            }
+//        }
+//        
+//        return (nil,nil)
+//    }
+//    
+//    private static func parseObject(name: String, json: [String:Any]) -> Model? {
+//        guard let properties = json["properties"] as? [String:[String:Any]] else { return nil }
+//        let required = (json["required"] as? [String]) ?? []
+//        var fields: [Variable] = []
+//        var additionalModels: [Model] = []
+//        for property in properties {
+//            let result = parseType(property.value, couldBeObjectName: property.key)
+//            if let model = result.1 {
+//                additionalModels.append(model)
+//            }
+//            if let type = result.0 {
+//                var field = Variable(name: property.key)
+//                field.optional = !required.contains(property.key)
+//                field.type = type
+//                field.description = property.value["description"] as? String
+//                fields.append(field)
+//            }
+//        }
+//        var model = Model(name: name, vars: fields)
+////        model.models = additionalModels /// Need to finish
+//        return model
+//    }
+//    
 //
 import Foundation
 
