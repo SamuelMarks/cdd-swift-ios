@@ -21,10 +21,8 @@ var log = Logger(logLevels: [.all], writers: writers)
 
 
 extension Logger {
-    func enableFileOutput() {
-        guard let pwd = ProcessInfo.processInfo.environment["PWD"] else { return }
-        
-        let writers = [ConsoleWriter(modifiers: [ColorModifier()]), FileWriter(filePath: pwd + "/output.txt")] as [LogWriter]
+    func enableFileOutput(path: String) {
+        let writers = [ConsoleWriter(modifiers: [ColorModifier()]), FileWriter(filePath: path)] as [LogWriter]
         log = Logger(logLevels: [.all], writers: writers)
     }
 }
