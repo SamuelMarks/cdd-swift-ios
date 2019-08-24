@@ -91,20 +91,21 @@ class StructContentRewriter: SyntaxRewriter {
 		let node2 = self.rewriter(node)
 		return super.visit(node2)
 	}
+}
 
-
-
-//	override func visit(_ node: ClosureExprSyntax) -> ExprSyntax {
-//		print("--\(node)--")
-//		return super.visit(node)
-//	}
-
-//	override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
-////		let klassName = "\(node.identifier)".trimmingCharacters(in: .whitespaces)
-//
-//		let node2 = self.rewriter(node)
-//		return super.visit(node2) as! DeclSyntax
-//	}
+class StructInserter: SyntaxRewriter {
+    let rewriter: (StructDeclSyntax) -> DeclSyntax
+    
+    init(rewriter: @escaping (StructDeclSyntax) -> StructDeclSyntax) {
+        self.rewriter = rewriter
+    }
+    
+    
+    override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
+        let node2 = self.rewriter(node)
+        node
+        return super.visit(node2) as! DeclSyntax
+    }
 }
 
 open class AppendVariableRewriter: SyntaxRewriter {

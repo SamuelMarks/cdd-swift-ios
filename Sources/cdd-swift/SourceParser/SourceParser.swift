@@ -81,19 +81,17 @@ func parse(sourceFiles: [SourceFile]) -> ([Model],[Request]) {
 	return (Array(models.values),Array(requests.values))
 }
 
-func parseProjectInfo(_ source: SourceFile) -> Result<ProjectInfo, Swift.Error> {
+func parseProjectInfo(_ source: SourceFile) throws -> ProjectInfo {
 	let visitor = ExtractVariables()
 	source.syntax.walk(visitor)
 
 	guard let hostname = visitor.variables["HOST"], let endpoint = visitor.variables["ENDPOINT"] else {
-		return .failure(
-			ProjectError.InvalidSettingsFile("Cannot find HOST or ENDPOINT variables in Settings.swift"))
+        throw ProjectError.InvalidSettingsFile("Cannot find HOST or ENDPOINT variables in Settings.swift")
 	}
 
-    guard let hosturl = URL(string: (hostname.value ?? "") + (endpoint.value ?? "")) else {
-		return .failure(
-			ProjectError.InvalidHostname("Invalid hostname format: \(hostname), \(endpoint)"))
+    guard let hosturl = URL(string: (hostname.value ?? "") + (endpoint.value ?? "")), hosturl.scheme != nil, hosturl.host != nil else {
+		throw ProjectError.InvalidHostname("Invalid hostname format: \(hostname.value ?? ""), \(endpoint.value ?? "")")
 	}
 
-	return .success(ProjectInfo(modificationDate: source.modificationDate, hostname: hosturl))
+	return ProjectInfo(modificationDate: source.modificationDate, hostname: hosturl)
 }

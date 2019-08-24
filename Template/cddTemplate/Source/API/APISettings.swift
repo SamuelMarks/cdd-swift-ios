@@ -1,0 +1,2 @@
+var HOST = ""
+let ENDPOINT = ""

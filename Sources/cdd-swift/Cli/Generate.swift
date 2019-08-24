@@ -15,7 +15,8 @@ class GenerateCommand: Command {
 	let shortDescription = "Generates a new CDD project."
 	let projectName = SwiftCLI.Parameter()
 	let projectPath = Key<String>("-p", "--project-path", description: "Manually specify a path to output the project")
-
+    let isVerbose = Key<String>("-v", "--verbose", description: "Verbosity selection")
+//    let projectPath = Key<String>("-o", "--output", description: "Verbosity selection")
 
 	func execute() throws {
 		let templatePath = NSHomeDirectory() + TEMPLATE_PATH

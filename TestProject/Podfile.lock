@@ -1,0 +1,20 @@
+PODS:
+  - Alamofire (4.8.2)
+  - EasyPeasy (1.9.0)
+
+DEPENDENCIES:
+  - Alamofire
+  - EasyPeasy
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - EasyPeasy
+
+SPEC CHECKSUMS:
+  Alamofire: ae5c501addb7afdbb13687d7f2f722c78734c2d3
+  EasyPeasy: 19a84ef8f8bbcf925b9fecc29d1d78b7dab96718
+
+PODFILE CHECKSUM: 8eb4539290ab2554c450bc4a46998fbc4da36deb
+
+COCOAPODS: 1.6.1

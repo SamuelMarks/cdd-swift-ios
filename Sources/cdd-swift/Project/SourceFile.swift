@@ -9,21 +9,21 @@ import Foundation
 import SwiftSyntax
 
 struct SourceFile: ProjectSource {
-	let path: URL
+	let url: URL
 	let modificationDate: Date
 	var syntax: SourceFileSyntax
 
 	init(path: String) throws {
 		do {
 			let url = URL(fileURLWithPath: path)
-			self.path = url
+			self.url = url
 			self.modificationDate = try fileLastModifiedDate(url: url)
 			self.syntax = try SyntaxTreeParser.parse(url)
 		}
 	}
 
-	private init(path: URL, modificationDate: Date, syntax: SourceFileSyntax) {
-		self.path = path
+	private init(url: URL, modificationDate: Date, syntax: SourceFileSyntax) {
+		self.url = url
 		self.modificationDate = modificationDate
 		self.syntax = syntax
 	}
@@ -38,7 +38,14 @@ struct SourceFile: ProjectSource {
         self.syntax = ClassRemover.remove(name: model.name, in: self.syntax)
     }
     
-    mutating func insert(model: Model) {
+    mutating func insert(model: Model) throws {
+        let structTemplate = STRUCT_TEMPLATE.replacingOccurrences(of: "$0", with: model.name).replacingOccurrences(of: "$1", with: "APIModel")
+        
+        let text = "\(syntax)"
+        try (text + "\n" + structTemplate + "\n").write(to: url, atomically: true, encoding: .utf8)
+        
+        self = try SourceFile(path: url.path)
+        
         update(vars:model.vars,oldVars:[],inClass:model.name)
     }
     
@@ -54,20 +61,19 @@ struct SourceFile: ProjectSource {
         for change in changes {
             guard let classSyntax = findClass(name: name) else { return }
             
+            var newClassSyntax: Syntax!
             switch change {
             case .deletion(let variable):
-                let newClassSyntax = VariableRemover.remove(name: variable.name, in: classSyntax)
-                self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
+                newClassSyntax = VariableRemover.remove(name: variable.name, in: classSyntax)
             case .insertion(let variable):
                 let rewriter = StructContentRewriter {
                     return $0.appending(variable.syntax())
                 }
-                let newClassSyntax = rewriter.visit(classSyntax)
-                self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
+                newClassSyntax = rewriter.visit(classSyntax)
             case .same(let variable):
-                let newClassSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
-                self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
+                newClassSyntax = VariableRewriter.rewrite(name: variable.name, syntax: variable.syntax(), in: classSyntax)
             }
+            self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
         }
     }
     
@@ -75,7 +81,14 @@ struct SourceFile: ProjectSource {
         self.syntax = ClassRemover.remove(name: request.name, in: self.syntax)
     }
     
-    mutating func insert(request:Request) {
+    mutating func insert(request:Request) throws {
+        let structTemplate = STRUCT_TEMPLATE.replacingOccurrences(of: "$0", with: request.name).replacingOccurrences(of: "$1", with: "APIRequest")
+        
+        let text = "\(syntax)"
+        try (text + "\n" + structTemplate + "\n ").write(to: url, atomically: true, encoding: .utf8)
+        
+        self = try SourceFile(path: url.path)
+        
         update(vars:request.vars,oldVars:[],inClass:request.name)
         
         let responseTypeItem = SyntaxFactory.makeMemberDeclListItem(decl: request.responseTypeSyntax(), semicolon: nil)
@@ -120,7 +133,7 @@ struct SourceFile: ProjectSource {
         }
 		// todo: add fields
 		return SourceFile(
-			path: url,
+			url: url,
 			modificationDate: Date(),
             syntax: makeStruct(name: name, type:structType))
 	}

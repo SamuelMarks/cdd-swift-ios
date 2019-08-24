@@ -7,16 +7,16 @@ import Yams
 import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
-let MODELS_DIR = "/Source/API/Models"
-let REQUESTS_DIR = "/Source/API/Requests"
-let SETTINGS_FILE = "/Source/Settings.swift"
+let MODELS_DIR = "/Source/API/APIModels.swift"
+let REQUESTS_DIR = "/Source/API/APIRequests.swift"
+let SETTINGS_FILE = "/Source/API/APISettings.swift"
 
 protocol ProjectSource {
     mutating func remove(model:Model)
-    mutating func insert(model:Model)
+    mutating func insert(model:Model) throws
     mutating func update(model:Model)
     mutating func remove(request:Request)
-    mutating func insert(request:Request)
+    mutating func insert(request:Request) throws
     mutating func update(request:Request)
 }
 
@@ -25,7 +25,8 @@ class ProjectReader {
     let projectPath: String
     var specFile: SpecFile
     var settingsFile: SourceFile
-    var sourceFiles: [SourceFile]
+    var modelsFile: SourceFile
+    var requestsFile: SourceFile
     
     init(path: String) throws {
         self.projectPath = path
@@ -39,58 +40,24 @@ class ProjectReader {
             )
             self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_FILE)")
             
-            if case let .success(projectFiles) = readDirectory(self.projectPath + MODELS_DIR) {
-                self.sourceFiles = try projectFiles.map({ file in
-                    do {
-                        log.infoMessage("MODEL source found: \(file)")
-                        return try SourceFile(path: file.path )
-                    } catch let err {
-                        throw err
-                    }
-                })
-            } else {
-                self.sourceFiles = []
-            }
-            
-            if case let .success(projectFiles) = readDirectory(self.projectPath + REQUESTS_DIR) {
-                let requestsSourceFiles: [SourceFile] = try projectFiles.map({ file in
-                    do {
-                        log.infoMessage("REQUEST source found: \(file)")
-                        return try SourceFile(path: file.path)
-                    } catch let err {
-                        throw err
-                    }
-                })
-                self.sourceFiles.append(contentsOf:requestsSourceFiles)
-            } else {
-//                self.sourceFiles = []
-            }
-            
-            
+            self.modelsFile = try SourceFile(path: "\(self.projectPath + MODELS_DIR)")
+            self.requestsFile = try SourceFile(path: "\(self.projectPath + REQUESTS_DIR)")
         } catch let error {
             throw error
         }
     }
     
-    func generateProject() -> Result<Project, Swift.Error> {
-        guard case let .success(projectInfo) = parseProjectInfo(self.settingsFile) else {
-            return .failure(
-                ProjectError.InvalidSettingsFile("Cannot parse \(SETTINGS_FILE)"))
-        }
+    func generateProject() throws -> Project {
+        let projectInfo = try parseProjectInfo(self.settingsFile)
         
-        let result = parse(sourceFiles: sourceFiles)
-        // todo: requests
-        return .success(
-            Project(
-                info: projectInfo,
-                models: result.0,
-                requests: result.1
-        ))
+        let result = parse(sourceFiles: [modelsFile,requestsFile])
+        
+        return Project(info: projectInfo, models: result.0, requests: result.1)
     }
     
     func sync() throws  {
         // generate a Project from swift files
-        let swiftProject = try self.generateProject().get()
+        let swiftProject = try self.generateProject()
         
         log.eventMessage("Generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
         log.infoMessage("- source models: \(swiftProject.models.map({$0.name}))")
@@ -139,59 +106,32 @@ class ProjectReader {
         
         let modelsChanges1 = mergedProject.models.compare(to: swiftProject.models)
         for change in modelsChanges1 {
-            guard let index = indexFileFor(object: change.object()) else { return }
-            var sourceFile = sourceFiles[index]
+            var sourceFile = modelsFile
             switch change {
             case .deletion(let model):
                 sourceFile.remove(model:model)
             case .insertion(let model):
-                sourceFile.insert(model:model)
+                try sourceFile.insert(model:model)
             case .same(let model):
                sourceFile.update(model:model)
             }
-            sourceFiles[index] = sourceFile
+            modelsFile = sourceFile
         }
         
         let requestsChanges1 = mergedProject.requests.compare(to: swiftProject.requests)
         for change in requestsChanges1 {
-            guard let index = indexFileFor(object: change.object()) else { return }
-            var sourceFile = sourceFiles[index]
+            var sourceFile = requestsFile
             
             switch change {
             case .deletion(let request):
                 sourceFile.remove(request: request)
             case .insertion(let request):
-                sourceFile.insert(request: request)
+                try sourceFile.insert(request: request)
             case .same(let request):
                 sourceFile.update(request: request)
             }
-            sourceFiles[index] = sourceFile
+            requestsFile = sourceFile
         }
-    }
-    
-    func indexFileFor(object: ProjectObject) -> Int? {
-        var path = ""
-        var name = ""
-        var structType = ""
-        if object is Model {
-            path = "\(MODELS_DIR)/\(object.name).swift"
-            name = object.name
-            structType = MODEL_PROTOCOL
-        }
-        else if object is Request {
-            path = "\(REQUESTS_DIR)/\(object.name).swift"
-            name = object.name
-            structType = REQUEST_PROTOCOL
-        }
-        path = self.projectPath + path
-        if !fileExists(file: path), let file = SourceFile.create(path: path, name: name, structType: structType) {
-            self.sourceFiles.append(file)
-        }
-        if let index = self.sourceFiles.firstIndex(where: {$0.containsClassWith(name: name)}) {
-            return index
-        }
-        
-        return nil
     }
     
     func write() -> Result<(), Swift.Error> {
@@ -201,10 +141,10 @@ class ProjectReader {
             let _ = writeStringToFile(file: self.specFile.path, contents: "\(yaml)")
 
             // write models
-			for sourceFile in self.sourceFiles {
+			for sourceFile in [modelsFile,requestsFile] {
 				logFileWrite(
-					result: writeStringToFile(file: sourceFile.path, contents: "\(sourceFile.syntax)"),
-					filePath: sourceFile.path.path)
+					result: writeStringToFile(file: sourceFile.url, contents: "\(sourceFile.syntax)"),
+					filePath: sourceFile.url.path)
 			}
         } catch let err {
             return .failure(err)
