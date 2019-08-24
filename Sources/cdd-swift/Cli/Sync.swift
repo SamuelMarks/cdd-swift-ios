@@ -1,15 +1,22 @@
 import Foundation
 import SwiftCLI
+import Willow
 
 class SyncCommand: Command {
 	let name = "sync"
 	let shortDescription = "Synchronizes OpenAPI spec to a CDD-Swift project"
-	//		let verbose = Flag("--verbose", "-v", description: "Show verbose output", defaultValue: false)
-	//		let silent = Flag("--silent", "-s", description: "Silence standard output", defaultValue: false)
 	let silent = Flag("--dry-run", "-d", description: "Dry run; no changes are written to disk", defaultValue: false)
-    let projectPath = Key<String>("-p", "--project-path", description: "Manually specify a path to output the project")
-    let isVerbose = Key<String>("-v", "--verbose", description: "Verbosity selection")
+    let projectPath = Key<String>("-p", "--project-path", description: "Manually specify a path to the project")
+    let openapiPath = Key<String>("-o", "--openapi-path", description: "Manually specify a path to openapi file")
+    let verbose = Flag("-v", "--verbose", description: "Show verbose output", defaultValue: false)
+    let output = Flag("-f", "--output-file", description: "Output logging to file", defaultValue:false)
+    
+
 	func execute() throws {
+        
+        if output.value {
+            log.enableFileOutput()
+        }
         
         if config.dryRun {
             log.infoMessage("CONFIG SETTING Dry run; no changes are written to disk")
@@ -20,18 +27,18 @@ class SyncCommand: Command {
         }
 
         if let path = projectPath.value {
-            sync(path: path)
+            sync(projectPath: path)
         }
         else {
             if let pwd = ProcessInfo.processInfo.environment["PWD"] {
-                sync(path: pwd)
+                sync(projectPath: pwd)
             }
         }
 	}
 
-    func sync(path:String) {
+    func sync(projectPath:String) {
 		do {
-			let projectReader = try ProjectReader(path: path)
+			let projectReader = try ProjectReader(projectPath: projectPath, openAPIPath: openapiPath.value)
             try projectReader.sync()
             log.eventMessage("Project Synced")
 			if case .success(_) = projectReader.write() {

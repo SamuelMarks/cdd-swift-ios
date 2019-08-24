@@ -28,20 +28,20 @@ class ProjectReader {
     var modelsFile: SourceFile
     var requestsFile: SourceFile
     
-    init(path: String) throws {
-        self.projectPath = path
-        
+    init(projectPath: String, openAPIPath:String?) throws {
+        self.projectPath = projectPath
+        let openapiPath = openAPIPath ?? projectPath + SPEC_FILE
         do {
-            let specUrl = URL(fileURLWithPath: "\(self.projectPath + SPEC_FILE)")
+            let specUrl = URL(fileURLWithPath: openapiPath)
             self.specFile = SpecFile(
                 path: specUrl,
                 modificationDate: try fileLastModifiedDate(url: specUrl),
                 syntax: try SwaggerSpec.init(url: specUrl)
             )
-            self.settingsFile = try SourceFile(path: "\(self.projectPath + SETTINGS_FILE)")
+            self.settingsFile = try SourceFile(path: self.projectPath + SETTINGS_FILE)
             
-            self.modelsFile = try SourceFile(path: "\(self.projectPath + MODELS_DIR)")
-            self.requestsFile = try SourceFile(path: "\(self.projectPath + REQUESTS_DIR)")
+            self.modelsFile = try SourceFile(path: self.projectPath + MODELS_DIR)
+            self.requestsFile = try SourceFile(path: self.projectPath + REQUESTS_DIR)
         } catch let error {
             throw error
         }
