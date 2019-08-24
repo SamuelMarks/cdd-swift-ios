@@ -63,9 +63,8 @@ extension ParameterType : Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-        case .content(let content):
+		case .content(_):
             break
-//            try container.encode(content, forKey: .content)
         case .schema(let schema):
             try container.encode(schema, forKey: .schema)
         }

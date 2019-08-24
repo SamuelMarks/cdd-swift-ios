@@ -1,6 +1,29 @@
 import Foundation
 import SwiftSyntax
 import SwiftCLI
+import Willow
+
+class Config {
+	var dryRun: Bool = false
+}
+
+class ColorModifier: LogModifier {
+	func modifyMessage(_ message: String, with logLevel: LogLevel) -> String {
+		switch logLevel {
+		case .error:
+			return "[ERROR] \(message)".red
+		case .info:
+			return "[INFO] \(message)".yellow
+		case .event:
+			return "[OK] \(message)".green
+		default:
+			return "[OK] \(message)"
+		}
+	}
+}
+let writers = [ConsoleWriter(modifiers: [ColorModifier()])]
+let log = Logger(logLevels: [.all], writers: writers)
+let config = Config()
 
 let cli = CLI(
     name: "cdd-swift",
@@ -8,8 +31,7 @@ let cli = CLI(
     description: "Compiler Driven Development: Swift Adaptor",
     commands: [
         GenerateCommand(),
-        SyncCommand(),
-        TestCommand()
+        SyncCommand()
     ]
 )
 

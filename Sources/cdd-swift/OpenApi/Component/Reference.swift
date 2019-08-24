@@ -18,6 +18,7 @@ public class Reference<T: Component> {
     private var _value: T?
     public var value: T {
         guard let value = _value else {
+			log.errorMessage("Error decoding spec for reference: \(self.name)")
             fatalError("Reference \(string) is unresolved")
         }
         return value
@@ -60,20 +61,26 @@ public class Reference<T: Component> {
 
 extension PossibleReference : Encodable {
     enum CodingKeys: String, CodingKey {
-       case componentType
+        case componentType
+        case ref = "$ref"
     }
     
     public func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-        if let parametr = value as? Parameter {
-            try parametr.encode(to: encoder)
-        }
-        else
-            if let response = value as? Response {
-                try response.encode(to: encoder)
-        }
-            else if let header = value as? Header {
-                try header.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .value(let value):
+            if let parametr = value as? Parameter {
+                try parametr.encode(to: encoder)
+            }
+            else
+                if let response = value as? Response {
+                    try response.encode(to: encoder)
+                }
+                else if let header = value as? Header {
+                    try header.encode(to: encoder)
+            }
+        case .reference(let ref):
+            try container.encode(ref.string, forKey: .ref)
         }
     }
 }

@@ -38,24 +38,6 @@
         }
       },
       {
-        "package": "llbuild",
-        "repositoryURL": "https://github.com/apple/swift-llbuild.git",
-        "state": {
-          "branch": null,
-          "revision": "f1c9ad9a253cdf1aa89a7f5c99c30b4513b06ddb",
-          "version": "0.1.1"
-        }
-      },
-      {
-        "package": "SwiftPM",
-        "repositoryURL": "https://github.com/apple/swift-package-manager.git",
-        "state": {
-          "branch": null,
-          "revision": "8656a25cb906c1896339f950ac960ee1b4fe8034",
-          "version": "0.4.0"
-        }
-      },
-      {
         "package": "SwiftSyntax",
         "repositoryURL": "https://github.com/apple/swift-syntax.git",
         "state": {
@@ -71,6 +53,15 @@
           "branch": null,
           "revision": "ba2268e67c07b9f9cfbc0801385e6238b36255eb",
           "version": "5.3.2"
+        }
+      },
+      {
+        "package": "Willow",
+        "repositoryURL": "https://github.com/Nike-Inc/Willow.git",
+        "state": {
+          "branch": null,
+          "revision": "67c567faf21f578149c030bb8e740ab87d11c508",
+          "version": "5.2.1"
         }
       },
       {

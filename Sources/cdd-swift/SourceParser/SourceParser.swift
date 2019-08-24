@@ -11,8 +11,44 @@ import SwiftSyntax
 let MODEL_PROTOCOL = "APIModel"
 let REQUEST_PROTOCOL = "APIRequest"
 
-func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
-    var classToSourceFile: [String:URL] = [:]
+/// count occurances of valid models
+func modelCount(sourceFile: SourceFile) -> Int {
+	var count: Int = 0
+
+	let visitor = ClassVisitor()
+	sourceFile.syntax.walk(visitor)
+
+	for klass in visitor.klasses {
+		if klass.interfaces.contains(MODEL_PROTOCOL) {
+			count += 1
+		}
+	}
+
+	return count
+}
+
+/// parse models from source
+func parseModels(sourceFiles: [SourceFile]) -> [Model] {
+	var models: [String:Model] = [:]
+
+	for sourceFile in sourceFiles {
+		let visitor = ClassVisitor()
+		sourceFile.syntax.walk(visitor)
+
+		for klass in visitor.klasses {
+			if klass.interfaces.contains(MODEL_PROTOCOL) {
+				models[klass.name] = Model(name: klass.name,
+										   vars: Array(klass.vars.values),
+										   modificationDate: sourceFile.modificationDate)
+			}
+		}
+	}
+
+	return Array(models.values)
+}
+
+// todo: simplify / remove
+func parse(sourceFiles: [SourceFile]) -> ([Model],[Request]) {
     var models: [String:Model] = [:]
     var requests:[String:Request] = [:]
 	for sourceFile in sourceFiles {
@@ -21,9 +57,7 @@ func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
         
         for klass in visitor.klasses {
             if klass.interfaces.contains(MODEL_PROTOCOL) {
-                models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values), modificationDate:sourceFile.modificationDate)
-                
-                classToSourceFile[klass.name] = sourceFile.path
+				models[klass.name] = Model(name: klass.name, vars: Array(klass.vars.values), modificationDate: sourceFile.modificationDate)
             }
         }
         
@@ -37,17 +71,14 @@ func parse(sourceFiles: [SourceFile]) -> ([Model],[Request], [String:URL]) {
                     var vars = klass.vars
                     vars.removeValue(forKey: "urlPath")
                     vars.removeValue(forKey: "method")
-                    requests[klass.name] = Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values), modificationDate:sourceFile.modificationDate)
-                    classToSourceFile[klass.name] = sourceFile.path
+                    requests[klass.name] = Request(name:klass.name, method: method, urlPath: path, responseType: responseType, errorType: errorType, vars: Array(vars.values),modificationDate: sourceFile.modificationDate)
                 }
             }
         }
         
 	}
 
-	
-
-	return (Array(models.values),Array(requests.values), classToSourceFile)
+	return (Array(models.values),Array(requests.values))
 }
 
 func parseProjectInfo(_ source: SourceFile) -> Result<ProjectInfo, Swift.Error> {

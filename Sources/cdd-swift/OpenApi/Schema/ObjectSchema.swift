@@ -38,7 +38,6 @@ extension Property : Encodable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
         try schema.encode(to: encoder)
     }
 }

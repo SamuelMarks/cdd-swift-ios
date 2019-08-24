@@ -1,222 +1,182 @@
+//
+//  SpecFile.swift
+//  CYaml
+//
+//  Created by Rob Saunders on 7/16/19.
+//
 
 import Foundation
+import Yams
 
-struct SpecFile {
-    let path: URL
-    let modificationDate: Date
-    var syntax: SwaggerSpec
-}
+struct SpecFile: ProjectSource {
+	let path: URL
+	let modificationDate: Date
+	var syntax: SwaggerSpec
 
-private extension String {
-    func formated() -> String {
-        let bookedWords = ["Error","Class"]
-        var text = self.capitalizingFirstLetter()
-        for word in bookedWords {
-            text = text.replacingOccurrences(of: word, with: "API\(word)")
-        }
-        return text
-    }
-}
-
-extension PrimitiveType {
-    static func fromSwagger(string: String) -> PrimitiveType? {
-        if string == "integer" {
-            return .Int
-        }
-        else if string == "number" {
-            return .Float
-        }
-        else if string == "boolean" {
-            return .Bool
-        }
-        return .String
-    }
-}
-
-extension SpecFile {
+	mutating func apply(projectInfo: ProjectInfo) {
+		let hostname = projectInfo.hostname.absoluteString
+		if !self.syntax.servers.map({$0.url}).contains(projectInfo.hostname.absoluteString) {
+			self.syntax.servers.append(Server(name: nil, url: hostname, description: nil, variables: [:]))
+		}
+	}
     
-    private func generateRequestName(path:String, method:String) -> String {
-        return path.components(separatedBy: ["/","\\","(",")","{","}"]).map {$0.formated()}.joined() + method.formated() + "Request"
-    }
-    
-    private func parseType(_ json: [String:Any], couldBeObjectName: String = "") -> (Type?,Model?) {
-        if let type = json["type"] as? String {
-            if type == "array", let items = json["items"] as? [String:Any] {
-                let res = parseType(items, couldBeObjectName: couldBeObjectName)
-                if let type = res.0 {
-                    return (.array(type), res.1)
-                }
-                else {
-                    return (nil, res.1)
-                }
-            }
-            else
-                if type == "object" {
-                    if let model = parseObject(name: couldBeObjectName, json: json) {
-                        return (.complex(couldBeObjectName), model)
-                    }
-                }
-                else if let type = PrimitiveType.fromSwagger(string: type) {
-                    return (.primitive(type),nil)
-            }
-        }
+    mutating func apply(project: Project) {
         
-        return (nil,nil)
     }
     
-    private func parseObject(name: String, json: [String:Any]) -> Model? {
-        guard let properties = json["properties"] as? [String:[String:Any]] else { return nil }
-        let required = (json["required"] as? [String]) ?? []
-        var fields: [Variable] = []
-        var additionalModels: [Model] = []
-        for property in properties {
-            let result = parseType(property.value, couldBeObjectName: property.key)
-            if let model = result.1 {
-                additionalModels.append(model)
-            }
-            if let type = result.0 {
-                var field = Variable(name: property.key)
-                field.optional = !required.contains(property.key)
-                field.type = type
-                field.description = property.value["description"] as? String
-                fields.append(field)
-            }
-        }
-        var model = Model(name: name, vars: fields,modificationDate: modificationDate)
-        //        model.models = additionalModels /// Need to finish
-        return model
+    mutating func update(request:Request) {
+        checkForComplexResponse(request: request)
+        guard let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) else { return }
+        var path = syntax.paths[pathIndex]
+        guard let method = Operation.Method(rawValue: request.method.rawValue) else { return }
+        guard let operationIndex = path.operations.firstIndex(where: {$0.method == method}) else { return }
+
+        let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
+        let response = request.response()
+        let responses: [OperationResponse] = response == nil ? [] : [response!]
+        let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
+
+        let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
+
+        path.operations[operationIndex] = operation
+        syntax.paths[pathIndex] = path
+		log.eventMessage("UPDATED \(request.name) in specfile")
     }
     
     
-    
-    func generateProject() -> Project? {
+    mutating func update(model:Model) {
+        guard let index = syntax.components.schemas.firstIndex(where: {$0.name == model.name}) else {return}
+        var schema = syntax.components.schemas[index]
         
-        var arrayTypes: [(name:String,type:String)] = []
-        var models:[Model] = []
-        var enums: [APIFieldD] = [] // need to finish
-        for schema in syntax.components.schemas {
-            if let dataType = schema.value.metadata.type {
-                switch dataType {
-                case .object:
-                    if let model = parseObject(name: schema.name.formated(), json: schema.value.metadata.json) {
-                        models.append(model)
-                    }
-                case .array:
-                    if let items = schema.value.metadata.json["items"] as? [String:Any] {
-                        if let ref = items["$ref"] as? String, let type = ref.components(separatedBy: "/").last {
-                            arrayTypes.append((schema.name.formated(),"[\(type.formated())]"))
-                        }
-                        else
-                            if var model = parseObject(name: schema.name, json: items) {
-                                //                                model.shouldBeUsedAsArray = true /// need to finish
-                                models.append(model)
-                            }
-                            else if let type = items["type"] as? String {
-                                var field = APIFieldD(name: schema.name, type: type)
-                                field.description = schema.value.metadata.description
-                                arrayTypes.append((schema.name.formated(),"[\(field.type)]"))
-                        }
-                    }
-                case .string:
-                    if let items = schema.value.metadata.json["enum"] as? [String] {
-                        var field = APIFieldD(name: schema.name, type: "string")
-                        field.description = schema.value.metadata.description
-                        field.cases = items
-                        enums.append(field)
-                    }
-                default:
-                    break
-                }
+        let properties = schemas(from: model.vars)
+        
+        schema.value.type = objectType(for: properties)
+        syntax.components.schemas[index] = schema
+		log.eventMessage("UPDATED \(model.name) in specfile")
+    }
+    
+
+    mutating func remove(model:Model) {
+        for (index, specModel) in self.syntax.components.schemas.enumerated() {
+            if model.name == specModel.name {
+                self.syntax.components.schemas.remove(at: index)
+                print("REMOVED \(model.name) from specfile")
+            } else {
+                exitWithError("critical error: could not remove \(model.name) from spec")
             }
         }
-        
-        var requests: [Request] = []
-        for operation in syntax.operations {
-            let method = operation.method.rawValue
-            var fields:[Variable] = []
-            for parameter in operation.parameters {
-                let json = parameter.value.json
-                if let name = json["name"] as? String,
-                    let required = json["required"] as? Bool,
-                    let schema = json["schema"] as? [String:String] {
-                    
-                    if let typeRaw = schema["type"], let type = PrimitiveType.fromSwagger(string: typeRaw) {
-                        var field = Variable(name: name)
-                        field.type = .primitive(type)
-                        field.optional = !required
-                        field.description = parameter.value.description
-                        fields.append(field)
-                    }
-                    else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
-                        var field = Variable(name: name)
-                        field.type = .complex(name.formated())
-                        field.optional = !required
-                        field.description = parameter.value.description
-                        fields.append(field)
-                    }
-                }
+    }
+    
+    mutating func insert(model:Model) {
+        let properties = schemas(from: model.vars)
+        let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: objectType(for: properties))
+        self.syntax.components.schemas.append(ComponentObject(name: model.name, value: schema))
+    }
+    
+    mutating func remove(request:Request) {
+        let method = Operation.Method(rawValue: request.method.rawValue) ?? .post
+        if var path = syntax.paths.first(where:{$0.path == request.urlPath}) {
+            path.operations.removeAll(where: {$0.method == method})
+            if path.operations.count == 0 {
+                syntax.paths.removeAll(where: {$0.path == request.urlPath})
+            }
+        }
+    }
+    
+    mutating func checkForComplexResponse(request:Request) {
+        if request.responseType != request.swaggerResponseType {
+            let singleObjectType = request.responseType.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+            
+            let type = "#/components/schemas/" + singleObjectType
+            let ref = Reference<Schema>(type)
+            
+            let objects = syntax.components.schemas
+            if let object = objects.first(where: { $0.name == singleObjectType }) {
+                ref.resolve(with: object.value)
             }
             
-            var errorNameResponse: String = "EmptyResponse"
-            var responseName: String = "EmptyResponse"
-            if let responses = operation.json["responses"] as? [String:Any] {
-                for response in responses {
-                    if let responseJSON = response.value as? [String:Any] {
-                        if response.key == "default" {
-                            if let ref = responseJSON["$ref"] as? String,
-                                let name = ref.components(separatedBy: "/").last {
-                                errorNameResponse = name
-                            }
-                            else if let content = responseJSON["content"] as? [String:Any],
-                                let schema = (content.values.first as? [String:Any])?.values.first as? [String:Any],
-                                let ref = schema["$ref"] as? String,
-                                let name = ref.components(separatedBy: "/").last{
-                                errorNameResponse = name.formated()
-                            }
-                        }
-                        else {
-                            if let content = responseJSON["content"] as? [String:Any],
-                                let schema = (content.values.first as? [String:Any])?.values.first as? [String:Any] {
-                                if let ref = schema["$ref"] as? String,
-                                    let name = ref.components(separatedBy: "/").last{
-                                    
-                                    responseName = name.formated()
-                                }
-                                else if let type = schema["type"] as? String {
-                                    if type == "array",
-                                        let items = schema["items"] as? [String:Any],
-                                        let ref = items["$ref"] as? String,
-                                        let name = ref.components(separatedBy: "/").last{
-                                        responseName = "[\(name.formated())]"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if let arrType = arrayTypes.first(where: { (name,type) -> Bool in
-                return name == responseName
-            }) {
-                responseName = arrType.type
-            }
-            let path = operation.path
+            let schemaRef = Schema(metadata: Metadata(jsonDictionary: ["type":"array"]), type: .reference(ref))
             
-            let request = Request(name: generateRequestName(path: path, method: method),
-                                  method: Method(rawValue: method) ?? .post,
-                                  urlPath: path,
-                                  responseType: responseName,
-                                  errorType: errorNameResponse,
-                                  vars: fields,
-                                  modificationDate: modificationDate)
-            requests.append(request)
+            let arrSchema = ArraySchema(items: .single(schemaRef), minItems: nil, maxItems: nil, additionalItems: nil, uniqueItems: false)
+            
+            let schema = Schema(metadata: Metadata(jsonDictionary: ["type":"object"]), type: .array(arrSchema))
+            self.syntax.components.schemas.append(ComponentObject(name: request.swaggerResponseType, value: schema))
         }
-        
-        
-        guard let path = syntax.servers.first?.url, let url = URL(string:path) else { return nil }
-        
-        
-        return Project(info: ProjectInfo(modificationDate: modificationDate, hostname: url), models: models, requests: requests)
     }
     
+    mutating func insert(request:Request) {
+        checkForComplexResponse(request: request)
+
+        let parameters = request.vars.map { PossibleReference.value($0.parameter()) }
+        let response = request.response()
+        let responses: [OperationResponse] = response == nil ? [] : [response!]
+        let defaultResponse: PossibleReference<Response>? = request.defaultResponse()
+        var path = syntax.paths.first(where:{$0.path == request.urlPath}) ?? Path(path: request.urlPath, operations: [], parameters: [])
+        let method = Operation.Method(rawValue: request.method.rawValue) ?? .post
+
+        let operation = Operation(json: [:], path: request.urlPath, method: method, summary: nil, description: nil, requestBody: nil, pathParameters: [], operationParameters: parameters, responses: responses, defaultResponse: defaultResponse, deprecated: false, identifier: nil, tags: [], securityRequirements: nil)
+        path.operations.append(operation)
+        if let pathIndex = syntax.paths.firstIndex(where:{$0.path == request.urlPath}) {
+            syntax.paths[pathIndex] = path
+        }
+        else {
+            syntax.paths.append(path)
+        }
+    }
+    
+	func generateProject() -> Project {
+		return Project.fromSwagger(self)!
+	}
+
+	func contains(model name: String) -> Bool {
+		return self.syntax.components.schemas.contains(where: {$0.name == name})
+	}
+
+	func toYAML() -> Result<String, Swift.Error> {
+		do {
+			let encoder = YAMLEncoder()
+			let encodedYAML = try encoder.encode(self.syntax)
+			return .success(encodedYAML)
+		}
+		catch let err {
+			return .failure(err)
+		}
+	}
+    
+    func schemas(from variables:[Variable]) -> [Property] {
+        return variables.map({$0.property()})
+    }
+    
+    func objectType(for properties: [Property]) -> SchemaType {
+        let requiredProperties = properties.filter { $0.required }
+        let optionalProperties = properties.filter { !$0.required }
+        
+        return .object(ObjectSchema(requiredProperties: requiredProperties, optionalProperties: optionalProperties, properties: properties, minProperties: nil, maxProperties: nil, additionalProperties: nil, abstract: false, discriminator: nil))
+    }
+}
+
+
+private extension Request {
+    func response() -> OperationResponse? {
+        if responseType == "EmptyResponse" {
+            return nil
+        }
+        
+        let schema = Schema(metadata: Metadata(jsonDictionary: [:]), type: .reference(Reference("#/components/schemas/" + swaggerResponseType)))
+        let content = Content(mediaItems: [Content.MediaType.json.rawValue:MediaItem(schema: schema)])
+        let response = Response(description: "", content: content, headers: [:])
+        return OperationResponse(statusCode: 200, response: .value(response))
+    }
+    
+    func defaultResponse() -> PossibleReference<Response>? {
+        if errorType == "EmptyResponse" {
+            return nil
+        }
+        
+        let schema = Schema(metadata: Metadata(jsonDictionary: [:]), type: .reference(Reference("#/components/schemas/" + swaggerResponseType)))
+        let content = Content(mediaItems: [Content.MediaType.json.rawValue:MediaItem(schema: schema)])
+        let response = Response(description: "", content: content, headers: [:])
+        
+        return .value(response)
+    }
 }

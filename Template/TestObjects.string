@@ -1,0 +1,195 @@
+{
+  "models" : [
+    {
+      "name" : "Person",
+      "modificationDate" : 587369168.93559432,
+      "vars" : [
+        {
+          "name" : "name",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "age",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Int"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "APIError",
+      "modificationDate" : 587369168.93526399,
+      "vars" : [
+        {
+          "name" : "code",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Int"
+          }
+        },
+        {
+          "name" : "message",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "Pet",
+      "modificationDate" : 587369168.93587041,
+      "vars" : [
+        {
+          "name" : "name",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "id",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "tag",
+          "optional" : true,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ]
+    }
+  ],
+  "requests" : [
+    {
+      "method" : "post",
+      "vars" : [
+        {
+          "name" : "phone",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "code",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "EmptyResponse",
+      "modificationDate" : 587479540.1394943,
+      "urlPath" : "\/api\/v2\/login",
+      "responseType" : "User",
+      "name" : "LoginPostRequest"
+    },
+    {
+      "method" : "post",
+      "vars" : [
+        {
+          "name" : "id",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "isMy",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Bool"
+          }
+        },
+        {
+          "name" : "tag",
+          "optional" : false,
+          "type" : {
+            "array" : {
+              "primitive" : "String"
+            }
+          }
+        },
+        {
+          "name" : "name",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "amount",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Float"
+          }
+        }
+      ],
+      "errorType" : "APIError",
+      "modificationDate" : 587462305.81030715,
+      "urlPath" : "\/pets",
+      "responseType" : "EmptyResponse",
+      "name" : "PetsPostRequest"
+    },
+    {
+      "method" : "get",
+      "vars" : [
+        {
+          "name" : "petId",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "APIError",
+      "modificationDate" : 587369598.46154654,
+      "urlPath" : "\/pets\/{petId}",
+      "responseType" : "[Pet]",
+      "name" : "PetsPetIdGetRequest"
+    },
+    {
+      "method" : "post",
+      "vars" : [
+        {
+          "name" : "phone",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "EmptyResponse",
+      "modificationDate" : 587479928.71126473,
+      "urlPath" : "\/api\/v2\/register",
+      "responseType" : "User",
+      "name" : "RegisterPostRequest"
+    },
+    {
+      "method" : "get",
+      "vars" : [
+        {
+          "name" : "limit",
+          "optional" : true,
+          "type" : {
+            "primitive" : "Int"
+          }
+        }
+      ],
+      "errorType" : "APIError",
+      "modificationDate" : 587369577.19931757,
+      "urlPath" : "\/pets",
+      "responseType" : "[Pet]",
+      "name" : "PetsGetRequest__"
+    }
+  ]
+}
