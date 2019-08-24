@@ -33,5 +33,9 @@ xcode:
 clean:
 	swift package clean
 
-test: build
-	.build/debug/cdd-swift test
+test-cov:
+	@swift package generate-xcodeproj
+	@xcodebuild -scheme cdd-swift -derivedDataPath .build/xcode -enableCodeCoverage YES test
+	@xcov --scheme cdd-swift --configuration Debug --derived_data_path .build/xcode --skip_slack --markdown_report
+	@rm -rf .build/xcode
+	@open xcov_report/index.html

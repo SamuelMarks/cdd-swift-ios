@@ -25,5 +25,9 @@ let package = Package(
         .target(
             name: "cdd-swift",
             dependencies: ["SwiftSyntax", "Yams", "PathKit", "JSONUtilities", "Rainbow", "SwiftCLI", "Willow"]),
+        .testTarget(
+            name: "cdd-swiftTests",
+            dependencies: ["cdd-swift"]
+        ),
     ]
 )
