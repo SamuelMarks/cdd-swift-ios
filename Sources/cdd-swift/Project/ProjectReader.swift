@@ -7,9 +7,9 @@ import Yams
 import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
-let MODELS_DIR = "/cddTemplate/Source/API/APIModels.swift"
-let REQUESTS_DIR = "/cddTemplate/Source/API/APIRequests.swift"
-let SETTINGS_FILE = "/cddTemplate/Source/API/APISettings.swift"
+let MODELS_DIR = "/iOS/cddTemplate/Source/API/APIModels.swift"
+let REQUESTS_DIR = "/iOS/cddTemplate/Source/API/APIRequests.swift"
+let SETTINGS_FILE = "/iOS/cddTemplate/Source/API/APISettings.swift"
 
 protocol ProjectSource {
     mutating func remove(model:Model)
