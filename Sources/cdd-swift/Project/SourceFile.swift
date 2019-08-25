@@ -20,7 +20,7 @@ struct SourceFile: ProjectSource {
 			self.modificationDate = try fileLastModifiedDate(url: url)
 			self.syntax = try SyntaxTreeParser.parse(url)
 
-			log.eventMessage("read file: \(path)")
+			log.eventMessage("File read: \(path)")
 		}
 	}
 
