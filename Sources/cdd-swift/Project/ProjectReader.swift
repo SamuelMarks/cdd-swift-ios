@@ -42,8 +42,6 @@ class ProjectReader {
             
             self.modelsFile = try SourceFile(path: self.projectPath + MODELS_DIR)
             self.requestsFile = try SourceFile(path: self.projectPath + REQUESTS_DIR)
-        } catch let error {
-            throw error
         }
     }
     

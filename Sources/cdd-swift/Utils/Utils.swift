@@ -127,9 +127,6 @@ func fileLastModifiedDate(url: URL) throws -> Date {
 		let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
 		return attributes[FileAttributeKey.modificationDate] as! Date
 	}
-	catch {
-		throw ProjectError.InvalidSettingsFile("could not determine modified date for file: \(url.path)")
-	}
 }
 
 extension String {

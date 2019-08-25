@@ -12,6 +12,7 @@ enum ProjectError : Error {
 	case InvalidHostname(String)
 	case OpenAPIFile(String)
 	case SourceFileParser(String)
+	case NoSuchFile(String)
 
 	var localizedDescription: String {
 		switch self {
@@ -23,6 +24,8 @@ enum ProjectError : Error {
 			return "OpenAPI file: \(msg)"
 		case .SourceFileParser(let msg):
 			return "Source parser: \(msg)"
+		case .NoSuchFile(let msg):
+			return "No such file: \(msg)"
 		}
 	}
 }

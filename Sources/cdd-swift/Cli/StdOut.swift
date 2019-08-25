@@ -14,6 +14,6 @@ func exitWithError(_ string: String) -> Never {
 }
 
 func exitWithError(_ error: Swift.Error) -> Never {
-	print("[Error] \(error)".red)
+	print("[Error] \(error.localizedDescription)".red)
 	exit(EXIT_FAILURE)
 }
