@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,7 +17,18 @@
 		AA2748A7231002010035FCBB /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2748A6231002010035FCBB /* APIModels.swift */; };
 		AA2748A92310020F0035FCBB /* APISettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2748A82310020F0035FCBB /* APISettings.swift */; };
 		AA2748BE231011040035FCBB /* APIBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2748BD231011040035FCBB /* APIBase.swift */; };
+		D42B98AC2312436F00D690AE /* cddTemplateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42B98AB2312436F00D690AE /* cddTemplateTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D42B98AE2312436F00D690AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA274881230FFFE10035FCBB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA274888230FFFE10035FCBB;
+			remoteInfo = cddTemplate;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0AAE0B46598B0A4ED41863EE /* Pods-cddTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cddTemplate.debug.xcconfig"; path = "Target Support Files/Pods-cddTemplate/Pods-cddTemplate.debug.xcconfig"; sourceTree = "<group>"; };
@@ -33,6 +44,9 @@
 		AA2748A6231002010035FCBB /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
 		AA2748A82310020F0035FCBB /* APISettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISettings.swift; sourceTree = "<group>"; };
 		AA2748BD231011040035FCBB /* APIBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIBase.swift; sourceTree = "<group>"; };
+		D42B98A92312436F00D690AE /* cddTemplateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cddTemplateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D42B98AB2312436F00D690AE /* cddTemplateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cddTemplateTests.swift; sourceTree = "<group>"; };
+		D42B98AD2312436F00D690AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D879687571BD69CDD8E0168A /* Pods_cddTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_cddTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +59,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D42B98A62312436F00D690AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -52,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				AA27488B230FFFE10035FCBB /* cddTemplate */,
+				D42B98AA2312436F00D690AE /* cddTemplateTests */,
 				AA27488A230FFFE10035FCBB /* Products */,
 				BD00B7443384FD40A652EE85 /* Pods */,
 				BB2F8B8A8B7875BFD5458489 /* Frameworks */,
@@ -62,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				AA274889230FFFE10035FCBB /* cddTemplate.app */,
+				D42B98A92312436F00D690AE /* cddTemplateTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -116,6 +139,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		D42B98AA2312436F00D690AE /* cddTemplateTests */ = {
+			isa = PBXGroup;
+			children = (
+				D42B98AB2312436F00D690AE /* cddTemplateTests.swift */,
+				D42B98AD2312436F00D690AE /* Info.plist */,
+			);
+			path = cddTemplateTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -138,6 +170,24 @@
 			productReference = AA274889230FFFE10035FCBB /* cddTemplate.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D42B98A82312436F00D690AE /* cddTemplateTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D42B98B22312436F00D690AE /* Build configuration list for PBXNativeTarget "cddTemplateTests" */;
+			buildPhases = (
+				D42B98A52312436F00D690AE /* Sources */,
+				D42B98A62312436F00D690AE /* Frameworks */,
+				D42B98A72312436F00D690AE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D42B98AF2312436F00D690AE /* PBXTargetDependency */,
+			);
+			name = cddTemplateTests;
+			productName = cddTemplateTests;
+			productReference = D42B98A92312436F00D690AE /* cddTemplateTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -150,6 +200,10 @@
 				TargetAttributes = {
 					AA274888230FFFE10035FCBB = {
 						CreatedOnToolsVersion = 10.2;
+					};
+					D42B98A82312436F00D690AE = {
+						CreatedOnToolsVersion = 10.2.1;
+						TestTargetID = AA274888230FFFE10035FCBB;
 					};
 				};
 			};
@@ -167,6 +221,7 @@
 			projectRoot = "";
 			targets = (
 				AA274888230FFFE10035FCBB /* cddTemplate */,
+				D42B98A82312436F00D690AE /* cddTemplateTests */,
 			);
 		};
 /* End PBXProject section */
@@ -182,6 +237,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D42B98A72312436F00D690AE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -191,16 +253,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-cddTemplate/Pods-cddTemplate-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-cddTemplate/Pods-cddTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-cddTemplate/Pods-cddTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -245,7 +302,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D42B98A52312436F00D690AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D42B98AC2312436F00D690AE /* cddTemplateTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D42B98AF2312436F00D690AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA274888230FFFE10035FCBB /* cddTemplate */;
+			targetProxy = D42B98AE2312436F00D690AE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		AA274890230FFFE10035FCBB /* Main.storyboard */ = {
@@ -389,6 +462,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 65E78X9ZNB;
 				INFOPLIST_FILE = cddTemplate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -407,6 +481,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 65E78X9ZNB;
 				INFOPLIST_FILE = cddTemplate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -416,6 +491,46 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D42B98B02312436F00D690AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 65E78X9ZNB;
+				INFOPLIST_FILE = cddTemplateTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wearebrandnew.cddTemplateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cddTemplate.app/cddTemplate";
+			};
+			name = Debug;
+		};
+		D42B98B12312436F00D690AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 65E78X9ZNB;
+				INFOPLIST_FILE = cddTemplateTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wearebrandnew.cddTemplateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cddTemplate.app/cddTemplate";
 			};
 			name = Release;
 		};
@@ -436,6 +551,15 @@
 			buildConfigurations = (
 				AA27489C230FFFE30035FCBB /* Debug */,
 				AA27489D230FFFE30035FCBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D42B98B22312436F00D690AE /* Build configuration list for PBXNativeTarget "cddTemplateTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D42B98B02312436F00D690AE /* Debug */,
+				D42B98B12312436F00D690AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
