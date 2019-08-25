@@ -7,9 +7,9 @@ import Yams
 import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
-let MODELS_DIR = "/Source/API/APIModels.swift"
-let REQUESTS_DIR = "/Source/API/APIRequests.swift"
-let SETTINGS_FILE = "/Source/API/APISettings.swift"
+let MODELS_DIR = "/cddTemplate/Source/API/APIModels.swift"
+let REQUESTS_DIR = "/cddTemplate/Source/API/APIRequests.swift"
+let SETTINGS_FILE = "/cddTemplate/Source/API/APISettings.swift"
 
 protocol ProjectSource {
     mutating func remove(model:Model)
@@ -19,7 +19,6 @@ protocol ProjectSource {
     mutating func insert(request:Request) throws
     mutating func update(request:Request)
 }
-
 
 class ProjectReader {
     let projectPath: String

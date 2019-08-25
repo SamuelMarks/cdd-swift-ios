@@ -11,12 +11,11 @@ class SyncCommand: Command {
     let verbose = Flag("-v", "--verbose", description: "Show verbose output", defaultValue: false)
     let output = Key<String>("-f", "--output-file", description: "Output logging to file")
    func execute() throws {
-    
-    
+
     if let path = output.value {
         log.enableFileOutput(path: path)
     }
-    
+
     if config.dryRun {
         log.infoMessage("CONFIG SETTING Dry run; no changes are written to disk")
     }
@@ -43,8 +42,10 @@ class SyncCommand: Command {
 			if case .success(_) = projectReader.write() {
 				log.eventMessage("Successfully wrote project files.")
 			}
-		} catch (let err) {
-			exitWithError(err)
+		} catch let error as ProjectError {
+			exitWithError(error.localizedDescription)
+		} catch {
+			exitWithError(error)
 		}
 	}
 }

@@ -90,7 +90,7 @@ func parseProjectInfo(_ source: SourceFile) throws -> ProjectInfo {
 	}
 
     guard let hosturl = URL(string: (hostname.value ?? "") + (endpoint.value ?? "")), hosturl.scheme != nil, hosturl.host != nil else {
-		throw ProjectError.InvalidHostname("Invalid hostname format: \(hostname.value ?? ""), \(endpoint.value ?? "")")
+		throw ProjectError.InvalidHostname(hostname.value ?? "")
 	}
 
 	return ProjectInfo(modificationDate: source.modificationDate, hostname: hosturl)
