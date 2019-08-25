@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftCLI
+import Willow
 
 let TEMPLATE_PATH = "/.cdd/swift"
 
@@ -23,7 +24,7 @@ class GenerateCommand: Command {
         if let path = output.value {
             log.enableFileOutput(path: path)
         }
-        
+
 		guard fileExists(file: templatePath) else {
 			log.errorMessage("Template path does not exist: \(templatePath)")
 			return

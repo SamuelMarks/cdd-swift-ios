@@ -17,7 +17,7 @@ enum ProjectError : Error {
 	var localizedDescription: String {
 		switch self {
 		case .InvalidHostname(let msg):
-			return "Invalid hostname: \(msg)"
+			return NSLocalizedString("Invalid hostname: \(msg)", comment: "")
 		case .InvalidSettingsFile(let msg):
 			return "Invalid settings file: \(msg)"
 		case .OpenAPIFile(let msg):

@@ -17,8 +17,6 @@ class ColorModifier: LogModifier {
 }
 
 let writers = [ConsoleWriter(modifiers: [ColorModifier()])]
-var log = Logger(logLevels: [.all], writers: writers)
-
 
 extension Logger {
     func enableFileOutput(path: String) {

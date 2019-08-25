@@ -13,7 +13,7 @@ func exitWithError(_ string: String) -> Never {
 	exit(EXIT_FAILURE)
 }
 
-func exitWithError(_ error: Swift.Error) -> Never {
+func exitWithError<T:Swift.Error>(_ error: T) -> Never {
 	print("[Error] \(error.localizedDescription)".red)
 	exit(EXIT_FAILURE)
 }
