@@ -1,1 +1,1 @@
-import Alamofire
+import Foundation

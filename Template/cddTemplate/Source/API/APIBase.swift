@@ -1,15 +1,51 @@
-import Alamofire
-private let configuration: URLSessionConfiguration = {
-    let configuration = URLSessionConfiguration.default
-    configuration.httpAdditionalHeaders = Alamofire.SessionManager.defaultHTTPHeaders
-    configuration.timeoutIntervalForRequest = 15
-    configuration.httpShouldSetCookies = true
-    return configuration
-}()
-private let sessionManager = Alamofire.SessionManager(configuration: configuration)
-
+import Foundation
 enum PostTypeCodingError: Error {
     case decoding(String)
+}
+
+class API {
+    static var token: String? {
+        set {
+            UserDefaults.standard.set(newValue, forKey: "kAPIToken")
+            UserDefaults.standard.synchronize()
+        }
+        get {
+            return UserDefaults.standard.string(forKey: "kAPIToken")
+        }
+    }
+    
+    static func logout() {
+        token = nil
+    }
+}
+
+enum HTTPMethod: String {
+    case options = "OPTIONS"
+    case get     = "GET"
+    case head    = "HEAD"
+    case post    = "POST"
+    case put     = "PUT"
+    case patch   = "PATCH"
+    case delete  = "DELETE"
+    case trace   = "TRACE"
+    case connect = "CONNECT"
+}
+
+enum APIError: Error {
+    case cantParseURL(String)
+    case error(String)
+    case noData
+    
+    var localizedDescription: String {
+        switch self {
+        case .cantParseURL(let url):
+            return "Can't parse url \(url)"
+        case .error(let desc):
+            return desc
+        case .noData:
+            return "Response doesn't contain data"
+        }
+    }
 }
 
 protocol APIModel: Decodable {}
@@ -26,21 +62,17 @@ protocol APIRequest: Encodable {
     var urlPath: String { get }
     var method: HTTPMethod { get }
     func baseURL() -> URL
-    func headers() -> HTTPHeaders
+    func headers() -> [String:String]
     func isNeedLog() -> Bool
     func isNeedToken() -> Bool
     func send()
     func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)?,
               onResult: @escaping (_ result: ResponseType) -> Void,
               onError: @escaping (_ error: ErrorType) -> Void,
-              onOtherError: ((_ error: Error) -> Void)?)
+              onOtherError: ((_ error: APIError) -> Void)?)
 }
 
 extension APIRequest {
-    static var manager: SessionManager {
-        return sessionManager
-    }
-    
     func baseURL() -> URL {
         return URL(string: HOST)!
     }
@@ -53,8 +85,8 @@ extension APIRequest {
         })
     }
     
-    func headers() -> HTTPHeaders {
-        return ["Content-Type": "application/json", "Accept-Language": "RU-ru"]
+    func headers() -> [String:String] {
+        return [:]
     }
     
     func isNeedLog() -> Bool {
@@ -73,48 +105,65 @@ extension APIRequest {
     func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)? = nil,
               onResult: @escaping (_ result: ResponseType) -> Void,
               onError: @escaping (_ error: ErrorType) -> Void,
-              onOtherError: ((_ error: Error) -> Void)? = nil) {
+              onOtherError: ((_ error: APIError) -> Void)? = nil) {
         
-        guard let data = try? JSONEncoder().encode(self),
-            let params = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
-                return
-        }
-        
-        sessionManager.startRequestsImmediately = true
-        
-        var request: DataRequest?
-        
-        request = sessionManager.request(urlPath, method: method, parameters: params, encoding: JSONEncoding.default, headers: headers())
-        
-        request?.responseString { response in
-            guard self.isNeedLog() == true else {
+        do {
+            let data = try JSONEncoder().encode(self)
+            
+            URLSessionConfiguration.default.timeoutIntervalForRequest = 15
+            URLSessionConfiguration.default.httpShouldSetCookies = true
+            
+            guard let url = URL(string: urlPath) else {
+                onOtherError?(.cantParseURL(urlPath))
                 return
             }
-            var logString = ""
-            logString += "\nCURL:"
-            logString += "\n" + (response.request?.cURL ?? "")
-            
-            logString += "\nRESPONSE:"
-            if let value = response.result.value, let code = response.response?.statusCode {
-                
-                logString += "\nCODE: " + String(code)
-                logString += "\n" + value
+            var request = URLRequest(url: url)
+            request.httpMethod = method.rawValue
+            request.httpBody = data
+            request.allHTTPHeaderFields = headers()
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            if let token = API.token {
+                request.setValue(token, forHTTPHeaderField: "Token")
             }
             
-            print(logString)
-            }
-            .responseData { (response) in
+            URLSession.shared.dataTask(with: request) { (data, response, error) in
                 
-                switch response.result {
-                case .success(let data):
+                if self.isNeedLog() {
+                    var logString = ""
+                    logString += "\nCURL:"
+                    logString += "\n" + request.cURL
+                    
+                    logString += "\nRESPONSE:"
+                    if let httpResponse = response as? HTTPURLResponse,
+                        let data = data,
+                        let value = String(data: data, encoding: .utf8) {
+                        logString += "\nCODE: " + String(httpResponse.statusCode)
+                        logString += "\n" + value
+                    }
+                    print(logString)
+                }
+                
+                
+                guard error == nil else {
+                    onOtherError?(.error(error!.localizedDescription))
+                    return
+                }
+                
+                if let data = data {
+                    if let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments),
+                        let dict = json as? [String:Any],
+                        let token = dict["token"] as? String {
+                        API.token = token
+                    }
+                        
+                    
                     let decoder = JSONDecoder()
                     do {
                         let result = try decoder.decode(ResponseType.self, from: data)
-                        if let httpResponse = response.response,
+                        if let httpResponse = response as? HTTPURLResponse,
                             httpResponse.statusCode >= 200 && httpResponse.statusCode < 300 {
                             
                             onResult(result)
-                        } else {
                         }
                     } catch {
                         do {
@@ -124,12 +173,17 @@ extension APIRequest {
                         catch {
                             print("📌 📌 📌")
                             print(error)
-                            onOtherError?(error)
+                            onOtherError?(.error(error.localizedDescription))
                         }
                     }
-                case .failure(let error):
-                    onOtherError?(error)
                 }
+                else {
+                    onOtherError?(.noData)
+                }
+            }
+        }
+        catch {
+            onOtherError?(.error(error.localizedDescription))
         }
     }
 }

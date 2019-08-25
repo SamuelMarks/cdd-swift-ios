@@ -1,2 +1,2 @@
-var HOST = ""
+var HOST = "https://localhost"
 let ENDPOINT = ""

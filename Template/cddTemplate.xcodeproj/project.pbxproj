@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A5CFEE5E74977AECD9426809 /* Pods_cddTemplate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D879687571BD69CDD8E0168A /* Pods_cddTemplate.framework */; };
 		AA27488D230FFFE10035FCBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA27488C230FFFE10035FCBB /* AppDelegate.swift */; };
 		AA27488F230FFFE10035FCBB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA27488E230FFFE10035FCBB /* ViewController.swift */; };
 		AA274892230FFFE10035FCBB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA274890230FFFE10035FCBB /* Main.storyboard */; };
@@ -17,22 +16,9 @@
 		AA2748A7231002010035FCBB /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2748A6231002010035FCBB /* APIModels.swift */; };
 		AA2748A92310020F0035FCBB /* APISettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2748A82310020F0035FCBB /* APISettings.swift */; };
 		AA2748BE231011040035FCBB /* APIBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2748BD231011040035FCBB /* APIBase.swift */; };
-		D42B98AC2312436F00D690AE /* cddTemplateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42B98AB2312436F00D690AE /* cddTemplateTests.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		D42B98AE2312436F00D690AE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA274881230FFFE10035FCBB /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AA274888230FFFE10035FCBB;
-			remoteInfo = cddTemplate;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		0AAE0B46598B0A4ED41863EE /* Pods-cddTemplate.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cddTemplate.debug.xcconfig"; path = "Target Support Files/Pods-cddTemplate/Pods-cddTemplate.debug.xcconfig"; sourceTree = "<group>"; };
-		368488EE16C853D90254C23B /* Pods-cddTemplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cddTemplate.release.xcconfig"; path = "Target Support Files/Pods-cddTemplate/Pods-cddTemplate.release.xcconfig"; sourceTree = "<group>"; };
 		AA274889230FFFE10035FCBB /* cddTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cddTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA27488C230FFFE10035FCBB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AA27488E230FFFE10035FCBB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -44,22 +30,10 @@
 		AA2748A6231002010035FCBB /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
 		AA2748A82310020F0035FCBB /* APISettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISettings.swift; sourceTree = "<group>"; };
 		AA2748BD231011040035FCBB /* APIBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIBase.swift; sourceTree = "<group>"; };
-		D42B98A92312436F00D690AE /* cddTemplateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cddTemplateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D42B98AB2312436F00D690AE /* cddTemplateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cddTemplateTests.swift; sourceTree = "<group>"; };
-		D42B98AD2312436F00D690AE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D879687571BD69CDD8E0168A /* Pods_cddTemplate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_cddTemplate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		AA274886230FFFE10035FCBB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A5CFEE5E74977AECD9426809 /* Pods_cddTemplate.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D42B98A62312436F00D690AE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -73,10 +47,8 @@
 			isa = PBXGroup;
 			children = (
 				AA27488B230FFFE10035FCBB /* cddTemplate */,
-				D42B98AA2312436F00D690AE /* cddTemplateTests */,
 				AA27488A230FFFE10035FCBB /* Products */,
 				BD00B7443384FD40A652EE85 /* Pods */,
-				BB2F8B8A8B7875BFD5458489 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -84,7 +56,6 @@
 			isa = PBXGroup;
 			children = (
 				AA274889230FFFE10035FCBB /* cddTemplate.app */,
-				D42B98A92312436F00D690AE /* cddTemplateTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,30 +93,11 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		BB2F8B8A8B7875BFD5458489 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D879687571BD69CDD8E0168A /* Pods_cddTemplate.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		BD00B7443384FD40A652EE85 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				0AAE0B46598B0A4ED41863EE /* Pods-cddTemplate.debug.xcconfig */,
-				368488EE16C853D90254C23B /* Pods-cddTemplate.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		D42B98AA2312436F00D690AE /* cddTemplateTests */ = {
-			isa = PBXGroup;
-			children = (
-				D42B98AB2312436F00D690AE /* cddTemplateTests.swift */,
-				D42B98AD2312436F00D690AE /* Info.plist */,
-			);
-			path = cddTemplateTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -155,11 +107,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AA27489B230FFFE30035FCBB /* Build configuration list for PBXNativeTarget "cddTemplate" */;
 			buildPhases = (
-				CA4885A8B3550EE71A2DBA72 /* [CP] Check Pods Manifest.lock */,
 				AA274885230FFFE10035FCBB /* Sources */,
 				AA274886230FFFE10035FCBB /* Frameworks */,
 				AA274887230FFFE10035FCBB /* Resources */,
-				382282ADF1662792DE7C2586 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -169,24 +119,6 @@
 			productName = cddTemplate;
 			productReference = AA274889230FFFE10035FCBB /* cddTemplate.app */;
 			productType = "com.apple.product-type.application";
-		};
-		D42B98A82312436F00D690AE /* cddTemplateTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D42B98B22312436F00D690AE /* Build configuration list for PBXNativeTarget "cddTemplateTests" */;
-			buildPhases = (
-				D42B98A52312436F00D690AE /* Sources */,
-				D42B98A62312436F00D690AE /* Frameworks */,
-				D42B98A72312436F00D690AE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D42B98AF2312436F00D690AE /* PBXTargetDependency */,
-			);
-			name = cddTemplateTests;
-			productName = cddTemplateTests;
-			productReference = D42B98A92312436F00D690AE /* cddTemplateTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -200,10 +132,6 @@
 				TargetAttributes = {
 					AA274888230FFFE10035FCBB = {
 						CreatedOnToolsVersion = 10.2;
-					};
-					D42B98A82312436F00D690AE = {
-						CreatedOnToolsVersion = 10.2.1;
-						TestTargetID = AA274888230FFFE10035FCBB;
 					};
 				};
 			};
@@ -221,7 +149,6 @@
 			projectRoot = "";
 			targets = (
 				AA274888230FFFE10035FCBB /* cddTemplate */,
-				D42B98A82312436F00D690AE /* cddTemplateTests */,
 			);
 		};
 /* End PBXProject section */
@@ -237,56 +164,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D42B98A72312436F00D690AE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		382282ADF1662792DE7C2586 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-cddTemplate/Pods-cddTemplate-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-cddTemplate/Pods-cddTemplate-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-cddTemplate/Pods-cddTemplate-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CA4885A8B3550EE71A2DBA72 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-cddTemplate-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AA274885230FFFE10035FCBB /* Sources */ = {
@@ -302,23 +180,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D42B98A52312436F00D690AE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D42B98AC2312436F00D690AE /* cddTemplateTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D42B98AF2312436F00D690AE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AA274888230FFFE10035FCBB /* cddTemplate */;
-			targetProxy = D42B98AE2312436F00D690AE /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		AA274890230FFFE10035FCBB /* Main.storyboard */ = {
@@ -458,11 +320,10 @@
 		};
 		AA27489C230FFFE30035FCBB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0AAE0B46598B0A4ED41863EE /* Pods-cddTemplate.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 65E78X9ZNB;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = cddTemplate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -477,11 +338,10 @@
 		};
 		AA27489D230FFFE30035FCBB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 368488EE16C853D90254C23B /* Pods-cddTemplate.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 65E78X9ZNB;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = cddTemplate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -491,46 +351,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		D42B98B02312436F00D690AE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 65E78X9ZNB;
-				INFOPLIST_FILE = cddTemplateTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.wearebrandnew.cddTemplateTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cddTemplate.app/cddTemplate";
-			};
-			name = Debug;
-		};
-		D42B98B12312436F00D690AE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 65E78X9ZNB;
-				INFOPLIST_FILE = cddTemplateTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.wearebrandnew.cddTemplateTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cddTemplate.app/cddTemplate";
 			};
 			name = Release;
 		};
@@ -551,15 +371,6 @@
 			buildConfigurations = (
 				AA27489C230FFFE30035FCBB /* Debug */,
 				AA27489D230FFFE30035FCBB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D42B98B22312436F00D690AE /* Build configuration list for PBXNativeTarget "cddTemplateTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D42B98B02312436F00D690AE /* Debug */,
-				D42B98B12312436F00D690AE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
