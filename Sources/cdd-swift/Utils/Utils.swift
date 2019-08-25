@@ -6,6 +6,7 @@
 //
 
 import Foundation
+private let templateName = "cddTemplate"
 
 func writeStringToFile(file: URL, contents: String) -> Result<(), Swift.Error> {
 	if config.dryRun == true {
@@ -42,7 +43,21 @@ func readFile(_ url: URL) -> Result<String, Swift.Error> {
 	}
 }
 
-func copyDirectory(from sourceDir: String, to targetDir: String) {
+func findProjectName(at projectPath:String) -> String {
+    switch readDirectory(projectPath) {
+    case .success(let files):
+        for filename in files {
+            if filename.lastPathComponent.contains(".xcodeproj"), let name = filename.lastPathComponent.components(separatedBy: ".").first {
+                return name
+            }
+        }
+    case .failure(_):
+        exitWithError("Can't find swift project at \(projectPath)")
+    }
+    return ""
+}
+
+func copyDirectory(from sourceDir: String, to targetDir: String, projectName: String) {
 	let fileManager = FileManager.default
 
 	if !fileExists(file: targetDir) {
@@ -57,12 +72,13 @@ func copyDirectory(from sourceDir: String, to targetDir: String) {
 	case .success(let files):
 		for filename in files {
 			let sourceFilePath = filename.relativePath
-			let targetFilePath = "\(targetDir)/\(filename.lastPathComponent)"
+            let newName = filename.lastPathComponent.replacingOccurrences(of: templateName, with: projectName)
+			let targetFilePath = targetDir + "/" + newName
 
 			if fileIsDir(sourceFilePath) {
-				copyDirectory(from: sourceFilePath, to: targetFilePath)
+				copyDirectory(from: sourceFilePath, to: targetFilePath, projectName: projectName)
 			} else {
-				copyFile(from: sourceFilePath, to: targetFilePath)
+				copyFile(from: sourceFilePath, to: targetFilePath, projectName: projectName)
 			}
 		}
 	case .failure(_):
@@ -70,18 +86,24 @@ func copyDirectory(from sourceDir: String, to targetDir: String) {
 	}
 }
 
-func copyFile(from source: String, to target: String) {
+func copyFile(from source: String, to target: String, projectName: String) {
 	let fileManager = FileManager.default
 
 	do {
+        let targetURL = URL(fileURLWithPath: target)
 		try fileManager.copyItem(
 			at: URL(fileURLWithPath: source),
-			to: URL(fileURLWithPath: target))
+			to: targetURL)
+        
+        if let content = try? String(contentsOf: targetURL) {
+            let newContent = content.replacingOccurrences(of: templateName, with: projectName)
+            try newContent.write(to: targetURL, atomically: true, encoding: .utf8)
+        }
 	} catch CocoaError.fileWriteFileExists {
 		log.warnMessage("File exists, overwriting \(target)")
 
 		try! fileManager.removeItem(atPath: target)
-		copyFile(from: source, to: target)
+		copyFile(from: source, to: target, projectName: projectName)
 	} catch {
 		log.errorMessage("\(error)")
 		exitWithError("Error copying \(source) to \(target)")

@@ -7,9 +7,9 @@ import Yams
 import SwiftSyntax
 
 let SPEC_FILE = "/openapi.yml"
-let MODELS_DIR = "/iOS/cddTemplate/Source/API/APIModels.swift"
-let REQUESTS_DIR = "/iOS/cddTemplate/Source/API/APIRequests.swift"
-let SETTINGS_FILE = "/iOS/cddTemplate/Source/API/APISettings.swift"
+let MODELS_DIR = "/iOS/$0/Source/API/APIModels.swift"
+let REQUESTS_DIR = "/iOS/$0/Source/API/APIRequests.swift"
+let SETTINGS_FILE = "/iOS/$0/Source/API/APISettings.swift"
 
 protocol ProjectSource {
     mutating func remove(model:Model)
@@ -37,10 +37,12 @@ class ProjectReader {
                 modificationDate: try fileLastModifiedDate(url: specUrl),
                 syntax: try SwaggerSpec.init(url: specUrl)
             )
-            self.settingsFile = try SourceFile(path: self.projectPath + SETTINGS_FILE)
+            let projectName = findProjectName(at: self.projectPath + "/IOS")
+            log.infoMessage("Found project: " + projectName)
+            self.settingsFile = try SourceFile(path: self.projectPath + SETTINGS_FILE.replacingOccurrences(of: "$0", with: projectName))
             
-            self.modelsFile = try SourceFile(path: self.projectPath + MODELS_DIR)
-            self.requestsFile = try SourceFile(path: self.projectPath + REQUESTS_DIR)
+            self.modelsFile = try SourceFile(path: self.projectPath + MODELS_DIR.replacingOccurrences(of: "$0", with: projectName))
+            self.requestsFile = try SourceFile(path: self.projectPath + REQUESTS_DIR.replacingOccurrences(of: "$0", with: projectName))
         }
     }
     

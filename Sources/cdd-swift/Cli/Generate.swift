@@ -33,7 +33,7 @@ class GenerateCommand: Command {
             }
         }()
         
-        copyDirectory(from: templatePath, to: targetDir)
+        copyDirectory(from: templatePath, to: targetDir, projectName: projectName.value)
         log.infoMessage("Project template successfully generated at \(targetDir)")
     }
 }
