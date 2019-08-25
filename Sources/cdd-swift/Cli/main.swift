@@ -3,8 +3,6 @@ import SwiftSyntax
 import SwiftCLI
 import Willow
 
-var log = Willow.Logger(logLevels: [.all], writers: [ConsoleWriter()])
-
 class Config {
 	var dryRun: Bool = false
 }
