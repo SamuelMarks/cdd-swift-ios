@@ -13,6 +13,8 @@ install-release:
 install:
 	swift build
 	cp .build/debug/$(TOOL_NAME) ~/.bin/$(TOOL_NAME)
+	rm -rf ~/.cdd/swift
+	cp -R ./Template ~/.cdd/swift
 
 build:
 	swift build
