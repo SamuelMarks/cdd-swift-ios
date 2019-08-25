@@ -3,7 +3,7 @@ enum PostTypeCodingError: Error {
     case decoding(String)
 }
 
-class API {
+class CDDAPI {
     static var token: String? {
         set {
             UserDefaults.standard.set(newValue, forKey: "kAPIToken")
@@ -31,7 +31,7 @@ enum HTTPMethod: String {
     case connect = "CONNECT"
 }
 
-enum APIError: Error {
+enum CDDError: Error {
     case cantParseURL(String)
     case error(String)
     case noData
@@ -69,7 +69,7 @@ protocol APIRequest: Encodable {
     func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)?,
               onResult: @escaping (_ result: ResponseType) -> Void,
               onError: @escaping (_ error: ErrorType) -> Void,
-              onOtherError: ((_ error: APIError) -> Void)?)
+              onOtherError: ((_ error: CDDError) -> Void)?)
 }
 
 extension APIRequest {
@@ -105,7 +105,7 @@ extension APIRequest {
     func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)? = nil,
               onResult: @escaping (_ result: ResponseType) -> Void,
               onError: @escaping (_ error: ErrorType) -> Void,
-              onOtherError: ((_ error: APIError) -> Void)? = nil) {
+              onOtherError: ((_ error: CDDError) -> Void)? = nil) {
         
         do {
             let data = try JSONEncoder().encode(self)
@@ -122,7 +122,7 @@ extension APIRequest {
             request.httpBody = data
             request.allHTTPHeaderFields = headers()
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            if let token = API.token {
+            if let token = CDDAPI.token {
                 request.setValue(token, forHTTPHeaderField: "Token")
             }
             
@@ -153,9 +153,9 @@ extension APIRequest {
                     if let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments),
                         let dict = json as? [String:Any],
                         let token = dict["token"] as? String {
-                        API.token = token
+                        CDDAPI.token = token
                     }
-                        
+                    
                     
                     let decoder = JSONDecoder()
                     do {

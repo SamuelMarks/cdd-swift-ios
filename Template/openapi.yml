@@ -81,7 +81,7 @@ paths:
                 $ref: "#/components/schemas/Error"
 components:
   schemas:
-    Pett:
+    Pet:
       required:
         - id
         - name
