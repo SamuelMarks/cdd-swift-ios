@@ -1,2 +1,2 @@
-var HOST = ""
-let ENDPOINT = ""
+var HOST = "http://localhost"
+let ENDPOINT = "/"
