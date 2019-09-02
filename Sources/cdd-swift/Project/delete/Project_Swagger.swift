@@ -170,43 +170,40 @@ extension Project {
     static func fromSwagger(_ specFile: SpecFile) -> Project? {
 		let spec = specFile.syntax
         
-        
         var arrayTypes: [(name:String,type:String)] = []
         var models:[Model] = []
         var enums: [APIFieldD] = [] // need to finish
         for schema in spec.components.schemas {
-            if let dataType = schema.value.metadata.type {
-                switch dataType {
-                case .object:
-					if let model = parseObject(name: schema.name.formated(), json: schema.value.metadata.json, modificationDate: specFile.modificationDate) {
-                        models.append(model)
-                    }
-                case .array:
-                    if let items = schema.value.metadata.json["items"] as? [String:Any] {
-                        if let ref = items["$ref"] as? String, let type = ref.components(separatedBy: "/").last {
-                            arrayTypes.append((schema.name.formated(),"[\(type.formated())]"))
-                        }
-                        else
-							if let model = parseObject(name: schema.name, json: items, modificationDate: specFile.modificationDate) {
-//                                model.shouldBeUsedAsArray = true /// need to finish
-                                models.append(model)
-                            }
-                            else if let type = items["type"] as? String {
-                                var field = APIFieldD(name: schema.name, type: type)
-                                field.description = schema.value.metadata.description
-                                arrayTypes.append((schema.name.formated(),"[\(field.type)]"))
-                        }
-                    }
-                case .string:
-                    if let items = schema.value.metadata.json["enum"] as? [String] {
-                        var field = APIFieldD(name: schema.name, type: "string")
-                        field.description = schema.value.metadata.description
-                        field.cases = items
-                        enums.append(field)
-                    }
-                default:
-                    break
+            switch schema.value.type {
+            case .object:
+                if let model = parseObject(name: schema.name.formated(), json: schema.value.metadata.json, modificationDate: specFile.modificationDate) {
+                    models.append(model)
                 }
+            case .array:
+                if let items = schema.value.metadata.json["items"] as? [String:Any] {
+                    if let ref = items["$ref"] as? String, let type = ref.components(separatedBy: "/").last {
+                        arrayTypes.append((schema.name.formated(),"[\(type.formated())]"))
+                    }
+                    else
+                        if let model = parseObject(name: schema.name, json: items, modificationDate: specFile.modificationDate) {
+                            //                                model.shouldBeUsedAsArray = true /// need to finish
+                            models.append(model)
+                        }
+                        else if let type = items["type"] as? String {
+                            var field = APIFieldD(name: schema.name, type: type)
+                            field.description = schema.value.metadata.description
+                            arrayTypes.append((schema.name.formated(),"[\(field.type)]"))
+                    }
+                }
+            case .string:
+                if let items = schema.value.metadata.json["enum"] as? [String] {
+                    var field = APIFieldD(name: schema.name, type: "string")
+                    field.description = schema.value.metadata.description
+                    field.cases = items
+                    enums.append(field)
+                }
+            default:
+                break
             }
         }
         
@@ -215,24 +212,41 @@ extension Project {
             let method = operation.method.rawValue
             var fields:[Variable] = []
             for parameter in operation.parameters {
-                let json = parameter.value.json
-                if let name = json["name"] as? String,
-                    let required = json["required"] as? Bool,
-                    let schema = json["schema"] as? [String:String] {
-                    
-                    if let typeRaw = schema["type"], let type = PrimitiveType.fromSwagger(string: typeRaw) {
-                        var field = Variable(name: name)
-                        field.type = .primitive(type)
-                        field.optional = !required
-                        field.description = parameter.value.description
-                        fields.append(field)
+                if parameter.value.location == .query {
+                    let json = parameter.value.json
+                    if let name = json["name"] as? String,
+                        let required = json["required"] as? Bool,
+                        let schema = json["schema"] as? [String:String] {
+                        
+                        if let typeRaw = schema["type"], let type = PrimitiveType.fromSwagger(string: typeRaw) {
+                            var field = Variable(name: name)
+                            field.type = .primitive(type)
+                            field.optional = !required
+                            field.description = parameter.value.description
+                            fields.append(field)
+                        }
+                        else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
+                            var field = Variable(name: name)
+                            field.type = .complex(name.formated())
+                            field.optional = !required
+                            field.description = parameter.value.description
+                            fields.append(field)
+                        }
                     }
-                    else if let ref = schema["$ref"], let name = ref.components(separatedBy: "/").last {
-                        var field = Variable(name: name)
-                        field.type = .complex(name.formated())
-                        field.optional = !required
-                        field.description = parameter.value.description
-                        fields.append(field)
+                }
+            }
+            
+            if let body = operation.requestBody {
+                if let mediaItem = body.value.content.mediaItems.first?.value {
+                    switch mediaItem.schema.type {
+                    case .reference(let ref):
+                        if let type = ref.string.components(separatedBy: "/").last, let name = ref.referenceName {
+                            if let model = models.first(where: {$0.name == name}) {
+                                fields.append(contentsOf: model.vars)
+                            }
+                        }
+                    default:
+                        break
                     }
                 }
             }
