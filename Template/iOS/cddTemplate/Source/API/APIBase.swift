@@ -48,7 +48,7 @@ enum CDDError: Error {
     }
 }
 
-protocol APIModel: Decodable {}
+protocol APIModel: Decodable, Encodable {}
 
 struct EmptyResponse: APIModel {
     
@@ -113,7 +113,7 @@ extension APIRequest {
             URLSessionConfiguration.default.timeoutIntervalForRequest = 15
             URLSessionConfiguration.default.httpShouldSetCookies = true
             
-            guard let url = URL(string: urlPath) else {
+            guard let url = URL(string: HOST + ENDPOINT + urlPath) else {
                 onOtherError?(.cantParseURL(urlPath))
                 return
             }
@@ -123,7 +123,7 @@ extension APIRequest {
             request.allHTTPHeaderFields = headers()
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             if let token = CDDAPI.token {
-                request.setValue(token, forHTTPHeaderField: "Token")
+                request.setValue(token, forHTTPHeaderField: "X-Access-Token")
             }
             
             URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -152,7 +152,7 @@ extension APIRequest {
                 if let data = data {
                     if let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments),
                         let dict = json as? [String:Any],
-                        let token = dict["token"] as? String {
+                        let token = dict["access_token"] as? String {
                         CDDAPI.token = token
                     }
                     
@@ -180,7 +180,7 @@ extension APIRequest {
                 else {
                     onOtherError?(.noData)
                 }
-            }
+                }.resume()
         }
         catch {
             onOtherError?(.error(error.localizedDescription))
