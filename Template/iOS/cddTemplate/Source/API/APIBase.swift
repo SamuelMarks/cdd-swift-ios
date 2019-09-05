@@ -19,6 +19,16 @@ class CDDAPI {
     }
 }
 
+protocol APIClientProtocol {
+	func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+}
+
+class HTTPClient: APIClientProtocol {
+	func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+		return URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
+	}
+}
+
 enum HTTPMethod: String {
     case options = "OPTIONS"
     case get     = "GET"
@@ -102,10 +112,11 @@ extension APIRequest {
     }
     
     
-    func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)? = nil,
-              onResult: @escaping (_ result: ResponseType) -> Void,
-              onError: @escaping (_ error: ErrorType) -> Void,
-              onOtherError: ((_ error: CDDError) -> Void)? = nil) {
+	func send(client: APIClientProtocol = HTTPClient(),
+			  onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)? = nil,
+			  onResult: @escaping (_ result: ResponseType) -> Void,
+			  onError: @escaping (_ error: ErrorType) -> Void,
+			  onOtherError: ((_ error: CDDError) -> Void)? = nil) {
         
         do {
             let data = try JSONEncoder().encode(self)
@@ -126,7 +137,7 @@ extension APIRequest {
                 request.setValue(token, forHTTPHeaderField: "X-Access-Token")
             }
             
-            URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let _ = client.dataTask(with: request) { (data, response, error) in
                 
                 if self.isNeedLog() {
                     var logString = ""
