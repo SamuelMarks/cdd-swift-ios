@@ -76,7 +76,8 @@ protocol APIRequest: Encodable {
     func isNeedLog() -> Bool
     func isNeedToken() -> Bool
     func send()
-    func send(onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)?,
+    func send(client: APIClientProtocol,
+			  onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)?,
               onResult: @escaping (_ result: ResponseType) -> Void,
               onError: @escaping (_ error: ErrorType) -> Void,
               onOtherError: ((_ error: CDDError) -> Void)?)
