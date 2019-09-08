@@ -217,7 +217,7 @@ extension Project {
                     if let name = json["name"] as? String,
                         let required = json["required"] as? Bool,
                         let schema = json["schema"] as? [String:String] {
-                        
+                         
                         if let typeRaw = schema["type"], let type = PrimitiveType.fromSwagger(string: typeRaw) {
                             var field = Variable(name: name)
                             field.type = .primitive(type)
