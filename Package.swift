@@ -5,12 +5,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "cdd-swift",
+    name: "CDDSwift",
 	platforms: [
 		.macOS(.v10_13)
 	],
     products: [
-        .executable(name: "cdd-swift", targets: ["cdd-swift"]),
+        .executable(name: "cdd-swift", targets: ["CDDSwift"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-syntax.git", .exact("0.50000.0")),
@@ -23,11 +23,11 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "cdd-swift",
+            name: "CDDSwift",
             dependencies: ["SwiftSyntax", "Yams", "PathKit", "JSONUtilities", "Rainbow", "SwiftCLI", "Willow"]),
         .testTarget(
-            name: "cdd-swiftTests",
-            dependencies: ["cdd-swift"]
+            name: "CDDSwiftTests",
+            dependencies: ["CDDSwift"]
         ),
     ]
 )
