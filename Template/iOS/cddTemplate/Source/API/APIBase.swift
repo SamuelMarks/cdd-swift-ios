@@ -13,10 +13,6 @@ class CDDAPI {
 			return UserDefaults.standard.string(forKey: "kAPIToken")
 		}
 	}
-
-	static func logout() {
-		token = nil
-	}
 }
 
 protocol APIClientProtocol {
@@ -44,18 +40,21 @@ enum HTTPMethod: String {
 enum CDDError: Error {
 	case cantParseURL(String)
 	case error(String)
+	case genericError(Error)
 	case noData
-
-	var localizedDescription: String {
-		switch self {
-		case .cantParseURL(let url):
-			return "Can't parse url \(url)"
-		case .error(let desc):
-			return desc
-		case .noData:
-			return "Response doesn't contain data"
-		}
-	}
+	//
+	//    var localizedDescription: String {
+	//        switch self {
+	//        case .cantParseURL(let url):
+	//            return "Can't parse url \(url)"
+	//        case .error(let desc):
+	//            return desc
+	//        case .noData:
+	//            return "Response doesn't contain data"
+	//		case .genericError(let error):
+	//			return error.localizedDescription
+	//        }
+	//    }
 }
 
 protocol APIModel: Decodable, Encodable {}
@@ -64,18 +63,15 @@ struct EmptyResponse: APIModel {
 
 }
 
-
-
 protocol APIRequest: Encodable {
 	associatedtype ResponseType: Decodable
 	associatedtype ErrorType: Decodable
 	var urlPath: String { get }
 	var method: HTTPMethod { get }
-	func baseURL() -> URL
+	//    func baseURL() -> URL
 	func headers() -> [String:String]
 	func isNeedLog() -> Bool
 	func isNeedToken() -> Bool
-	func send()
 	func send(client: APIClientProtocol,
 			  onPaginate: ((_ curPage: Int, _ totalPage: Int) -> Void)?,
 			  onResult: @escaping (_ result: ResponseType) -> Void,
@@ -84,17 +80,9 @@ protocol APIRequest: Encodable {
 }
 
 extension APIRequest {
-	func baseURL() -> URL {
-		return URL(string: HOST)!
-	}
-
-	func send() {
-		send(onResult: { (_) in
-
-		}, onError: { (_) in
-
-		})
-	}
+	//    func baseURL() -> URL {
+	//        return URL(string: HOST)!
+	//    }
 
 	func headers() -> [String:String] {
 		return [:]
@@ -161,7 +149,7 @@ extension APIRequest {
 
 			let request = generateRequest(url: url, data: data)
 
-			let task = client.dataTask(with: request) { (data, response, error) in
+			let _ = client.dataTask(with: request) { (data, response, error) in
 				do {
 					guard let data = data else {
 						return // TODO: improve error handling
@@ -194,14 +182,14 @@ extension APIRequest {
 						}
 					}
 				} catch {
-					onOtherError?(.error(error.localizedDescription))
+					onOtherError?(.genericError(error))
 				}
 			}
 
 			//			task.resume()
 		}
 		catch {
-			onOtherError?(.error(error.localizedDescription))
+			onOtherError?(.genericError(error))
 		}
 	}
 }
