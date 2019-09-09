@@ -1,11 +1,3 @@
-//
-//  codetesterTests.swift
-//  codetesterTests
-//
-//  Created by Rob Saunders on 8/25/19.
-//  Copyright © 2019 Alexei. All rights reserved.
-//
-
 import XCTest
 @testable import codetester
 
@@ -76,26 +68,6 @@ class APIRequestTests: XCTestCase {
 			onResult: { result in XCTFail("incorrectly returned valid result") },
 			onError: { error in XCTFail("onError: \(error)") },
 			onOtherError: { error in /* ok */ })
-	}
-
-}
-
-class codetesterTests: XCTestCase {
-
-
-	// GET /pets/{id}
-	func testGetPet() {
-		let request = PetsPetIdGetRequest()
-		let petExpectation = expectation(description: "Expect GET /pets/{id} to return something")
-
-		request.send(
-			client: MockClient(json: #"{"id": 1, "name": 1}"#, statusCode: 200),
-			onResult: { pet in petExpectation.fulfill() },
-			onError: { error in XCTFail("onError: \(error)") },
-			onOtherError: { error in XCTFail("onOtherError: \(error)") })
-
-		waitForExpectations(timeout: 1, handler: { result in
-		})
 	}
 
 }
