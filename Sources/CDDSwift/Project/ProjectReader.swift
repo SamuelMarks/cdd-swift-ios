@@ -54,8 +54,9 @@ class ProjectReader {
     }
 
 	/// attempt to generate unit tests for generated requests
-	func generateTests(projectName: String) throws {
+	func generateTests() throws {
 		let swiftProject = try self.generateProject()
+		let projectName = guessProjectName()
 		print(buildTestClass(from: swiftProject.requests, projectName: projectName))
 	}
     
@@ -156,6 +157,21 @@ class ProjectReader {
 
 		return .success(())
     }
+
+	func guessProjectName() -> String {
+		if case let .success(files) = readDirectory(self.projectPath + "/iOS") {
+			for file in files {
+				if file.pathExtension == "xcodeproj" {
+					var file = file
+					file.deletePathExtension()
+					return file.lastPathComponent
+				}
+			}
+			return "hi"
+		}
+
+		return "MyProject"
+	}
 }
 
 func logFileWrite(result: Result<(), Swift.Error>, filePath: String) {
@@ -166,4 +182,3 @@ func logFileWrite(result: Result<(), Swift.Error>, filePath: String) {
 		log.errorMessage("ERROR WRITING \(filePath): \(err)")
 	}
 }
-

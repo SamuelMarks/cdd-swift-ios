@@ -48,7 +48,7 @@ class SyncCommand: Command {
             if case .success(_) = projectReader.write() {
                 log.eventMessage("Successfully wrote project files.")
             }
-			try projectReader.generateTests(projectName: "projectName")
+			try projectReader.generateTests()
         } catch let error as ProjectError {
             exitWithError(error.localizedDescription)
         } catch {
