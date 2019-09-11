@@ -48,13 +48,18 @@ class ProjectReader {
     
     func generateProject() throws -> Project {
         let projectInfo = try parseProjectInfo(self.settingsFile)
-        
         let result = parse(sourceFiles: [modelsFile,requestsFile])
         
         return Project(info: projectInfo, models: result.0, requests: result.1)
     }
+
+	/// attempt to generate unit tests for generated requests
+	func generateTests(projectName: String) throws {
+		let swiftProject = try self.generateProject()
+		print(buildTestClass(from: swiftProject.requests, projectName: projectName))
+	}
     
-    func sync() throws  {
+    func sync() throws {
         // generate a Project from swift files
         let swiftProject = try self.generateProject()
         
@@ -161,3 +166,4 @@ func logFileWrite(result: Result<(), Swift.Error>, filePath: String) {
 		log.errorMessage("ERROR WRITING \(filePath): \(err)")
 	}
 }
+

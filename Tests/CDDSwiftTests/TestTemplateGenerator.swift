@@ -7,6 +7,7 @@
 
 import Foundation
 import XCTest
+@testable import CDDSwift
 
 class codetesterTests: XCTestCase {
 	func testFindModel() {

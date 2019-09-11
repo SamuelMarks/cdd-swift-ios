@@ -27,7 +27,6 @@ struct Variable: ProjectObject, Codable {
 	}
 }
 
-
 indirect enum Type: Equatable, Codable {
     case primitive(PrimitiveType)
     case array(Type)
