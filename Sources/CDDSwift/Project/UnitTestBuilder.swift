@@ -27,7 +27,7 @@ func buildTest(from request: Request) -> String {
 
 	return """
 		// \(method) \(request.urlPath)
-		fn test\(request.name)() {
+		func test\(request.name)() {
 			let request = \(request.name)(\(buildParams(request.vars)))
 
 			request.send(

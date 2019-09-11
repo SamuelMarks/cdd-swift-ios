@@ -37,7 +37,7 @@ class ProjectReader {
                 modificationDate: try fileLastModifiedDate(url: specUrl),
                 syntax: try SwaggerSpec.init(url: specUrl)
             )
-            let projectName = findProjectName(at: self.projectPath + "/IOS")
+            let projectName = findProjectName(at: self.projectPath + "/iOS")
             log.infoMessage("Found project: " + projectName)
             self.settingsFile = try SourceFile(path: self.projectPath + SETTINGS_FILE.replacingOccurrences(of: "$0", with: projectName))
             
@@ -57,7 +57,16 @@ class ProjectReader {
 	func generateTests() throws {
 		let swiftProject = try self.generateProject()
 		let projectName = guessProjectName()
-		print(buildTestClass(from: swiftProject.requests, projectName: projectName))
+		let unitTests = buildTestClass(from: swiftProject.requests, projectName: projectName)
+
+		let testFile = URL(string: self.projectPath + "/iOS/\(projectName)Tests/ApiResourceTests.swift")!
+
+		switch writeStringToFile(file: testFile, contents: unitTests) {
+		case .success(_):
+			log.eventMessage("Wrote tests to \(testFile.path)")
+		case .failure(let error):
+			exitWithError(error)
+		}
 	}
     
     func sync() throws {
@@ -167,7 +176,6 @@ class ProjectReader {
 					return file.lastPathComponent
 				}
 			}
-			return "hi"
 		}
 
 		return "MyProject"
