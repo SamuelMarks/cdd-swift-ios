@@ -31,9 +31,8 @@ struct SourceFile: ProjectSource {
 	}
 
 	mutating func update(projectInfo: ProjectInfo) {
-		let host = "\(projectInfo.hostname.scheme ?? "")://\(projectInfo.hostname.host ?? "")"
-		let _ = self.renameVariable("HOST", host)
-		let _ = self.renameVariable("ENDPOINT", projectInfo.hostname.path)
+		let _ = self.renameVariable("HOST", projectInfo.host)
+		let _ = self.renameVariable("ENDPOINT", projectInfo.endpoint)
 	}
 
     mutating func remove(model: Model) {

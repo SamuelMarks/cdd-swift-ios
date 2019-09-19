@@ -10,7 +10,8 @@ import Foundation
 
 struct ProjectInfo {
 	var modificationDate: Date
-	var hostname: URL
+    var host: String
+    var endpoint: String
 
 	func newest(_ left: ProjectInfo, _ right: ProjectInfo) -> ProjectInfo {
 		return left.modificationDate.compare(right.modificationDate) == .orderedAscending ? left : right

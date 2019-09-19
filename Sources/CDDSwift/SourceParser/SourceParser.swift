@@ -85,13 +85,8 @@ func parseProjectInfo(_ source: SourceFile) throws -> ProjectInfo {
 	let visitor = ExtractVariables()
 	source.syntax.walk(visitor)
 
-	guard let hostname = visitor.variables["HOST"], let endpoint = visitor.variables["ENDPOINT"] else {
-        throw ProjectError.InvalidSettingsFile("Cannot find HOST or ENDPOINT variables in Settings.swift")
-	}
-
-    guard let hosturl = URL(string: (hostname.value ?? "") + (endpoint.value ?? "")), hosturl.scheme != nil, hosturl.host != nil else {
-		throw ProjectError.InvalidHostname(hostname.value ?? "")
-	}
-
-	return ProjectInfo(modificationDate: source.modificationDate, hostname: hosturl)
+    let host = visitor.variables["HOST"]?.value ?? ""
+    let endpoint = visitor.variables["ENDPOINT"]?.value ?? ""
+	
+	return ProjectInfo(modificationDate: source.modificationDate, host: host, endpoint: endpoint)
 }

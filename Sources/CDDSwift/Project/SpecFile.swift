@@ -14,8 +14,8 @@ struct SpecFile: ProjectSource {
 	var syntax: SwaggerSpec
 
 	mutating func apply(projectInfo: ProjectInfo) {
-		let hostname = projectInfo.hostname.absoluteString
-		if !self.syntax.servers.map({$0.url}).contains(projectInfo.hostname.absoluteString) {
+		let hostname = projectInfo.host + projectInfo.endpoint
+		if !self.syntax.servers.map({$0.url}).contains(hostname) {
 			self.syntax.servers.append(Server(name: nil, url: hostname, description: nil, variables: [:]))
 		}
 	}

@@ -308,8 +308,12 @@ extension Project {
         
         guard let path = spec.servers.first?.url, let url = URL(string:path) else { return nil }
         
+        let host = "\(url.scheme ?? "")://\(url.host ?? "")"
+        let endpoint = url.path
         
-        return Project(info: ProjectInfo(modificationDate: specFile.modificationDate, hostname: url), models: models, requests: requests)
+        
+        
+        return Project(info: ProjectInfo(modificationDate: specFile.modificationDate, host: host,endpoint: endpoint), models: models, requests: requests)
     }
     
 }
