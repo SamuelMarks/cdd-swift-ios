@@ -1,5 +1,5 @@
 import XCTest
-@testable import codetester
+@testable import cddTemplate
 
 class MockClient: APIClientProtocol {
 	var jsonData: Data

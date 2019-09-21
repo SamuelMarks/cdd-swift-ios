@@ -61,7 +61,7 @@ public class VariableRemover: SyntaxRewriter {
         for (index,child) in node.children.enumerated() {
             let extractor = ExtractVariables()
             child.walk(extractor)
-            if extractor.variables.first?.value.name == name {
+            if extractor.variables.first?.name == name {
                 return node.removing(childAt: index)
             }
         }

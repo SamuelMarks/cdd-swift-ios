@@ -1,5 +1,5 @@
 import XCTest
-@testable import codetester
+@testable import cddTemplate
 
-class codetesterTests: XCTestCase {
+class cddTemplateTests: XCTestCase {
 }

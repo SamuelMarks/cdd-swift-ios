@@ -1,7 +1,7 @@
 import SwiftSyntax
 
 class ExtractVariables : SyntaxVisitor {
-	var variables: Dictionary<String, Variable> = [:]
+	var variables: [Variable] = []
 
 	override func visit(_ node: PatternBindingSyntax) -> SyntaxVisitorContinueKind {
     
@@ -10,7 +10,7 @@ class ExtractVariables : SyntaxVisitor {
 		for child in node.children {
 			if type(of: child) == IdentifierPatternSyntax.self {
                 if let variable = variable {
-                    variables[variable.name] = variable
+                    variables.append(variable)
                 }
                 variable = Variable(name:"\(child)".trimmedWhiteSpaces)
 			}
@@ -58,7 +58,7 @@ class ExtractVariables : SyntaxVisitor {
 		}
         
         if let variable = variable {
-            variables[variable.name] = variable
+            variables.append(variable)
         }
         
 		return .skipChildren

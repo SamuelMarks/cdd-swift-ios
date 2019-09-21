@@ -57,7 +57,7 @@ class ProjectReader {
 	func generateTests() throws {
 		let swiftProject = try self.generateProject()
 		let projectName = guessProjectName()
-		let unitTests = buildTestClass(from: swiftProject.requests, projectName: projectName)
+		let unitTests = TestsBuilder(project: swiftProject, projectName: projectName).build()
 
 		let testFile = URL(string: self.projectPath + "/iOS/\(projectName)Tests/ApiResourceTests.swift")!
 

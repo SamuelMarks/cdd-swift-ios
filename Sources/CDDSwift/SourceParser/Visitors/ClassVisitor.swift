@@ -6,7 +6,7 @@ import SwiftSyntax
 struct Klass {
     let name: String
     var interfaces: [String] = []
-    var vars: [String:Variable] = [:]
+    var vars: [Variable] = []
     var typeAliases: [String:String] = [:]
     init(name: String) {
         self.name = name
