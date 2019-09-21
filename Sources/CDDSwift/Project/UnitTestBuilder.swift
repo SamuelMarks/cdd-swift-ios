@@ -35,14 +35,37 @@ class TestsBuilder {
     private func buildTest(from request: Request) -> String {
         let method = "\(request.method)".uppercased()
         
+        var jsonString = ""
+        let modelName = request.responseType.replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")
+        if let model = project.models.first(where: {$0.name == modelName}) {
+            jsonString = "\(model.name)(\(buildParams(model.vars)))"
+            
+            if request.responseType.hasPrefix("[") {
+                jsonString = "[\(jsonString)]"
+            }
+            
+            jsonString += ".jsonString"
+        }
+        else {
+            jsonString = """
+            "{}"
+            """
+        }
+        
+        jsonString = "let json = " + jsonString
+        
+        
         return """
         // \(method) \(request.urlPath)
         func test\(request.name)() {
         let request = \(request.name)(\(buildParams(request.vars)))
         
+        \(jsonString)
         request.send(
-        client: MockClient(json: #"\(buildResponse(for: request))"#, statusCode: 200),
-        onResult: { pet in /*ok*/ },
+        client: MockClient(json: json, statusCode: 200),
+        onResult: { result in
+        XCTAssertEqual(result.jsonString, json)
+        },
         onError: { error in XCTFail("onError: \\(error)") },
         onOtherError: { error in XCTFail("onOtherError: \\(error)") })
         }
@@ -79,13 +102,13 @@ class TestsBuilder {
         case .primitive(let t):
             switch t {
             case .Bool:
-                return "true"
+                return "APIFaker.bool"
             case .Float:
-                return "0.0"
+                return "APIFaker.float"
             case .Int:
-                return "1"
+                return "APIFaker.int"
             case .String:
-                return "\"fred\""
+                return "APIFaker.string"
             }
         case .array(let type):
             return "[\(defaultArgumentForType(type))]"
