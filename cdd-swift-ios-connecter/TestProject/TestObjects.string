@@ -1,0 +1,285 @@
+{
+  "requests" : [
+    {
+      "method" : "post",
+      "vars" : [
+        {
+          "name" : "phone",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "EmptyResponse",
+      "modificationDate" : 587479928.71126473,
+      "urlPath" : "\/api\/v2\/register",
+      "responseType" : "User",
+      "name" : "RegisterPostRequest"
+    },
+    {
+      "method" : "get",
+      "vars" : [
+        {
+          "name" : "petId",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "APIError",
+      "modificationDate" : 587369598.46154654,
+      "urlPath" : "\/pets\/{petId}",
+      "responseType" : "[Pet]",
+      "name" : "PetsPetIdGetRequest"
+    },
+    {
+      "method" : "post",
+      "vars" : [
+        {
+          "name" : "name",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "isMy",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Bool"
+          }
+        },
+        {
+          "name" : "tag",
+          "optional" : false,
+          "type" : {
+            "array" : {
+              "primitive" : "String"
+            }
+          }
+        },
+        {
+          "name" : "amount",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Float"
+          }
+        },
+        {
+          "name" : "id",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "APIError",
+      "modificationDate" : 587640899.35090387,
+      "urlPath" : "\/pets\/{id}",
+      "responseType" : "EmptyResponse",
+      "name" : "PetsPostRequest"
+    },
+    {
+      "method" : "post",
+      "vars" : [
+        {
+          "name" : "code",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "phone",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ],
+      "errorType" : "EmptyResponse",
+      "modificationDate" : 587479540.1394943,
+      "urlPath" : "\/api\/v2\/login",
+      "responseType" : "User",
+      "name" : "LoginPostRequest"
+    },
+    {
+      "method" : "get",
+      "vars" : [
+        {
+          "name" : "limit",
+          "optional" : true,
+          "type" : {
+            "primitive" : "Int"
+          }
+        }
+      ],
+      "errorType" : "APIError",
+      "modificationDate" : 587369577.19931757,
+      "urlPath" : "\/pets",
+      "responseType" : "[Pet]",
+      "name" : "PetsGetRequest__"
+    }
+  ],
+  "models" : [
+    {
+      "name" : "User",
+      "modificationDate" : 587637347.92308033,
+      "vars" : [
+        {
+          "name" : "description",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "specialization",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "gender",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "birthdate",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "logoPath",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "lastName",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "firstName",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "phone",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "token",
+          "optional" : true,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "id",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Int"
+          }
+        },
+        {
+          "name" : "email",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "city",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "APIError",
+      "modificationDate" : 587369168.93526399,
+      "vars" : [
+        {
+          "name" : "message",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "code",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Int"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "Pet",
+      "modificationDate" : 587369168.93587041,
+      "vars" : [
+        {
+          "name" : "tag",
+          "optional" : true,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "name",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "id",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "Person",
+      "modificationDate" : 587369168.93559432,
+      "vars" : [
+        {
+          "name" : "name",
+          "optional" : false,
+          "type" : {
+            "primitive" : "String"
+          }
+        },
+        {
+          "name" : "age",
+          "optional" : false,
+          "type" : {
+            "primitive" : "Int"
+          }
+        }
+      ]
+    }
+  ]
+}

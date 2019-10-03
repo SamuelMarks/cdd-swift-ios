@@ -125,7 +125,7 @@ struct SpecFile: ProjectSource {
     }
     
 	func generateProject() -> Project {
-		return Project.fromSwagger(self)!
+		return Project.fromSwagger(self)
 	}
 
 	func contains(model name: String) -> Bool {

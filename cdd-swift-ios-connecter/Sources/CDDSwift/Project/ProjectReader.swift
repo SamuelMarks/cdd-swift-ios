@@ -6,7 +6,6 @@ import Foundation
 import Yams
 import SwiftSyntax
 
-let SPEC_FILE = "/openapi.yml"
 let MODELS_DIR = "/iOS/$0/Source/API/APIModels.swift"
 let REQUESTS_DIR = "/iOS/$0/Source/API/APIRequests.swift"
 let SETTINGS_FILE = "/iOS/$0/Source/API/APISettings.swift"
@@ -22,21 +21,13 @@ protocol ProjectSource {
 
 class ProjectReader {
     let projectPath: String
-    var specFile: SpecFile
     var settingsFile: SourceFile
     var modelsFile: SourceFile
     var requestsFile: SourceFile
     
-    init(projectPath: String, openAPIPath:String?) throws {
+    init(projectPath: String) throws {
         self.projectPath = projectPath
-        let openapiPath = openAPIPath ?? projectPath + SPEC_FILE
         do {
-            let specUrl = URL(fileURLWithPath: openapiPath)
-            self.specFile = SpecFile(
-                path: specUrl,
-                modificationDate: try fileLastModifiedDate(url: specUrl),
-                syntax: try SwaggerSpec.init(url: specUrl)
-            )
             let projectName = findProjectName(at: self.projectPath + "/iOS")
             log.infoMessage("Found project: " + projectName)
             self.settingsFile = try SourceFile(path: self.projectPath + SETTINGS_FILE.replacingOccurrences(of: "$0", with: projectName))
@@ -44,6 +35,10 @@ class ProjectReader {
             self.modelsFile = try SourceFile(path: self.projectPath + MODELS_DIR.replacingOccurrences(of: "$0", with: projectName))
             self.requestsFile = try SourceFile(path: self.projectPath + REQUESTS_DIR.replacingOccurrences(of: "$0", with: projectName))
         }
+    }
+    
+    func read() throws -> Project {
+        return try generateProject()
     }
     
     func generateProject() throws -> Project {
@@ -69,56 +64,17 @@ class ProjectReader {
 		}
 	}
     
-    func sync() throws {
+    func write(project: Project) throws {
         // generate a Project from swift files
         let swiftProject = try self.generateProject()
         
         log.eventMessage("Generated project from swift project with \(swiftProject.models.count) models, \(swiftProject.requests.count) routes.".green)
         log.infoMessage("- source models: \(swiftProject.models.map({$0.name}))")
         log.infoMessage("- source requests: \(swiftProject.requests.map({$0.name}))")
-        // generate a Project from the openapi spec
-        // todo: convert interface to .generateProject() -> Result
-        let specProject: Project = Project.fromSwagger(self.specFile)
-        log.eventMessage("Generated project from spec with \(specProject.models.count) models, \(specProject.requests.count) routes.".green)
-        log.infoMessage("- spec models: \(specProject.models.map({$0.name}))")
-        log.infoMessage("- spec project requests: \(specProject.requests.map({$0.name}))")
-        // merge the projects with most recent data from each set
-        // todo: fix spec to return properly
-
-        let mergedProject = specProject.merge(with: swiftProject)
         
-        log.eventMessage("Merged project with \(mergedProject.models.count) models, \(mergedProject.requests.count) routes.".green)
-        log.infoMessage("- Merged project models: \(mergedProject.models.map({$0.name}))")
-        log.infoMessage("- Merged project requests: \(mergedProject.requests.map({$0.name}))")
+        self.settingsFile.update(projectInfo: project.info)
         
-        self.specFile.apply(projectInfo: mergedProject.info)
-        self.settingsFile.update(projectInfo: mergedProject.info)
-        
-        let modelsChanges = mergedProject.models.compare(to: specProject.models)
-        for change in modelsChanges {
-            switch change {
-            case .deletion(let model):
-                specFile.remove(model: model)
-            case .insertion(let model):
-                specFile.insert(model: model)
-            case .same(let model):
-                specFile.update(model: model)
-            }
-        }
-        
-        let requestsChanges = mergedProject.requests.compare(to: specProject.requests)
-        for change in requestsChanges {
-            switch change {
-            case .deletion(let request):
-                specFile.remove(request: request)
-            case .insertion(let request):
-                specFile.insert(request: request)
-            case .same(let request):
-                specFile.update(request: request)
-            }
-        }
-        
-        let modelsChanges1 = mergedProject.models.compare(to: swiftProject.models)
+        let modelsChanges1 = project.models.compare(to: swiftProject.models)
         for change in modelsChanges1 {
             var sourceFile = modelsFile
             switch change {
@@ -132,7 +88,7 @@ class ProjectReader {
             modelsFile = sourceFile
         }
         
-        let requestsChanges1 = mergedProject.requests.compare(to: swiftProject.requests)
+        let requestsChanges1 = project.requests.compare(to: swiftProject.requests)
         for change in requestsChanges1 {
             var sourceFile = requestsFile
             
@@ -146,16 +102,14 @@ class ProjectReader {
             }
             requestsFile = sourceFile
         }
+        
+        try write().get()
     }
     
     func write() -> Result<(), Swift.Error> {
         do {
-            // write specfile
-            let yaml = try self.specFile.toYAML().get()
-            let _ = writeStringToFile(file: self.specFile.path, contents: "\(yaml)")
-
             // write models
-			for sourceFile in [modelsFile,requestsFile] {
+			for sourceFile in [modelsFile,requestsFile, settingsFile] {
 				logFileWrite(
 					result: writeStringToFile(file: sourceFile.url, contents: "\(sourceFile.syntax)"),
 					filePath: sourceFile.url.path)

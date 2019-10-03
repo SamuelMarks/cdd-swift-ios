@@ -116,7 +116,11 @@ extension PrimitiveType {
 extension Project {
     
     private static func generateRequestName(path:String, method:String) -> String {
-        return path.components(separatedBy: ["/","\\","(",")","{","}"]).map {$0.formated()}.joined() + method.formated() + "Request"
+        
+        var path = path.components(separatedBy: ["/","\\","(",")","{","}",".",","]).map {$0.formated()}.joined()
+        path = path.components(separatedBy: CharacterSet.decimalDigits).joined()
+        
+        return path + method.formated() + "Request"
     }
     
 	private static func parseType(_ json: [String:Any], couldBeObjectName: String = "", modificationDate: Date) -> (Type?,Model?) {
@@ -167,7 +171,7 @@ extension Project {
     
 
     
-    static func fromSwagger(_ specFile: SpecFile) -> Project? {
+    static func fromSwagger(_ specFile: SpecFile) -> Project {
 		let spec = specFile.syntax
         
         var arrayTypes: [(name:String,type:String)] = []
@@ -212,7 +216,7 @@ extension Project {
             let method = operation.method.rawValue
             var fields:[Variable] = []
             for parameter in operation.parameters {
-                if parameter.value.location == .query {
+                if parameter.value.location == .query || parameter.value.location == .path {
                     let json = parameter.value.json
                     if let name = json["name"] as? String,
                         let required = json["required"] as? Bool,
@@ -305,11 +309,13 @@ extension Project {
             requests.append(request)
         }
 
+        var host = spec.servers.first?.url ?? ""
+        var endpoint = ""
+        if let path = spec.servers.first?.url, let url = URL(string:path) {
+            host = "\(url.scheme ?? "")://\(url.host ?? "")"
+            endpoint = url.path
+        }
         
-        guard let path = spec.servers.first?.url, let url = URL(string:path) else { return nil }
-        
-        let host = "\(url.scheme ?? "")://\(url.host ?? "")"
-        let endpoint = url.path
         
         
         
