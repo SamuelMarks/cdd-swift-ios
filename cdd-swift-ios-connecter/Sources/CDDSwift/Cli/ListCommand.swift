@@ -39,7 +39,7 @@ class ListCommand: Command {
             log.infoMessage("CONFIG SETTING Dry run; no changes are written to disk")
         }
         
-        read(path: path)
+        read(path: path.value)
     }
     
     func read(path:String) {
