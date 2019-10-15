@@ -2,13 +2,33 @@ import Foundation
 import SwiftCLI
 import Willow
 
-class ReadCommand: Command {
-    let name = "read"
-    let shortDescription = "Parsing swift sorce files to Project objects"
+class ListCommand: Command {
+    enum CommandType {
+        case model, request
+    }
+    
+    let name: String
+    let shortDescription: String
+    let type: CommandType
+    
+    
     let projectPath = Key<String>("-p", "--project-path", description: "Manually specify a path to the project")
     
     let verbose = Flag("-v", "--verbose", description: "Show verbose output", defaultValue: false)
-//    let output = Key<String>("-f", "--output-file", description: "Output logging to file")
+    //    let output = Key<String>("-f", "--output-file", description: "Output logging to file")
+    
+    
+    init(_ type: CommandType) {
+        switch type {
+        case .model:
+            name = "list-models"
+            shortDescription = "Parsing swift sorce files to Models"
+        case .request:
+            name = "list-requests"
+            shortDescription = "Parsing swift sorce files to Requests"
+        }
+        self.type = type
+    }
     
     func execute() throws {
         
@@ -33,7 +53,14 @@ class ReadCommand: Command {
     func read(projectPath:String) {
         do {
             let projectReader = try ProjectReader(projectPath: projectPath)
-            let jsonString = try projectReader.read().json()
+            let project = try projectReader.read()
+            switch type {
+            case .model:
+                try? print(project.models.json())
+            case .request:
+                try? print(project.requests.json())              
+            }
+            
             log.eventMessage("Project Readed")
         } catch let error as ProjectError {
             exitWithError(error.localizedDescription)

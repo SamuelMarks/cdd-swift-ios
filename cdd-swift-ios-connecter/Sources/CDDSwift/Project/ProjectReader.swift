@@ -11,10 +11,9 @@ let REQUESTS_DIR = "/iOS/$0/Source/API/APIRequests.swift"
 let SETTINGS_FILE = "/iOS/$0/Source/API/APISettings.swift"
 
 protocol ProjectSource {
-    mutating func remove(model:Model)
+    mutating func remove(name: String)
     mutating func insert(model:Model) throws
     mutating func update(model:Model)
-    mutating func remove(request:Request)
     mutating func insert(request:Request) throws
     mutating func update(request:Request)
 }
@@ -79,7 +78,7 @@ class ProjectReader {
             var sourceFile = modelsFile
             switch change {
             case .deletion(let model):
-                sourceFile.remove(model:model)
+                sourceFile.remove(name:model.name)
             case .insertion(let model):
                 try sourceFile.insert(model:model)
             case .same(let model):
@@ -94,7 +93,7 @@ class ProjectReader {
             
             switch change {
             case .deletion(let request):
-                sourceFile.remove(request: request)
+                sourceFile.remove(name: request.name)
             case .insertion(let request):
                 try sourceFile.insert(request: request)
             case .same(let request):

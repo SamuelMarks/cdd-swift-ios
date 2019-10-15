@@ -35,8 +35,8 @@ struct SourceFile: ProjectSource {
 		let _ = self.renameVariable("ENDPOINT", projectInfo.endpoint)
 	}
 
-    mutating func remove(model: Model) {
-        self.syntax = ClassRemover.remove(name: model.name, in: self.syntax)
+    mutating func remove(name: String) {
+        self.syntax = ClassRemover.remove(name: name, in: self.syntax)
     }
     
     mutating func insert(model: Model) throws {
@@ -76,10 +76,6 @@ struct SourceFile: ProjectSource {
             }
             self.syntax = ClassRewriter.rewrite(name: name, syntax: newClassSyntax, in: self.syntax)
         }
-    }
-    
-    mutating func remove(request:Request) {
-        self.syntax = ClassRemover.remove(name: request.name, in: self.syntax)
     }
     
     mutating func insert(request:Request) throws {

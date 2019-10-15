@@ -14,8 +14,15 @@ let cli = CLI(
     version: "0.1.0",
     description: "Compiler Driven Development: Swift Adaptor",
     commands: [
-        ReadCommand(),
-        WriteCommand()
+        ListCommand(.model),
+        ListCommand(.request),
+        WriteCommand(operation:.insert,source:.model),
+        WriteCommand(operation:.update,source:.model),
+        WriteCommand(operation:.delete,source:.model),
+        WriteCommand(operation:.insert,source:.request),
+        WriteCommand(operation:.update,source:.request),
+        WriteCommand(operation:.delete,source:.request)
+        
     ]
 )
 

@@ -86,29 +86,24 @@ struct Project: Codable {
         )
         
     }
+}
 
-    static func from(json: String) throws -> Project {
+
+extension Decodable {
+    static func from(json: String) throws -> Self {
         let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-
-        return try JSONDecoder().decode(Project.self, from: data)
+        
+        return try JSONDecoder().decode(Self.self, from: data)
     }
-    
+}
+
+extension Encodable {
     func json() throws -> String {
         let data = try JSONEncoder().encode(self)
         
         return String(data: data, encoding: .utf8) ?? ""
-        
-//        let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-//        let url = URL(fileURLWithPath: path)
-//
-//
-//        let directory = url.deletingLastPathComponent()
-//        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-//        try data.write(to: url, options: [.atomic])
-        
     }
 }
-
 
 
 
