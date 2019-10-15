@@ -11,8 +11,7 @@ class ListCommand: Command {
     let shortDescription: String
     let type: CommandType
     
-    
-    let projectPath = Key<String>("-p", "--project-path", description: "Manually specify a path to the project")
+    let path = Param.Required<String>()
     
     let verbose = Flag("-v", "--verbose", description: "Show verbose output", defaultValue: false)
     //    let output = Key<String>("-f", "--output-file", description: "Output logging to file")
@@ -40,25 +39,19 @@ class ListCommand: Command {
             log.infoMessage("CONFIG SETTING Dry run; no changes are written to disk")
         }
         
-        if let path = projectPath.value {
-            read(projectPath: path)
-        }
-        else {
-            if let pwd = ProcessInfo.processInfo.environment["PWD"] {
-                read(projectPath: pwd)
-            }
-        }
+        read(path: path)
     }
     
-    func read(projectPath:String) {
+    func read(path:String) {
         do {
-            let projectReader = try ProjectReader(projectPath: projectPath)
-            let project = try projectReader.read()
+            let file = try SourceFile(path: path)
+            let objects = parse(sourceFiles: [file])
+            
             switch type {
             case .model:
-                try? print(project.models.json())
+                try print(objects.0.json())
             case .request:
-                try? print(project.requests.json())              
+                try print(objects.1.json())
             }
             
             log.eventMessage("Project Readed")
