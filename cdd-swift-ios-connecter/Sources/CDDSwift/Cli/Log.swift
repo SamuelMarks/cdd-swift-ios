@@ -26,7 +26,8 @@ class ColorModifier: LogModifier {
 extension Logger {
     
     func enableFileOutput(path: String) {
-        let writers = [ConsoleWriter(modifiers: [ColorModifier()]), FileWriter(filePath: path)] as [LogWriter]
+        let writers = [FileWriter(filePath: path)] as [LogWriter]
+//        [ConsoleWriter(modifiers: [ColorModifier()]), FileWriter(filePath: path)] as [LogWriter]
 
         log = Logger(logLevels: [log.logLevels], writers: writers)
     }
@@ -61,3 +62,24 @@ class FileWriter: LogWriter {
         
     }
 }
+
+class ErrWriter: LogWriter {
+//    private let path: String
+    private let modifier = ColorModifier()
+    
+    
+    func writeMessage(_ message: String, logLevel: LogLevel) {
+        let stderr = FileHandle.standardError
+        
+        // Write it
+        if let data = message.data(using: .utf8) {
+            stderr.write(data)
+        }
+        
+    }
+    
+    func writeMessage(_ message: LogMessage, logLevel: LogLevel) {
+        
+    }
+}
+

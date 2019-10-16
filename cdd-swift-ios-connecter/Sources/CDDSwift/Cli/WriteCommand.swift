@@ -15,9 +15,8 @@ class WriteCommand: Command {
     let operation: OperationType
     let source: SourceType
     
-    
-    let projectPath = Key<String>("-p", "--project-path", description: "Manually specify a path to the project")
-    
+    let path = Param.Required<String>()
+    let json = Param.Required<String>()
     let verbose = Flag("-v", "--verbose", description: "Show verbose output", defaultValue: false)
     //    let output = Key<String>("-f", "--output-file", description: "Output logging to file")
     
@@ -39,47 +38,40 @@ class WriteCommand: Command {
             log.infoMessage("CONFIG SETTING Dry run; no changes are written to disk")
         }
         
-        if let path = projectPath.value {
-            try write(projectPath: path, json: "")
-        }
-        else {
-            if let pwd = ProcessInfo.processInfo.environment["PWD"] {
-                try write(projectPath: pwd, json: "")
-            }
-        }
+        try write(path: path.value, json: json.value)
     }
     
-    func write(projectPath: String, json:String) throws {
+    func write(path: String, json:String) throws {
         do {
-            let projectReader = try ProjectReader(projectPath: projectPath)
             
+            var file = try SourceFile(path: path)
             switch operation {
             case .insert:
                 switch source {
                 case .model:
-                    try projectReader.modelsFile.insert(model: Model.from(json: json))
+                    try file.insert(model: Model.from(json: json))
                 case .request:
-                    try projectReader.requestsFile.insert(request: Request.from(json: json))
+                    try file.insert(request: Request.from(json: json))
                 }
             case .update:
                 switch source {
                 case .model:
-                    try projectReader.modelsFile.update(model: Model.from(json: json))
+                    try file.update(model: Model.from(json: json))
                 case .request:
-                    try projectReader.requestsFile.update(request: Request.from(json: json))
+                    try file.update(request: Request.from(json: json))
                 }
             case .delete:
                 switch source {
                 case .model:
-                    projectReader.modelsFile.remove(name: json)
+                    file.remove(name: json)
                 case .request:
-                    projectReader.requestsFile.remove(name: json)
+                    file.remove(name: json)
                 }
             }
-
-            try projectReader.generateTests()
-            projectReader.write()
-            log.eventMessage("Project Readed")
+            
+            writeStringToFile(file: file.url, contents: "\(file.syntax)")
+//            try projectReader.generateTests()
+//            projectReader.write()
         } catch let error as ProjectError {
             exitWithError(error.localizedDescription)
         } catch {
