@@ -1,5 +1,8 @@
 cdd-swift
 =========
+[![Swift 5](https://img.shields.io/badge/Swift-5-blue.svg)](https://swift.org)
+[![License: (Apache-2.0 OR MIT)](https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-orange)](LICENSE-APACHE)
+[![CircleCI](https://circleci.com/gh/offscale/cdd-swift-ios.svg?style=svg)](https://circleci.com/gh/offscale/cdd-swift-ios)
 
 Compiler driven development adaptor for [cdd-ctl](https://github.com/offscale/cdd-ctl).
 
